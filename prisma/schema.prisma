@@ -1,0 +1,109 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma-client"
+}
+
+enum Role {
+  ADMIN
+  VENDEDOR
+  CLIENTE
+}
+
+model User {
+  id                  Int                  @id @default(autoincrement())
+  email               String               @unique
+  password            String
+  role                Role                 @default(CLIENTE)
+  nombre              String
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  inventariosVendedor InventarioVendedor[] // Para vendedores
+  ventasRealizadas    Venta[]              @relation("VendedorVenta") // Ventas hechas por el vendedor
+  ventasCompradas     Venta[]              @relation("ClienteVenta") // Compras del cliente
+  suscripcion         Suscripcion?
+  logros              LogroFidelidad[]
+  liquidaciones       Liquidacion[]        @relation("VendedorLiquidacion")
+}
+
+model Vape {
+  id          Int                  @id @default(autoincrement())
+  nombre      String
+  descripcion String?
+  imagenUrl   String?
+  costo       Float
+  precio      Float
+  stockGlobal Int                  @default(0)
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+  inventarios InventarioVendedor[]
+  Venta       Venta[]
+}
+
+model InventarioVendedor {
+  id         Int      @id @default(autoincrement())
+  vendedorId Int
+  vapeId     Int
+  cantidad   Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  vendedor User @relation(fields: [vendedorId], references: [id])
+  vape     Vape @relation(fields: [vapeId], references: [id])
+
+  @@unique([vendedorId, vapeId])
+}
+
+model Venta {
+  id                Int      @id @default(autoincrement())
+  vendedorId        Int
+  clienteId         Int?     // Opcional si es una venta rápida sin registrar cliente
+  vapeId            Int
+  cantidad          Int
+  costoAdquisicion  Float    // Snapshot del costo en el momento de la venta
+  precioVenta       Float    // Precio al que se vendió finalmente (con o sin descuento)
+  descuentoAdmin    Float    @default(0) // Monto del descuento absorbido por el admin
+  descuentoVendedor Float    @default(0) // Monto del descuento absorbido por el vendedor
+  liquidacionId     Int?
+  createdAt         DateTime @default(now())
+
+  vendedor    User         @relation("VendedorVenta", fields: [vendedorId], references: [id])
+  cliente     User?        @relation("ClienteVenta", fields: [clienteId], references: [id])
+  vape        Vape         @relation(fields: [vapeId], references: [id])
+  liquidacion Liquidacion? @relation(fields: [liquidacionId], references: [id])
+}
+
+model Liquidacion {
+  id         Int      @id @default(autoincrement())
+  vendedorId Int
+  montoTotal Float    @default(0)
+  cerrada    Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  vendedor User    @relation("VendedorLiquidacion", fields: [vendedorId], references: [id])
+  ventas   Venta[]
+}
+
+model Suscripcion {
+  id        Int      @id @default(autoincrement())
+  clienteId Int      @unique
+  activa    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  cliente User @relation(fields: [clienteId], references: [id])
+}
+
+model LogroFidelidad {
+  id          Int      @id @default(autoincrement())
+  clienteId   Int
+  nombre      String
+  descripcion String?
+  obtenidoEn  DateTime @default(now())
+
+  cliente User @relation(fields: [clienteId], references: [id])
+}

@@ -1,0 +1,35 @@
+{
+  "name": "nubex",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cripsitorey/nubex.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/cripsitorey/nubex/issues"
+  },
+  "homepage": "https://github.com/cripsitorey/nubex#readme",
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "multer": "^2.1.1",
+    "pg": "^8.20.0",
+    "sharp": "^0.34.5",
+    "uuid": "^14.0.0"
+  },
+  "devDependencies": {
+    "prisma": "^7.8.0"
+  }
+}
