@@ -1,0 +1,69 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+@theme inline {
+  --font-sans: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
+}
+
+:root {
+  /* Nubex Theme variables for DaisyUI */
+  --color-base-100: #0B0F19; /* Deep Midnight */
+  --color-base-200: #161E2C; /* Navy Slate */
+  --color-base-300: #1c2637; 
+  --color-base-content: #FFFFFF; /* Pure White */
+  
+  --color-primary: #00E5FF; /* Electric Cyan */
+  --color-primary-content: #0B0F19;
+  
+  --color-success: #9DFF00; /* Lime Glow */
+  --color-success-content: #0B0F19;
+  
+  --color-warning: #F000FF; /* Magenta Punch (for alert) */
+  --color-warning-content: #FFFFFF;
+  
+  --color-error: #F000FF; /* Magenta Punch */
+  --color-error-content: #FFFFFF;
+  
+  --color-neutral: #161E2C; /* Navy Slate */
+  --color-neutral-content: #FFFFFF;
+}
+
+[data-theme="nubexTheme"] {
+  --b1: 226 39% 7%; /* 0B0F19 in Oklch aprox / or HSL? DaisyUI v4 used oklch or standard. Actually we just rely on standard base-100 for now. Since DaisyUI v5 we can just map colors. */
+}
+
+/* Fallback for v5 theming */
+@plugin "daisyui/theme" {
+  name: "nubexTheme";
+  default: true;
+  color-scheme: dark;
+  --color-base-100: #0B0F19;
+  --color-base-200: #161E2C;
+  --color-base-300: #1c2637;
+  --color-base-content: #FFFFFF;
+  --color-primary: #00E5FF;
+  --color-primary-content: #0B0F19;
+  --color-success: #9DFF00;
+  --color-success-content: #0B0F19;
+  --color-warning: #F000FF;
+  --color-warning-content: #FFFFFF;
+  --color-error: #F000FF;
+  --color-error-content: #FFFFFF;
+  --color-neutral: #161E2C;
+  --color-neutral-content: #FFFFFF;
+}
+
+body {
+  background-color: var(--color-base-100);
+  color: var(--color-base-content);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@utility glass-card {
+  background-color: rgba(22, 30, 44, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}

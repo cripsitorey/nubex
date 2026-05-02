@@ -1,0 +1,21 @@
+{
+  "name": "Nubex Vape Inventory",
+  "short_name": "Nubex",
+  "description": "Sistema offline-first de inventario y ventas para Nubex Vapes",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0B0F19",
+  "theme_color": "#0B0F19",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
