@@ -262,6 +262,7 @@ export type VapeWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Vape"> | Date | string
   inventarios?: Prisma.InventarioVendedorListRelationFilter
   Venta?: Prisma.VentaListRelationFilter
+  entregas?: Prisma.EntregaSuscripcionListRelationFilter
 }
 
 export type VapeOrderByWithRelationInput = {
@@ -276,6 +277,7 @@ export type VapeOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   inventarios?: Prisma.InventarioVendedorOrderByRelationAggregateInput
   Venta?: Prisma.VentaOrderByRelationAggregateInput
+  entregas?: Prisma.EntregaSuscripcionOrderByRelationAggregateInput
 }
 
 export type VapeWhereUniqueInput = Prisma.AtLeast<{
@@ -293,6 +295,7 @@ export type VapeWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"Vape"> | Date | string
   inventarios?: Prisma.InventarioVendedorListRelationFilter
   Venta?: Prisma.VentaListRelationFilter
+  entregas?: Prisma.EntregaSuscripcionListRelationFilter
 }, "id">
 
 export type VapeOrderByWithAggregationInput = {
@@ -338,6 +341,7 @@ export type VapeCreateInput = {
   updatedAt?: Date | string
   inventarios?: Prisma.InventarioVendedorCreateNestedManyWithoutVapeInput
   Venta?: Prisma.VentaCreateNestedManyWithoutVapeInput
+  entregas?: Prisma.EntregaSuscripcionCreateNestedManyWithoutVapeInput
 }
 
 export type VapeUncheckedCreateInput = {
@@ -352,6 +356,7 @@ export type VapeUncheckedCreateInput = {
   updatedAt?: Date | string
   inventarios?: Prisma.InventarioVendedorUncheckedCreateNestedManyWithoutVapeInput
   Venta?: Prisma.VentaUncheckedCreateNestedManyWithoutVapeInput
+  entregas?: Prisma.EntregaSuscripcionUncheckedCreateNestedManyWithoutVapeInput
 }
 
 export type VapeUpdateInput = {
@@ -365,6 +370,7 @@ export type VapeUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   inventarios?: Prisma.InventarioVendedorUpdateManyWithoutVapeNestedInput
   Venta?: Prisma.VentaUpdateManyWithoutVapeNestedInput
+  entregas?: Prisma.EntregaSuscripcionUpdateManyWithoutVapeNestedInput
 }
 
 export type VapeUncheckedUpdateInput = {
@@ -379,6 +385,7 @@ export type VapeUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   inventarios?: Prisma.InventarioVendedorUncheckedUpdateManyWithoutVapeNestedInput
   Venta?: Prisma.VentaUncheckedUpdateManyWithoutVapeNestedInput
+  entregas?: Prisma.EntregaSuscripcionUncheckedUpdateManyWithoutVapeNestedInput
 }
 
 export type VapeCreateManyInput = {
@@ -507,6 +514,20 @@ export type VapeUpdateOneRequiredWithoutVentaNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.VapeUpdateToOneWithWhereWithoutVentaInput, Prisma.VapeUpdateWithoutVentaInput>, Prisma.VapeUncheckedUpdateWithoutVentaInput>
 }
 
+export type VapeCreateNestedOneWithoutEntregasInput = {
+  create?: Prisma.XOR<Prisma.VapeCreateWithoutEntregasInput, Prisma.VapeUncheckedCreateWithoutEntregasInput>
+  connectOrCreate?: Prisma.VapeCreateOrConnectWithoutEntregasInput
+  connect?: Prisma.VapeWhereUniqueInput
+}
+
+export type VapeUpdateOneRequiredWithoutEntregasNestedInput = {
+  create?: Prisma.XOR<Prisma.VapeCreateWithoutEntregasInput, Prisma.VapeUncheckedCreateWithoutEntregasInput>
+  connectOrCreate?: Prisma.VapeCreateOrConnectWithoutEntregasInput
+  upsert?: Prisma.VapeUpsertWithoutEntregasInput
+  connect?: Prisma.VapeWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.VapeUpdateToOneWithWhereWithoutEntregasInput, Prisma.VapeUpdateWithoutEntregasInput>, Prisma.VapeUncheckedUpdateWithoutEntregasInput>
+}
+
 export type VapeCreateWithoutInventariosInput = {
   nombre: string
   descripcion?: string | null
@@ -517,6 +538,7 @@ export type VapeCreateWithoutInventariosInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   Venta?: Prisma.VentaCreateNestedManyWithoutVapeInput
+  entregas?: Prisma.EntregaSuscripcionCreateNestedManyWithoutVapeInput
 }
 
 export type VapeUncheckedCreateWithoutInventariosInput = {
@@ -530,6 +552,7 @@ export type VapeUncheckedCreateWithoutInventariosInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   Venta?: Prisma.VentaUncheckedCreateNestedManyWithoutVapeInput
+  entregas?: Prisma.EntregaSuscripcionUncheckedCreateNestedManyWithoutVapeInput
 }
 
 export type VapeCreateOrConnectWithoutInventariosInput = {
@@ -558,6 +581,7 @@ export type VapeUpdateWithoutInventariosInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Venta?: Prisma.VentaUpdateManyWithoutVapeNestedInput
+  entregas?: Prisma.EntregaSuscripcionUpdateManyWithoutVapeNestedInput
 }
 
 export type VapeUncheckedUpdateWithoutInventariosInput = {
@@ -571,6 +595,7 @@ export type VapeUncheckedUpdateWithoutInventariosInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Venta?: Prisma.VentaUncheckedUpdateManyWithoutVapeNestedInput
+  entregas?: Prisma.EntregaSuscripcionUncheckedUpdateManyWithoutVapeNestedInput
 }
 
 export type VapeCreateWithoutVentaInput = {
@@ -583,6 +608,7 @@ export type VapeCreateWithoutVentaInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   inventarios?: Prisma.InventarioVendedorCreateNestedManyWithoutVapeInput
+  entregas?: Prisma.EntregaSuscripcionCreateNestedManyWithoutVapeInput
 }
 
 export type VapeUncheckedCreateWithoutVentaInput = {
@@ -596,6 +622,7 @@ export type VapeUncheckedCreateWithoutVentaInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   inventarios?: Prisma.InventarioVendedorUncheckedCreateNestedManyWithoutVapeInput
+  entregas?: Prisma.EntregaSuscripcionUncheckedCreateNestedManyWithoutVapeInput
 }
 
 export type VapeCreateOrConnectWithoutVentaInput = {
@@ -624,6 +651,7 @@ export type VapeUpdateWithoutVentaInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   inventarios?: Prisma.InventarioVendedorUpdateManyWithoutVapeNestedInput
+  entregas?: Prisma.EntregaSuscripcionUpdateManyWithoutVapeNestedInput
 }
 
 export type VapeUncheckedUpdateWithoutVentaInput = {
@@ -637,6 +665,77 @@ export type VapeUncheckedUpdateWithoutVentaInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   inventarios?: Prisma.InventarioVendedorUncheckedUpdateManyWithoutVapeNestedInput
+  entregas?: Prisma.EntregaSuscripcionUncheckedUpdateManyWithoutVapeNestedInput
+}
+
+export type VapeCreateWithoutEntregasInput = {
+  nombre: string
+  descripcion?: string | null
+  imagenUrl?: string | null
+  costo: number
+  precio: number
+  stockGlobal?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  inventarios?: Prisma.InventarioVendedorCreateNestedManyWithoutVapeInput
+  Venta?: Prisma.VentaCreateNestedManyWithoutVapeInput
+}
+
+export type VapeUncheckedCreateWithoutEntregasInput = {
+  id?: number
+  nombre: string
+  descripcion?: string | null
+  imagenUrl?: string | null
+  costo: number
+  precio: number
+  stockGlobal?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  inventarios?: Prisma.InventarioVendedorUncheckedCreateNestedManyWithoutVapeInput
+  Venta?: Prisma.VentaUncheckedCreateNestedManyWithoutVapeInput
+}
+
+export type VapeCreateOrConnectWithoutEntregasInput = {
+  where: Prisma.VapeWhereUniqueInput
+  create: Prisma.XOR<Prisma.VapeCreateWithoutEntregasInput, Prisma.VapeUncheckedCreateWithoutEntregasInput>
+}
+
+export type VapeUpsertWithoutEntregasInput = {
+  update: Prisma.XOR<Prisma.VapeUpdateWithoutEntregasInput, Prisma.VapeUncheckedUpdateWithoutEntregasInput>
+  create: Prisma.XOR<Prisma.VapeCreateWithoutEntregasInput, Prisma.VapeUncheckedCreateWithoutEntregasInput>
+  where?: Prisma.VapeWhereInput
+}
+
+export type VapeUpdateToOneWithWhereWithoutEntregasInput = {
+  where?: Prisma.VapeWhereInput
+  data: Prisma.XOR<Prisma.VapeUpdateWithoutEntregasInput, Prisma.VapeUncheckedUpdateWithoutEntregasInput>
+}
+
+export type VapeUpdateWithoutEntregasInput = {
+  nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagenUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  costo?: Prisma.FloatFieldUpdateOperationsInput | number
+  precio?: Prisma.FloatFieldUpdateOperationsInput | number
+  stockGlobal?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  inventarios?: Prisma.InventarioVendedorUpdateManyWithoutVapeNestedInput
+  Venta?: Prisma.VentaUpdateManyWithoutVapeNestedInput
+}
+
+export type VapeUncheckedUpdateWithoutEntregasInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagenUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  costo?: Prisma.FloatFieldUpdateOperationsInput | number
+  precio?: Prisma.FloatFieldUpdateOperationsInput | number
+  stockGlobal?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  inventarios?: Prisma.InventarioVendedorUncheckedUpdateManyWithoutVapeNestedInput
+  Venta?: Prisma.VentaUncheckedUpdateManyWithoutVapeNestedInput
 }
 
 
@@ -647,11 +746,13 @@ export type VapeUncheckedUpdateWithoutVentaInput = {
 export type VapeCountOutputType = {
   inventarios: number
   Venta: number
+  entregas: number
 }
 
 export type VapeCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   inventarios?: boolean | VapeCountOutputTypeCountInventariosArgs
   Venta?: boolean | VapeCountOutputTypeCountVentaArgs
+  entregas?: boolean | VapeCountOutputTypeCountEntregasArgs
 }
 
 /**
@@ -678,6 +779,13 @@ export type VapeCountOutputTypeCountVentaArgs<ExtArgs extends runtime.Types.Exte
   where?: Prisma.VentaWhereInput
 }
 
+/**
+ * VapeCountOutputType without action
+ */
+export type VapeCountOutputTypeCountEntregasArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EntregaSuscripcionWhereInput
+}
+
 
 export type VapeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -691,6 +799,7 @@ export type VapeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   updatedAt?: boolean
   inventarios?: boolean | Prisma.Vape$inventariosArgs<ExtArgs>
   Venta?: boolean | Prisma.Vape$VentaArgs<ExtArgs>
+  entregas?: boolean | Prisma.Vape$entregasArgs<ExtArgs>
   _count?: boolean | Prisma.VapeCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["vape"]>
 
@@ -734,6 +843,7 @@ export type VapeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = run
 export type VapeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   inventarios?: boolean | Prisma.Vape$inventariosArgs<ExtArgs>
   Venta?: boolean | Prisma.Vape$VentaArgs<ExtArgs>
+  entregas?: boolean | Prisma.Vape$entregasArgs<ExtArgs>
   _count?: boolean | Prisma.VapeCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type VapeIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -744,6 +854,7 @@ export type $VapePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   objects: {
     inventarios: Prisma.$InventarioVendedorPayload<ExtArgs>[]
     Venta: Prisma.$VentaPayload<ExtArgs>[]
+    entregas: Prisma.$EntregaSuscripcionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1151,6 +1262,7 @@ export interface Prisma__VapeClient<T, Null = never, ExtArgs extends runtime.Typ
   readonly [Symbol.toStringTag]: "PrismaPromise"
   inventarios<T extends Prisma.Vape$inventariosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Vape$inventariosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InventarioVendedorPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   Venta<T extends Prisma.Vape$VentaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Vape$VentaArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VentaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  entregas<T extends Prisma.Vape$entregasArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Vape$entregasArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EntregaSuscripcionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1627,6 +1739,30 @@ export type Vape$VentaArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
   take?: number
   skip?: number
   distinct?: Prisma.VentaScalarFieldEnum | Prisma.VentaScalarFieldEnum[]
+}
+
+/**
+ * Vape.entregas
+ */
+export type Vape$entregasArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EntregaSuscripcion
+   */
+  select?: Prisma.EntregaSuscripcionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EntregaSuscripcion
+   */
+  omit?: Prisma.EntregaSuscripcionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EntregaSuscripcionInclude<ExtArgs> | null
+  where?: Prisma.EntregaSuscripcionWhereInput
+  orderBy?: Prisma.EntregaSuscripcionOrderByWithRelationInput | Prisma.EntregaSuscripcionOrderByWithRelationInput[]
+  cursor?: Prisma.EntregaSuscripcionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EntregaSuscripcionScalarFieldEnum | Prisma.EntregaSuscripcionScalarFieldEnum[]
 }
 
 /**

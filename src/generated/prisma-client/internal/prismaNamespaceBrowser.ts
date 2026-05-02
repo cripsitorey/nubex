@@ -57,6 +57,7 @@ export const ModelName = {
   Venta: 'Venta',
   Liquidacion: 'Liquidacion',
   Suscripcion: 'Suscripcion',
+  EntregaSuscripcion: 'EntregaSuscripcion',
   LogroFidelidad: 'LogroFidelidad'
 } as const
 
@@ -84,6 +85,7 @@ export const UserScalarFieldEnum = {
   password: 'password',
   role: 'role',
   nombre: 'nombre',
+  totalVapesComprados: 'totalVapesComprados',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -128,6 +130,9 @@ export const VentaScalarFieldEnum = {
   precioVenta: 'precioVenta',
   descuentoAdmin: 'descuentoAdmin',
   descuentoVendedor: 'descuentoVendedor',
+  montoParaAdmin: 'montoParaAdmin',
+  montoParaVendedor: 'montoParaVendedor',
+  pagadoA: 'pagadoA',
   estado: 'estado',
   comprobanteUrl: 'comprobanteUrl',
   liquidacionId: 'liquidacionId',
@@ -153,11 +158,25 @@ export const SuscripcionScalarFieldEnum = {
   id: 'id',
   clienteId: 'clienteId',
   activa: 'activa',
+  diasEntreEntregas: 'diasEntreEntregas',
+  multaFija: 'multaFija',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type SuscripcionScalarFieldEnum = (typeof SuscripcionScalarFieldEnum)[keyof typeof SuscripcionScalarFieldEnum]
+
+
+export const EntregaSuscripcionScalarFieldEnum = {
+  id: 'id',
+  suscripcionId: 'suscripcionId',
+  vendedorId: 'vendedorId',
+  vapeId: 'vapeId',
+  multaAplicada: 'multaAplicada',
+  createdAt: 'createdAt'
+} as const
+
+export type EntregaSuscripcionScalarFieldEnum = (typeof EntregaSuscripcionScalarFieldEnum)[keyof typeof EntregaSuscripcionScalarFieldEnum]
 
 
 export const LogroFidelidadScalarFieldEnum = {

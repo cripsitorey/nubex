@@ -72,6 +72,11 @@ export type Liquidacion = Prisma.LiquidacionModel
  */
 export type Suscripcion = Prisma.SuscripcionModel
 /**
+ * Model EntregaSuscripcion
+ * 
+ */
+export type EntregaSuscripcion = Prisma.EntregaSuscripcionModel
+/**
  * Model LogroFidelidad
  * 
  */

@@ -28,10 +28,12 @@ export type AggregateUser = {
 
 export type UserAvgAggregateOutputType = {
   id: number | null
+  totalVapesComprados: number | null
 }
 
 export type UserSumAggregateOutputType = {
   id: number | null
+  totalVapesComprados: number | null
 }
 
 export type UserMinAggregateOutputType = {
@@ -42,6 +44,7 @@ export type UserMinAggregateOutputType = {
   password: string | null
   role: $Enums.Role | null
   nombre: string | null
+  totalVapesComprados: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -54,6 +57,7 @@ export type UserMaxAggregateOutputType = {
   password: string | null
   role: $Enums.Role | null
   nombre: string | null
+  totalVapesComprados: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -66,6 +70,7 @@ export type UserCountAggregateOutputType = {
   password: number
   role: number
   nombre: number
+  totalVapesComprados: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -74,10 +79,12 @@ export type UserCountAggregateOutputType = {
 
 export type UserAvgAggregateInputType = {
   id?: true
+  totalVapesComprados?: true
 }
 
 export type UserSumAggregateInputType = {
   id?: true
+  totalVapesComprados?: true
 }
 
 export type UserMinAggregateInputType = {
@@ -88,6 +95,7 @@ export type UserMinAggregateInputType = {
   password?: true
   role?: true
   nombre?: true
+  totalVapesComprados?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -100,6 +108,7 @@ export type UserMaxAggregateInputType = {
   password?: true
   role?: true
   nombre?: true
+  totalVapesComprados?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -112,6 +121,7 @@ export type UserCountAggregateInputType = {
   password?: true
   role?: true
   nombre?: true
+  totalVapesComprados?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -211,6 +221,7 @@ export type UserGroupByOutputType = {
   password: string
   role: $Enums.Role
   nombre: string
+  totalVapesComprados: number
   createdAt: Date
   updatedAt: Date
   _count: UserCountAggregateOutputType | null
@@ -246,6 +257,7 @@ export type UserWhereInput = {
   password?: Prisma.StringFilter<"User"> | string
   role?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
   nombre?: Prisma.StringFilter<"User"> | string
+  totalVapesComprados?: Prisma.IntFilter<"User"> | number
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   inventariosVendedor?: Prisma.InventarioVendedorListRelationFilter
@@ -254,6 +266,7 @@ export type UserWhereInput = {
   suscripcion?: Prisma.XOR<Prisma.SuscripcionNullableScalarRelationFilter, Prisma.SuscripcionWhereInput> | null
   logros?: Prisma.LogroFidelidadListRelationFilter
   liquidaciones?: Prisma.LiquidacionListRelationFilter
+  entregasSuscripcion?: Prisma.EntregaSuscripcionListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -264,6 +277,7 @@ export type UserOrderByWithRelationInput = {
   password?: Prisma.SortOrder
   role?: Prisma.SortOrder
   nombre?: Prisma.SortOrder
+  totalVapesComprados?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   inventariosVendedor?: Prisma.InventarioVendedorOrderByRelationAggregateInput
@@ -272,6 +286,7 @@ export type UserOrderByWithRelationInput = {
   suscripcion?: Prisma.SuscripcionOrderByWithRelationInput
   logros?: Prisma.LogroFidelidadOrderByRelationAggregateInput
   liquidaciones?: Prisma.LiquidacionOrderByRelationAggregateInput
+  entregasSuscripcion?: Prisma.EntregaSuscripcionOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -285,6 +300,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   password?: Prisma.StringFilter<"User"> | string
   role?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
   nombre?: Prisma.StringFilter<"User"> | string
+  totalVapesComprados?: Prisma.IntFilter<"User"> | number
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   inventariosVendedor?: Prisma.InventarioVendedorListRelationFilter
@@ -293,6 +309,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   suscripcion?: Prisma.XOR<Prisma.SuscripcionNullableScalarRelationFilter, Prisma.SuscripcionWhereInput> | null
   logros?: Prisma.LogroFidelidadListRelationFilter
   liquidaciones?: Prisma.LiquidacionListRelationFilter
+  entregasSuscripcion?: Prisma.EntregaSuscripcionListRelationFilter
 }, "id" | "email" | "cedula" | "telefono">
 
 export type UserOrderByWithAggregationInput = {
@@ -303,6 +320,7 @@ export type UserOrderByWithAggregationInput = {
   password?: Prisma.SortOrder
   role?: Prisma.SortOrder
   nombre?: Prisma.SortOrder
+  totalVapesComprados?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
@@ -323,6 +341,7 @@ export type UserScalarWhereWithAggregatesInput = {
   password?: Prisma.StringWithAggregatesFilter<"User"> | string
   role?: Prisma.EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
   nombre?: Prisma.StringWithAggregatesFilter<"User"> | string
+  totalVapesComprados?: Prisma.IntWithAggregatesFilter<"User"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
 }
@@ -334,6 +353,7 @@ export type UserCreateInput = {
   password: string
   role?: $Enums.Role
   nombre: string
+  totalVapesComprados?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   inventariosVendedor?: Prisma.InventarioVendedorCreateNestedManyWithoutVendedorInput
@@ -342,6 +362,7 @@ export type UserCreateInput = {
   suscripcion?: Prisma.SuscripcionCreateNestedOneWithoutClienteInput
   logros?: Prisma.LogroFidelidadCreateNestedManyWithoutClienteInput
   liquidaciones?: Prisma.LiquidacionCreateNestedManyWithoutVendedorInput
+  entregasSuscripcion?: Prisma.EntregaSuscripcionCreateNestedManyWithoutVendedorInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -352,6 +373,7 @@ export type UserUncheckedCreateInput = {
   password: string
   role?: $Enums.Role
   nombre: string
+  totalVapesComprados?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   inventariosVendedor?: Prisma.InventarioVendedorUncheckedCreateNestedManyWithoutVendedorInput
@@ -360,6 +382,7 @@ export type UserUncheckedCreateInput = {
   suscripcion?: Prisma.SuscripcionUncheckedCreateNestedOneWithoutClienteInput
   logros?: Prisma.LogroFidelidadUncheckedCreateNestedManyWithoutClienteInput
   liquidaciones?: Prisma.LiquidacionUncheckedCreateNestedManyWithoutVendedorInput
+  entregasSuscripcion?: Prisma.EntregaSuscripcionUncheckedCreateNestedManyWithoutVendedorInput
 }
 
 export type UserUpdateInput = {
@@ -369,6 +392,7 @@ export type UserUpdateInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  totalVapesComprados?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   inventariosVendedor?: Prisma.InventarioVendedorUpdateManyWithoutVendedorNestedInput
@@ -377,6 +401,7 @@ export type UserUpdateInput = {
   suscripcion?: Prisma.SuscripcionUpdateOneWithoutClienteNestedInput
   logros?: Prisma.LogroFidelidadUpdateManyWithoutClienteNestedInput
   liquidaciones?: Prisma.LiquidacionUpdateManyWithoutVendedorNestedInput
+  entregasSuscripcion?: Prisma.EntregaSuscripcionUpdateManyWithoutVendedorNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -387,6 +412,7 @@ export type UserUncheckedUpdateInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  totalVapesComprados?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   inventariosVendedor?: Prisma.InventarioVendedorUncheckedUpdateManyWithoutVendedorNestedInput
@@ -395,6 +421,7 @@ export type UserUncheckedUpdateInput = {
   suscripcion?: Prisma.SuscripcionUncheckedUpdateOneWithoutClienteNestedInput
   logros?: Prisma.LogroFidelidadUncheckedUpdateManyWithoutClienteNestedInput
   liquidaciones?: Prisma.LiquidacionUncheckedUpdateManyWithoutVendedorNestedInput
+  entregasSuscripcion?: Prisma.EntregaSuscripcionUncheckedUpdateManyWithoutVendedorNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -405,6 +432,7 @@ export type UserCreateManyInput = {
   password: string
   role?: $Enums.Role
   nombre: string
+  totalVapesComprados?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -416,6 +444,7 @@ export type UserUpdateManyMutationInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  totalVapesComprados?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -428,6 +457,7 @@ export type UserUncheckedUpdateManyInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  totalVapesComprados?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -440,12 +470,14 @@ export type UserCountOrderByAggregateInput = {
   password?: Prisma.SortOrder
   role?: Prisma.SortOrder
   nombre?: Prisma.SortOrder
+  totalVapesComprados?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type UserAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  totalVapesComprados?: Prisma.SortOrder
 }
 
 export type UserMaxOrderByAggregateInput = {
@@ -456,6 +488,7 @@ export type UserMaxOrderByAggregateInput = {
   password?: Prisma.SortOrder
   role?: Prisma.SortOrder
   nombre?: Prisma.SortOrder
+  totalVapesComprados?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -468,12 +501,14 @@ export type UserMinOrderByAggregateInput = {
   password?: Prisma.SortOrder
   role?: Prisma.SortOrder
   nombre?: Prisma.SortOrder
+  totalVapesComprados?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type UserSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  totalVapesComprados?: Prisma.SortOrder
 }
 
 export type UserScalarRelationFilter = {
@@ -498,16 +533,16 @@ export type EnumRoleFieldUpdateOperationsInput = {
   set?: $Enums.Role
 }
 
-export type DateTimeFieldUpdateOperationsInput = {
-  set?: Date | string
-}
-
 export type IntFieldUpdateOperationsInput = {
   set?: number
   increment?: number
   decrement?: number
   multiply?: number
   divide?: number
+}
+
+export type DateTimeFieldUpdateOperationsInput = {
+  set?: Date | string
 }
 
 export type UserCreateNestedOneWithoutInventariosVendedorInput = {
@@ -582,6 +617,20 @@ export type UserUpdateOneRequiredWithoutSuscripcionNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSuscripcionInput, Prisma.UserUpdateWithoutSuscripcionInput>, Prisma.UserUncheckedUpdateWithoutSuscripcionInput>
 }
 
+export type UserCreateNestedOneWithoutEntregasSuscripcionInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutEntregasSuscripcionInput, Prisma.UserUncheckedCreateWithoutEntregasSuscripcionInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutEntregasSuscripcionInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutEntregasSuscripcionNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutEntregasSuscripcionInput, Prisma.UserUncheckedCreateWithoutEntregasSuscripcionInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutEntregasSuscripcionInput
+  upsert?: Prisma.UserUpsertWithoutEntregasSuscripcionInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutEntregasSuscripcionInput, Prisma.UserUpdateWithoutEntregasSuscripcionInput>, Prisma.UserUncheckedUpdateWithoutEntregasSuscripcionInput>
+}
+
 export type UserCreateNestedOneWithoutLogrosInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutLogrosInput, Prisma.UserUncheckedCreateWithoutLogrosInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutLogrosInput
@@ -603,6 +652,7 @@ export type UserCreateWithoutInventariosVendedorInput = {
   password: string
   role?: $Enums.Role
   nombre: string
+  totalVapesComprados?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   ventasRealizadas?: Prisma.VentaCreateNestedManyWithoutVendedorInput
@@ -610,6 +660,7 @@ export type UserCreateWithoutInventariosVendedorInput = {
   suscripcion?: Prisma.SuscripcionCreateNestedOneWithoutClienteInput
   logros?: Prisma.LogroFidelidadCreateNestedManyWithoutClienteInput
   liquidaciones?: Prisma.LiquidacionCreateNestedManyWithoutVendedorInput
+  entregasSuscripcion?: Prisma.EntregaSuscripcionCreateNestedManyWithoutVendedorInput
 }
 
 export type UserUncheckedCreateWithoutInventariosVendedorInput = {
@@ -620,6 +671,7 @@ export type UserUncheckedCreateWithoutInventariosVendedorInput = {
   password: string
   role?: $Enums.Role
   nombre: string
+  totalVapesComprados?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   ventasRealizadas?: Prisma.VentaUncheckedCreateNestedManyWithoutVendedorInput
@@ -627,6 +679,7 @@ export type UserUncheckedCreateWithoutInventariosVendedorInput = {
   suscripcion?: Prisma.SuscripcionUncheckedCreateNestedOneWithoutClienteInput
   logros?: Prisma.LogroFidelidadUncheckedCreateNestedManyWithoutClienteInput
   liquidaciones?: Prisma.LiquidacionUncheckedCreateNestedManyWithoutVendedorInput
+  entregasSuscripcion?: Prisma.EntregaSuscripcionUncheckedCreateNestedManyWithoutVendedorInput
 }
 
 export type UserCreateOrConnectWithoutInventariosVendedorInput = {
@@ -652,6 +705,7 @@ export type UserUpdateWithoutInventariosVendedorInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  totalVapesComprados?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ventasRealizadas?: Prisma.VentaUpdateManyWithoutVendedorNestedInput
@@ -659,6 +713,7 @@ export type UserUpdateWithoutInventariosVendedorInput = {
   suscripcion?: Prisma.SuscripcionUpdateOneWithoutClienteNestedInput
   logros?: Prisma.LogroFidelidadUpdateManyWithoutClienteNestedInput
   liquidaciones?: Prisma.LiquidacionUpdateManyWithoutVendedorNestedInput
+  entregasSuscripcion?: Prisma.EntregaSuscripcionUpdateManyWithoutVendedorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutInventariosVendedorInput = {
@@ -669,6 +724,7 @@ export type UserUncheckedUpdateWithoutInventariosVendedorInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  totalVapesComprados?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ventasRealizadas?: Prisma.VentaUncheckedUpdateManyWithoutVendedorNestedInput
@@ -676,6 +732,7 @@ export type UserUncheckedUpdateWithoutInventariosVendedorInput = {
   suscripcion?: Prisma.SuscripcionUncheckedUpdateOneWithoutClienteNestedInput
   logros?: Prisma.LogroFidelidadUncheckedUpdateManyWithoutClienteNestedInput
   liquidaciones?: Prisma.LiquidacionUncheckedUpdateManyWithoutVendedorNestedInput
+  entregasSuscripcion?: Prisma.EntregaSuscripcionUncheckedUpdateManyWithoutVendedorNestedInput
 }
 
 export type UserCreateWithoutVentasRealizadasInput = {
@@ -685,6 +742,7 @@ export type UserCreateWithoutVentasRealizadasInput = {
   password: string
   role?: $Enums.Role
   nombre: string
+  totalVapesComprados?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   inventariosVendedor?: Prisma.InventarioVendedorCreateNestedManyWithoutVendedorInput
@@ -692,6 +750,7 @@ export type UserCreateWithoutVentasRealizadasInput = {
   suscripcion?: Prisma.SuscripcionCreateNestedOneWithoutClienteInput
   logros?: Prisma.LogroFidelidadCreateNestedManyWithoutClienteInput
   liquidaciones?: Prisma.LiquidacionCreateNestedManyWithoutVendedorInput
+  entregasSuscripcion?: Prisma.EntregaSuscripcionCreateNestedManyWithoutVendedorInput
 }
 
 export type UserUncheckedCreateWithoutVentasRealizadasInput = {
@@ -702,6 +761,7 @@ export type UserUncheckedCreateWithoutVentasRealizadasInput = {
   password: string
   role?: $Enums.Role
   nombre: string
+  totalVapesComprados?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   inventariosVendedor?: Prisma.InventarioVendedorUncheckedCreateNestedManyWithoutVendedorInput
@@ -709,6 +769,7 @@ export type UserUncheckedCreateWithoutVentasRealizadasInput = {
   suscripcion?: Prisma.SuscripcionUncheckedCreateNestedOneWithoutClienteInput
   logros?: Prisma.LogroFidelidadUncheckedCreateNestedManyWithoutClienteInput
   liquidaciones?: Prisma.LiquidacionUncheckedCreateNestedManyWithoutVendedorInput
+  entregasSuscripcion?: Prisma.EntregaSuscripcionUncheckedCreateNestedManyWithoutVendedorInput
 }
 
 export type UserCreateOrConnectWithoutVentasRealizadasInput = {
@@ -723,6 +784,7 @@ export type UserCreateWithoutVentasCompradasInput = {
   password: string
   role?: $Enums.Role
   nombre: string
+  totalVapesComprados?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   inventariosVendedor?: Prisma.InventarioVendedorCreateNestedManyWithoutVendedorInput
@@ -730,6 +792,7 @@ export type UserCreateWithoutVentasCompradasInput = {
   suscripcion?: Prisma.SuscripcionCreateNestedOneWithoutClienteInput
   logros?: Prisma.LogroFidelidadCreateNestedManyWithoutClienteInput
   liquidaciones?: Prisma.LiquidacionCreateNestedManyWithoutVendedorInput
+  entregasSuscripcion?: Prisma.EntregaSuscripcionCreateNestedManyWithoutVendedorInput
 }
 
 export type UserUncheckedCreateWithoutVentasCompradasInput = {
@@ -740,6 +803,7 @@ export type UserUncheckedCreateWithoutVentasCompradasInput = {
   password: string
   role?: $Enums.Role
   nombre: string
+  totalVapesComprados?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   inventariosVendedor?: Prisma.InventarioVendedorUncheckedCreateNestedManyWithoutVendedorInput
@@ -747,6 +811,7 @@ export type UserUncheckedCreateWithoutVentasCompradasInput = {
   suscripcion?: Prisma.SuscripcionUncheckedCreateNestedOneWithoutClienteInput
   logros?: Prisma.LogroFidelidadUncheckedCreateNestedManyWithoutClienteInput
   liquidaciones?: Prisma.LiquidacionUncheckedCreateNestedManyWithoutVendedorInput
+  entregasSuscripcion?: Prisma.EntregaSuscripcionUncheckedCreateNestedManyWithoutVendedorInput
 }
 
 export type UserCreateOrConnectWithoutVentasCompradasInput = {
@@ -772,6 +837,7 @@ export type UserUpdateWithoutVentasRealizadasInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  totalVapesComprados?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   inventariosVendedor?: Prisma.InventarioVendedorUpdateManyWithoutVendedorNestedInput
@@ -779,6 +845,7 @@ export type UserUpdateWithoutVentasRealizadasInput = {
   suscripcion?: Prisma.SuscripcionUpdateOneWithoutClienteNestedInput
   logros?: Prisma.LogroFidelidadUpdateManyWithoutClienteNestedInput
   liquidaciones?: Prisma.LiquidacionUpdateManyWithoutVendedorNestedInput
+  entregasSuscripcion?: Prisma.EntregaSuscripcionUpdateManyWithoutVendedorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutVentasRealizadasInput = {
@@ -789,6 +856,7 @@ export type UserUncheckedUpdateWithoutVentasRealizadasInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  totalVapesComprados?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   inventariosVendedor?: Prisma.InventarioVendedorUncheckedUpdateManyWithoutVendedorNestedInput
@@ -796,6 +864,7 @@ export type UserUncheckedUpdateWithoutVentasRealizadasInput = {
   suscripcion?: Prisma.SuscripcionUncheckedUpdateOneWithoutClienteNestedInput
   logros?: Prisma.LogroFidelidadUncheckedUpdateManyWithoutClienteNestedInput
   liquidaciones?: Prisma.LiquidacionUncheckedUpdateManyWithoutVendedorNestedInput
+  entregasSuscripcion?: Prisma.EntregaSuscripcionUncheckedUpdateManyWithoutVendedorNestedInput
 }
 
 export type UserUpsertWithoutVentasCompradasInput = {
@@ -816,6 +885,7 @@ export type UserUpdateWithoutVentasCompradasInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  totalVapesComprados?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   inventariosVendedor?: Prisma.InventarioVendedorUpdateManyWithoutVendedorNestedInput
@@ -823,6 +893,7 @@ export type UserUpdateWithoutVentasCompradasInput = {
   suscripcion?: Prisma.SuscripcionUpdateOneWithoutClienteNestedInput
   logros?: Prisma.LogroFidelidadUpdateManyWithoutClienteNestedInput
   liquidaciones?: Prisma.LiquidacionUpdateManyWithoutVendedorNestedInput
+  entregasSuscripcion?: Prisma.EntregaSuscripcionUpdateManyWithoutVendedorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutVentasCompradasInput = {
@@ -833,6 +904,7 @@ export type UserUncheckedUpdateWithoutVentasCompradasInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  totalVapesComprados?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   inventariosVendedor?: Prisma.InventarioVendedorUncheckedUpdateManyWithoutVendedorNestedInput
@@ -840,6 +912,7 @@ export type UserUncheckedUpdateWithoutVentasCompradasInput = {
   suscripcion?: Prisma.SuscripcionUncheckedUpdateOneWithoutClienteNestedInput
   logros?: Prisma.LogroFidelidadUncheckedUpdateManyWithoutClienteNestedInput
   liquidaciones?: Prisma.LiquidacionUncheckedUpdateManyWithoutVendedorNestedInput
+  entregasSuscripcion?: Prisma.EntregaSuscripcionUncheckedUpdateManyWithoutVendedorNestedInput
 }
 
 export type UserCreateWithoutLiquidacionesInput = {
@@ -849,6 +922,7 @@ export type UserCreateWithoutLiquidacionesInput = {
   password: string
   role?: $Enums.Role
   nombre: string
+  totalVapesComprados?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   inventariosVendedor?: Prisma.InventarioVendedorCreateNestedManyWithoutVendedorInput
@@ -856,6 +930,7 @@ export type UserCreateWithoutLiquidacionesInput = {
   ventasCompradas?: Prisma.VentaCreateNestedManyWithoutClienteInput
   suscripcion?: Prisma.SuscripcionCreateNestedOneWithoutClienteInput
   logros?: Prisma.LogroFidelidadCreateNestedManyWithoutClienteInput
+  entregasSuscripcion?: Prisma.EntregaSuscripcionCreateNestedManyWithoutVendedorInput
 }
 
 export type UserUncheckedCreateWithoutLiquidacionesInput = {
@@ -866,6 +941,7 @@ export type UserUncheckedCreateWithoutLiquidacionesInput = {
   password: string
   role?: $Enums.Role
   nombre: string
+  totalVapesComprados?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   inventariosVendedor?: Prisma.InventarioVendedorUncheckedCreateNestedManyWithoutVendedorInput
@@ -873,6 +949,7 @@ export type UserUncheckedCreateWithoutLiquidacionesInput = {
   ventasCompradas?: Prisma.VentaUncheckedCreateNestedManyWithoutClienteInput
   suscripcion?: Prisma.SuscripcionUncheckedCreateNestedOneWithoutClienteInput
   logros?: Prisma.LogroFidelidadUncheckedCreateNestedManyWithoutClienteInput
+  entregasSuscripcion?: Prisma.EntregaSuscripcionUncheckedCreateNestedManyWithoutVendedorInput
 }
 
 export type UserCreateOrConnectWithoutLiquidacionesInput = {
@@ -898,6 +975,7 @@ export type UserUpdateWithoutLiquidacionesInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  totalVapesComprados?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   inventariosVendedor?: Prisma.InventarioVendedorUpdateManyWithoutVendedorNestedInput
@@ -905,6 +983,7 @@ export type UserUpdateWithoutLiquidacionesInput = {
   ventasCompradas?: Prisma.VentaUpdateManyWithoutClienteNestedInput
   suscripcion?: Prisma.SuscripcionUpdateOneWithoutClienteNestedInput
   logros?: Prisma.LogroFidelidadUpdateManyWithoutClienteNestedInput
+  entregasSuscripcion?: Prisma.EntregaSuscripcionUpdateManyWithoutVendedorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutLiquidacionesInput = {
@@ -915,6 +994,7 @@ export type UserUncheckedUpdateWithoutLiquidacionesInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  totalVapesComprados?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   inventariosVendedor?: Prisma.InventarioVendedorUncheckedUpdateManyWithoutVendedorNestedInput
@@ -922,6 +1002,7 @@ export type UserUncheckedUpdateWithoutLiquidacionesInput = {
   ventasCompradas?: Prisma.VentaUncheckedUpdateManyWithoutClienteNestedInput
   suscripcion?: Prisma.SuscripcionUncheckedUpdateOneWithoutClienteNestedInput
   logros?: Prisma.LogroFidelidadUncheckedUpdateManyWithoutClienteNestedInput
+  entregasSuscripcion?: Prisma.EntregaSuscripcionUncheckedUpdateManyWithoutVendedorNestedInput
 }
 
 export type UserCreateWithoutSuscripcionInput = {
@@ -931,6 +1012,7 @@ export type UserCreateWithoutSuscripcionInput = {
   password: string
   role?: $Enums.Role
   nombre: string
+  totalVapesComprados?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   inventariosVendedor?: Prisma.InventarioVendedorCreateNestedManyWithoutVendedorInput
@@ -938,6 +1020,7 @@ export type UserCreateWithoutSuscripcionInput = {
   ventasCompradas?: Prisma.VentaCreateNestedManyWithoutClienteInput
   logros?: Prisma.LogroFidelidadCreateNestedManyWithoutClienteInput
   liquidaciones?: Prisma.LiquidacionCreateNestedManyWithoutVendedorInput
+  entregasSuscripcion?: Prisma.EntregaSuscripcionCreateNestedManyWithoutVendedorInput
 }
 
 export type UserUncheckedCreateWithoutSuscripcionInput = {
@@ -948,6 +1031,7 @@ export type UserUncheckedCreateWithoutSuscripcionInput = {
   password: string
   role?: $Enums.Role
   nombre: string
+  totalVapesComprados?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   inventariosVendedor?: Prisma.InventarioVendedorUncheckedCreateNestedManyWithoutVendedorInput
@@ -955,6 +1039,7 @@ export type UserUncheckedCreateWithoutSuscripcionInput = {
   ventasCompradas?: Prisma.VentaUncheckedCreateNestedManyWithoutClienteInput
   logros?: Prisma.LogroFidelidadUncheckedCreateNestedManyWithoutClienteInput
   liquidaciones?: Prisma.LiquidacionUncheckedCreateNestedManyWithoutVendedorInput
+  entregasSuscripcion?: Prisma.EntregaSuscripcionUncheckedCreateNestedManyWithoutVendedorInput
 }
 
 export type UserCreateOrConnectWithoutSuscripcionInput = {
@@ -980,6 +1065,7 @@ export type UserUpdateWithoutSuscripcionInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  totalVapesComprados?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   inventariosVendedor?: Prisma.InventarioVendedorUpdateManyWithoutVendedorNestedInput
@@ -987,6 +1073,7 @@ export type UserUpdateWithoutSuscripcionInput = {
   ventasCompradas?: Prisma.VentaUpdateManyWithoutClienteNestedInput
   logros?: Prisma.LogroFidelidadUpdateManyWithoutClienteNestedInput
   liquidaciones?: Prisma.LiquidacionUpdateManyWithoutVendedorNestedInput
+  entregasSuscripcion?: Prisma.EntregaSuscripcionUpdateManyWithoutVendedorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSuscripcionInput = {
@@ -997,11 +1084,103 @@ export type UserUncheckedUpdateWithoutSuscripcionInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  totalVapesComprados?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   inventariosVendedor?: Prisma.InventarioVendedorUncheckedUpdateManyWithoutVendedorNestedInput
   ventasRealizadas?: Prisma.VentaUncheckedUpdateManyWithoutVendedorNestedInput
   ventasCompradas?: Prisma.VentaUncheckedUpdateManyWithoutClienteNestedInput
+  logros?: Prisma.LogroFidelidadUncheckedUpdateManyWithoutClienteNestedInput
+  liquidaciones?: Prisma.LiquidacionUncheckedUpdateManyWithoutVendedorNestedInput
+  entregasSuscripcion?: Prisma.EntregaSuscripcionUncheckedUpdateManyWithoutVendedorNestedInput
+}
+
+export type UserCreateWithoutEntregasSuscripcionInput = {
+  email?: string | null
+  cedula?: string | null
+  telefono?: string | null
+  password: string
+  role?: $Enums.Role
+  nombre: string
+  totalVapesComprados?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  inventariosVendedor?: Prisma.InventarioVendedorCreateNestedManyWithoutVendedorInput
+  ventasRealizadas?: Prisma.VentaCreateNestedManyWithoutVendedorInput
+  ventasCompradas?: Prisma.VentaCreateNestedManyWithoutClienteInput
+  suscripcion?: Prisma.SuscripcionCreateNestedOneWithoutClienteInput
+  logros?: Prisma.LogroFidelidadCreateNestedManyWithoutClienteInput
+  liquidaciones?: Prisma.LiquidacionCreateNestedManyWithoutVendedorInput
+}
+
+export type UserUncheckedCreateWithoutEntregasSuscripcionInput = {
+  id?: number
+  email?: string | null
+  cedula?: string | null
+  telefono?: string | null
+  password: string
+  role?: $Enums.Role
+  nombre: string
+  totalVapesComprados?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  inventariosVendedor?: Prisma.InventarioVendedorUncheckedCreateNestedManyWithoutVendedorInput
+  ventasRealizadas?: Prisma.VentaUncheckedCreateNestedManyWithoutVendedorInput
+  ventasCompradas?: Prisma.VentaUncheckedCreateNestedManyWithoutClienteInput
+  suscripcion?: Prisma.SuscripcionUncheckedCreateNestedOneWithoutClienteInput
+  logros?: Prisma.LogroFidelidadUncheckedCreateNestedManyWithoutClienteInput
+  liquidaciones?: Prisma.LiquidacionUncheckedCreateNestedManyWithoutVendedorInput
+}
+
+export type UserCreateOrConnectWithoutEntregasSuscripcionInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutEntregasSuscripcionInput, Prisma.UserUncheckedCreateWithoutEntregasSuscripcionInput>
+}
+
+export type UserUpsertWithoutEntregasSuscripcionInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutEntregasSuscripcionInput, Prisma.UserUncheckedUpdateWithoutEntregasSuscripcionInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutEntregasSuscripcionInput, Prisma.UserUncheckedCreateWithoutEntregasSuscripcionInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutEntregasSuscripcionInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutEntregasSuscripcionInput, Prisma.UserUncheckedUpdateWithoutEntregasSuscripcionInput>
+}
+
+export type UserUpdateWithoutEntregasSuscripcionInput = {
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cedula?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telefono?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  totalVapesComprados?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  inventariosVendedor?: Prisma.InventarioVendedorUpdateManyWithoutVendedorNestedInput
+  ventasRealizadas?: Prisma.VentaUpdateManyWithoutVendedorNestedInput
+  ventasCompradas?: Prisma.VentaUpdateManyWithoutClienteNestedInput
+  suscripcion?: Prisma.SuscripcionUpdateOneWithoutClienteNestedInput
+  logros?: Prisma.LogroFidelidadUpdateManyWithoutClienteNestedInput
+  liquidaciones?: Prisma.LiquidacionUpdateManyWithoutVendedorNestedInput
+}
+
+export type UserUncheckedUpdateWithoutEntregasSuscripcionInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cedula?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  telefono?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  totalVapesComprados?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  inventariosVendedor?: Prisma.InventarioVendedorUncheckedUpdateManyWithoutVendedorNestedInput
+  ventasRealizadas?: Prisma.VentaUncheckedUpdateManyWithoutVendedorNestedInput
+  ventasCompradas?: Prisma.VentaUncheckedUpdateManyWithoutClienteNestedInput
+  suscripcion?: Prisma.SuscripcionUncheckedUpdateOneWithoutClienteNestedInput
   logros?: Prisma.LogroFidelidadUncheckedUpdateManyWithoutClienteNestedInput
   liquidaciones?: Prisma.LiquidacionUncheckedUpdateManyWithoutVendedorNestedInput
 }
@@ -1013,6 +1192,7 @@ export type UserCreateWithoutLogrosInput = {
   password: string
   role?: $Enums.Role
   nombre: string
+  totalVapesComprados?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   inventariosVendedor?: Prisma.InventarioVendedorCreateNestedManyWithoutVendedorInput
@@ -1020,6 +1200,7 @@ export type UserCreateWithoutLogrosInput = {
   ventasCompradas?: Prisma.VentaCreateNestedManyWithoutClienteInput
   suscripcion?: Prisma.SuscripcionCreateNestedOneWithoutClienteInput
   liquidaciones?: Prisma.LiquidacionCreateNestedManyWithoutVendedorInput
+  entregasSuscripcion?: Prisma.EntregaSuscripcionCreateNestedManyWithoutVendedorInput
 }
 
 export type UserUncheckedCreateWithoutLogrosInput = {
@@ -1030,6 +1211,7 @@ export type UserUncheckedCreateWithoutLogrosInput = {
   password: string
   role?: $Enums.Role
   nombre: string
+  totalVapesComprados?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   inventariosVendedor?: Prisma.InventarioVendedorUncheckedCreateNestedManyWithoutVendedorInput
@@ -1037,6 +1219,7 @@ export type UserUncheckedCreateWithoutLogrosInput = {
   ventasCompradas?: Prisma.VentaUncheckedCreateNestedManyWithoutClienteInput
   suscripcion?: Prisma.SuscripcionUncheckedCreateNestedOneWithoutClienteInput
   liquidaciones?: Prisma.LiquidacionUncheckedCreateNestedManyWithoutVendedorInput
+  entregasSuscripcion?: Prisma.EntregaSuscripcionUncheckedCreateNestedManyWithoutVendedorInput
 }
 
 export type UserCreateOrConnectWithoutLogrosInput = {
@@ -1062,6 +1245,7 @@ export type UserUpdateWithoutLogrosInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  totalVapesComprados?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   inventariosVendedor?: Prisma.InventarioVendedorUpdateManyWithoutVendedorNestedInput
@@ -1069,6 +1253,7 @@ export type UserUpdateWithoutLogrosInput = {
   ventasCompradas?: Prisma.VentaUpdateManyWithoutClienteNestedInput
   suscripcion?: Prisma.SuscripcionUpdateOneWithoutClienteNestedInput
   liquidaciones?: Prisma.LiquidacionUpdateManyWithoutVendedorNestedInput
+  entregasSuscripcion?: Prisma.EntregaSuscripcionUpdateManyWithoutVendedorNestedInput
 }
 
 export type UserUncheckedUpdateWithoutLogrosInput = {
@@ -1079,6 +1264,7 @@ export type UserUncheckedUpdateWithoutLogrosInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
+  totalVapesComprados?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   inventariosVendedor?: Prisma.InventarioVendedorUncheckedUpdateManyWithoutVendedorNestedInput
@@ -1086,6 +1272,7 @@ export type UserUncheckedUpdateWithoutLogrosInput = {
   ventasCompradas?: Prisma.VentaUncheckedUpdateManyWithoutClienteNestedInput
   suscripcion?: Prisma.SuscripcionUncheckedUpdateOneWithoutClienteNestedInput
   liquidaciones?: Prisma.LiquidacionUncheckedUpdateManyWithoutVendedorNestedInput
+  entregasSuscripcion?: Prisma.EntregaSuscripcionUncheckedUpdateManyWithoutVendedorNestedInput
 }
 
 
@@ -1099,6 +1286,7 @@ export type UserCountOutputType = {
   ventasCompradas: number
   logros: number
   liquidaciones: number
+  entregasSuscripcion: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1107,6 +1295,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   ventasCompradas?: boolean | UserCountOutputTypeCountVentasCompradasArgs
   logros?: boolean | UserCountOutputTypeCountLogrosArgs
   liquidaciones?: boolean | UserCountOutputTypeCountLiquidacionesArgs
+  entregasSuscripcion?: boolean | UserCountOutputTypeCountEntregasSuscripcionArgs
 }
 
 /**
@@ -1154,6 +1343,13 @@ export type UserCountOutputTypeCountLiquidacionesArgs<ExtArgs extends runtime.Ty
   where?: Prisma.LiquidacionWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountEntregasSuscripcionArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EntregaSuscripcionWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1163,6 +1359,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   password?: boolean
   role?: boolean
   nombre?: boolean
+  totalVapesComprados?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   inventariosVendedor?: boolean | Prisma.User$inventariosVendedorArgs<ExtArgs>
@@ -1171,6 +1368,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   suscripcion?: boolean | Prisma.User$suscripcionArgs<ExtArgs>
   logros?: boolean | Prisma.User$logrosArgs<ExtArgs>
   liquidaciones?: boolean | Prisma.User$liquidacionesArgs<ExtArgs>
+  entregasSuscripcion?: boolean | Prisma.User$entregasSuscripcionArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -1182,6 +1380,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   password?: boolean
   role?: boolean
   nombre?: boolean
+  totalVapesComprados?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -1194,6 +1393,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   password?: boolean
   role?: boolean
   nombre?: boolean
+  totalVapesComprados?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -1206,11 +1406,12 @@ export type UserSelectScalar = {
   password?: boolean
   role?: boolean
   nombre?: boolean
+  totalVapesComprados?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "cedula" | "telefono" | "password" | "role" | "nombre" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "cedula" | "telefono" | "password" | "role" | "nombre" | "totalVapesComprados" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   inventariosVendedor?: boolean | Prisma.User$inventariosVendedorArgs<ExtArgs>
   ventasRealizadas?: boolean | Prisma.User$ventasRealizadasArgs<ExtArgs>
@@ -1218,6 +1419,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   suscripcion?: boolean | Prisma.User$suscripcionArgs<ExtArgs>
   logros?: boolean | Prisma.User$logrosArgs<ExtArgs>
   liquidaciones?: boolean | Prisma.User$liquidacionesArgs<ExtArgs>
+  entregasSuscripcion?: boolean | Prisma.User$entregasSuscripcionArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1232,6 +1434,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     suscripcion: Prisma.$SuscripcionPayload<ExtArgs> | null
     logros: Prisma.$LogroFidelidadPayload<ExtArgs>[]
     liquidaciones: Prisma.$LiquidacionPayload<ExtArgs>[]
+    entregasSuscripcion: Prisma.$EntregaSuscripcionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1241,6 +1444,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     password: string
     role: $Enums.Role
     nombre: string
+    totalVapesComprados: number
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["user"]>
@@ -1643,6 +1847,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   suscripcion<T extends Prisma.User$suscripcionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$suscripcionArgs<ExtArgs>>): Prisma.Prisma__SuscripcionClient<runtime.Types.Result.GetResult<Prisma.$SuscripcionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   logros<T extends Prisma.User$logrosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$logrosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LogroFidelidadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   liquidaciones<T extends Prisma.User$liquidacionesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$liquidacionesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LiquidacionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  entregasSuscripcion<T extends Prisma.User$entregasSuscripcionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$entregasSuscripcionArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EntregaSuscripcionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1679,6 +1884,7 @@ export interface UserFieldRefs {
   readonly password: Prisma.FieldRef<"User", 'String'>
   readonly role: Prisma.FieldRef<"User", 'Role'>
   readonly nombre: Prisma.FieldRef<"User", 'String'>
+  readonly totalVapesComprados: Prisma.FieldRef<"User", 'Int'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
 }
@@ -2210,6 +2416,30 @@ export type User$liquidacionesArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.LiquidacionScalarFieldEnum | Prisma.LiquidacionScalarFieldEnum[]
+}
+
+/**
+ * User.entregasSuscripcion
+ */
+export type User$entregasSuscripcionArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EntregaSuscripcion
+   */
+  select?: Prisma.EntregaSuscripcionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EntregaSuscripcion
+   */
+  omit?: Prisma.EntregaSuscripcionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EntregaSuscripcionInclude<ExtArgs> | null
+  where?: Prisma.EntregaSuscripcionWhereInput
+  orderBy?: Prisma.EntregaSuscripcionOrderByWithRelationInput | Prisma.EntregaSuscripcionOrderByWithRelationInput[]
+  cursor?: Prisma.EntregaSuscripcionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EntregaSuscripcionScalarFieldEnum | Prisma.EntregaSuscripcionScalarFieldEnum[]
 }
 
 /**

@@ -36,6 +36,8 @@ export type VentaAvgAggregateOutputType = {
   precioVenta: number | null
   descuentoAdmin: number | null
   descuentoVendedor: number | null
+  montoParaAdmin: number | null
+  montoParaVendedor: number | null
   liquidacionId: number | null
 }
 
@@ -49,6 +51,8 @@ export type VentaSumAggregateOutputType = {
   precioVenta: number | null
   descuentoAdmin: number | null
   descuentoVendedor: number | null
+  montoParaAdmin: number | null
+  montoParaVendedor: number | null
   liquidacionId: number | null
 }
 
@@ -62,6 +66,9 @@ export type VentaMinAggregateOutputType = {
   precioVenta: number | null
   descuentoAdmin: number | null
   descuentoVendedor: number | null
+  montoParaAdmin: number | null
+  montoParaVendedor: number | null
+  pagadoA: $Enums.ReceptorPago | null
   estado: $Enums.EstadoVenta | null
   comprobanteUrl: string | null
   liquidacionId: number | null
@@ -78,6 +85,9 @@ export type VentaMaxAggregateOutputType = {
   precioVenta: number | null
   descuentoAdmin: number | null
   descuentoVendedor: number | null
+  montoParaAdmin: number | null
+  montoParaVendedor: number | null
+  pagadoA: $Enums.ReceptorPago | null
   estado: $Enums.EstadoVenta | null
   comprobanteUrl: string | null
   liquidacionId: number | null
@@ -94,6 +104,9 @@ export type VentaCountAggregateOutputType = {
   precioVenta: number
   descuentoAdmin: number
   descuentoVendedor: number
+  montoParaAdmin: number
+  montoParaVendedor: number
+  pagadoA: number
   estado: number
   comprobanteUrl: number
   liquidacionId: number
@@ -112,6 +125,8 @@ export type VentaAvgAggregateInputType = {
   precioVenta?: true
   descuentoAdmin?: true
   descuentoVendedor?: true
+  montoParaAdmin?: true
+  montoParaVendedor?: true
   liquidacionId?: true
 }
 
@@ -125,6 +140,8 @@ export type VentaSumAggregateInputType = {
   precioVenta?: true
   descuentoAdmin?: true
   descuentoVendedor?: true
+  montoParaAdmin?: true
+  montoParaVendedor?: true
   liquidacionId?: true
 }
 
@@ -138,6 +155,9 @@ export type VentaMinAggregateInputType = {
   precioVenta?: true
   descuentoAdmin?: true
   descuentoVendedor?: true
+  montoParaAdmin?: true
+  montoParaVendedor?: true
+  pagadoA?: true
   estado?: true
   comprobanteUrl?: true
   liquidacionId?: true
@@ -154,6 +174,9 @@ export type VentaMaxAggregateInputType = {
   precioVenta?: true
   descuentoAdmin?: true
   descuentoVendedor?: true
+  montoParaAdmin?: true
+  montoParaVendedor?: true
+  pagadoA?: true
   estado?: true
   comprobanteUrl?: true
   liquidacionId?: true
@@ -170,6 +193,9 @@ export type VentaCountAggregateInputType = {
   precioVenta?: true
   descuentoAdmin?: true
   descuentoVendedor?: true
+  montoParaAdmin?: true
+  montoParaVendedor?: true
+  pagadoA?: true
   estado?: true
   comprobanteUrl?: true
   liquidacionId?: true
@@ -273,6 +299,9 @@ export type VentaGroupByOutputType = {
   precioVenta: number
   descuentoAdmin: number
   descuentoVendedor: number
+  montoParaAdmin: number
+  montoParaVendedor: number
+  pagadoA: $Enums.ReceptorPago
   estado: $Enums.EstadoVenta
   comprobanteUrl: string | null
   liquidacionId: number | null
@@ -312,6 +341,9 @@ export type VentaWhereInput = {
   precioVenta?: Prisma.FloatFilter<"Venta"> | number
   descuentoAdmin?: Prisma.FloatFilter<"Venta"> | number
   descuentoVendedor?: Prisma.FloatFilter<"Venta"> | number
+  montoParaAdmin?: Prisma.FloatFilter<"Venta"> | number
+  montoParaVendedor?: Prisma.FloatFilter<"Venta"> | number
+  pagadoA?: Prisma.EnumReceptorPagoFilter<"Venta"> | $Enums.ReceptorPago
   estado?: Prisma.EnumEstadoVentaFilter<"Venta"> | $Enums.EstadoVenta
   comprobanteUrl?: Prisma.StringNullableFilter<"Venta"> | string | null
   liquidacionId?: Prisma.IntNullableFilter<"Venta"> | number | null
@@ -332,6 +364,9 @@ export type VentaOrderByWithRelationInput = {
   precioVenta?: Prisma.SortOrder
   descuentoAdmin?: Prisma.SortOrder
   descuentoVendedor?: Prisma.SortOrder
+  montoParaAdmin?: Prisma.SortOrder
+  montoParaVendedor?: Prisma.SortOrder
+  pagadoA?: Prisma.SortOrder
   estado?: Prisma.SortOrder
   comprobanteUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   liquidacionId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -355,6 +390,9 @@ export type VentaWhereUniqueInput = Prisma.AtLeast<{
   precioVenta?: Prisma.FloatFilter<"Venta"> | number
   descuentoAdmin?: Prisma.FloatFilter<"Venta"> | number
   descuentoVendedor?: Prisma.FloatFilter<"Venta"> | number
+  montoParaAdmin?: Prisma.FloatFilter<"Venta"> | number
+  montoParaVendedor?: Prisma.FloatFilter<"Venta"> | number
+  pagadoA?: Prisma.EnumReceptorPagoFilter<"Venta"> | $Enums.ReceptorPago
   estado?: Prisma.EnumEstadoVentaFilter<"Venta"> | $Enums.EstadoVenta
   comprobanteUrl?: Prisma.StringNullableFilter<"Venta"> | string | null
   liquidacionId?: Prisma.IntNullableFilter<"Venta"> | number | null
@@ -375,6 +413,9 @@ export type VentaOrderByWithAggregationInput = {
   precioVenta?: Prisma.SortOrder
   descuentoAdmin?: Prisma.SortOrder
   descuentoVendedor?: Prisma.SortOrder
+  montoParaAdmin?: Prisma.SortOrder
+  montoParaVendedor?: Prisma.SortOrder
+  pagadoA?: Prisma.SortOrder
   estado?: Prisma.SortOrder
   comprobanteUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   liquidacionId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -399,6 +440,9 @@ export type VentaScalarWhereWithAggregatesInput = {
   precioVenta?: Prisma.FloatWithAggregatesFilter<"Venta"> | number
   descuentoAdmin?: Prisma.FloatWithAggregatesFilter<"Venta"> | number
   descuentoVendedor?: Prisma.FloatWithAggregatesFilter<"Venta"> | number
+  montoParaAdmin?: Prisma.FloatWithAggregatesFilter<"Venta"> | number
+  montoParaVendedor?: Prisma.FloatWithAggregatesFilter<"Venta"> | number
+  pagadoA?: Prisma.EnumReceptorPagoWithAggregatesFilter<"Venta"> | $Enums.ReceptorPago
   estado?: Prisma.EnumEstadoVentaWithAggregatesFilter<"Venta"> | $Enums.EstadoVenta
   comprobanteUrl?: Prisma.StringNullableWithAggregatesFilter<"Venta"> | string | null
   liquidacionId?: Prisma.IntNullableWithAggregatesFilter<"Venta"> | number | null
@@ -411,6 +455,9 @@ export type VentaCreateInput = {
   precioVenta: number
   descuentoAdmin?: number
   descuentoVendedor?: number
+  montoParaAdmin?: number
+  montoParaVendedor?: number
+  pagadoA?: $Enums.ReceptorPago
   estado?: $Enums.EstadoVenta
   comprobanteUrl?: string | null
   createdAt?: Date | string
@@ -430,6 +477,9 @@ export type VentaUncheckedCreateInput = {
   precioVenta: number
   descuentoAdmin?: number
   descuentoVendedor?: number
+  montoParaAdmin?: number
+  montoParaVendedor?: number
+  pagadoA?: $Enums.ReceptorPago
   estado?: $Enums.EstadoVenta
   comprobanteUrl?: string | null
   liquidacionId?: number | null
@@ -442,6 +492,9 @@ export type VentaUpdateInput = {
   precioVenta?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  montoParaAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
+  montoParaVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  pagadoA?: Prisma.EnumReceptorPagoFieldUpdateOperationsInput | $Enums.ReceptorPago
   estado?: Prisma.EnumEstadoVentaFieldUpdateOperationsInput | $Enums.EstadoVenta
   comprobanteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -461,6 +514,9 @@ export type VentaUncheckedUpdateInput = {
   precioVenta?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  montoParaAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
+  montoParaVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  pagadoA?: Prisma.EnumReceptorPagoFieldUpdateOperationsInput | $Enums.ReceptorPago
   estado?: Prisma.EnumEstadoVentaFieldUpdateOperationsInput | $Enums.EstadoVenta
   comprobanteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   liquidacionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -477,6 +533,9 @@ export type VentaCreateManyInput = {
   precioVenta: number
   descuentoAdmin?: number
   descuentoVendedor?: number
+  montoParaAdmin?: number
+  montoParaVendedor?: number
+  pagadoA?: $Enums.ReceptorPago
   estado?: $Enums.EstadoVenta
   comprobanteUrl?: string | null
   liquidacionId?: number | null
@@ -489,6 +548,9 @@ export type VentaUpdateManyMutationInput = {
   precioVenta?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  montoParaAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
+  montoParaVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  pagadoA?: Prisma.EnumReceptorPagoFieldUpdateOperationsInput | $Enums.ReceptorPago
   estado?: Prisma.EnumEstadoVentaFieldUpdateOperationsInput | $Enums.EstadoVenta
   comprobanteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -504,6 +566,9 @@ export type VentaUncheckedUpdateManyInput = {
   precioVenta?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  montoParaAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
+  montoParaVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  pagadoA?: Prisma.EnumReceptorPagoFieldUpdateOperationsInput | $Enums.ReceptorPago
   estado?: Prisma.EnumEstadoVentaFieldUpdateOperationsInput | $Enums.EstadoVenta
   comprobanteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   liquidacionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -530,6 +595,9 @@ export type VentaCountOrderByAggregateInput = {
   precioVenta?: Prisma.SortOrder
   descuentoAdmin?: Prisma.SortOrder
   descuentoVendedor?: Prisma.SortOrder
+  montoParaAdmin?: Prisma.SortOrder
+  montoParaVendedor?: Prisma.SortOrder
+  pagadoA?: Prisma.SortOrder
   estado?: Prisma.SortOrder
   comprobanteUrl?: Prisma.SortOrder
   liquidacionId?: Prisma.SortOrder
@@ -546,6 +614,8 @@ export type VentaAvgOrderByAggregateInput = {
   precioVenta?: Prisma.SortOrder
   descuentoAdmin?: Prisma.SortOrder
   descuentoVendedor?: Prisma.SortOrder
+  montoParaAdmin?: Prisma.SortOrder
+  montoParaVendedor?: Prisma.SortOrder
   liquidacionId?: Prisma.SortOrder
 }
 
@@ -559,6 +629,9 @@ export type VentaMaxOrderByAggregateInput = {
   precioVenta?: Prisma.SortOrder
   descuentoAdmin?: Prisma.SortOrder
   descuentoVendedor?: Prisma.SortOrder
+  montoParaAdmin?: Prisma.SortOrder
+  montoParaVendedor?: Prisma.SortOrder
+  pagadoA?: Prisma.SortOrder
   estado?: Prisma.SortOrder
   comprobanteUrl?: Prisma.SortOrder
   liquidacionId?: Prisma.SortOrder
@@ -575,6 +648,9 @@ export type VentaMinOrderByAggregateInput = {
   precioVenta?: Prisma.SortOrder
   descuentoAdmin?: Prisma.SortOrder
   descuentoVendedor?: Prisma.SortOrder
+  montoParaAdmin?: Prisma.SortOrder
+  montoParaVendedor?: Prisma.SortOrder
+  pagadoA?: Prisma.SortOrder
   estado?: Prisma.SortOrder
   comprobanteUrl?: Prisma.SortOrder
   liquidacionId?: Prisma.SortOrder
@@ -591,6 +667,8 @@ export type VentaSumOrderByAggregateInput = {
   precioVenta?: Prisma.SortOrder
   descuentoAdmin?: Prisma.SortOrder
   descuentoVendedor?: Prisma.SortOrder
+  montoParaAdmin?: Prisma.SortOrder
+  montoParaVendedor?: Prisma.SortOrder
   liquidacionId?: Prisma.SortOrder
 }
 
@@ -720,6 +798,10 @@ export type VentaUncheckedUpdateManyWithoutVapeNestedInput = {
   deleteMany?: Prisma.VentaScalarWhereInput | Prisma.VentaScalarWhereInput[]
 }
 
+export type EnumReceptorPagoFieldUpdateOperationsInput = {
+  set?: $Enums.ReceptorPago
+}
+
 export type EnumEstadoVentaFieldUpdateOperationsInput = {
   set?: $Enums.EstadoVenta
 }
@@ -780,6 +862,9 @@ export type VentaCreateWithoutVendedorInput = {
   precioVenta: number
   descuentoAdmin?: number
   descuentoVendedor?: number
+  montoParaAdmin?: number
+  montoParaVendedor?: number
+  pagadoA?: $Enums.ReceptorPago
   estado?: $Enums.EstadoVenta
   comprobanteUrl?: string | null
   createdAt?: Date | string
@@ -797,6 +882,9 @@ export type VentaUncheckedCreateWithoutVendedorInput = {
   precioVenta: number
   descuentoAdmin?: number
   descuentoVendedor?: number
+  montoParaAdmin?: number
+  montoParaVendedor?: number
+  pagadoA?: $Enums.ReceptorPago
   estado?: $Enums.EstadoVenta
   comprobanteUrl?: string | null
   liquidacionId?: number | null
@@ -819,6 +907,9 @@ export type VentaCreateWithoutClienteInput = {
   precioVenta: number
   descuentoAdmin?: number
   descuentoVendedor?: number
+  montoParaAdmin?: number
+  montoParaVendedor?: number
+  pagadoA?: $Enums.ReceptorPago
   estado?: $Enums.EstadoVenta
   comprobanteUrl?: string | null
   createdAt?: Date | string
@@ -836,6 +927,9 @@ export type VentaUncheckedCreateWithoutClienteInput = {
   precioVenta: number
   descuentoAdmin?: number
   descuentoVendedor?: number
+  montoParaAdmin?: number
+  montoParaVendedor?: number
+  pagadoA?: $Enums.ReceptorPago
   estado?: $Enums.EstadoVenta
   comprobanteUrl?: string | null
   liquidacionId?: number | null
@@ -881,6 +975,9 @@ export type VentaScalarWhereInput = {
   precioVenta?: Prisma.FloatFilter<"Venta"> | number
   descuentoAdmin?: Prisma.FloatFilter<"Venta"> | number
   descuentoVendedor?: Prisma.FloatFilter<"Venta"> | number
+  montoParaAdmin?: Prisma.FloatFilter<"Venta"> | number
+  montoParaVendedor?: Prisma.FloatFilter<"Venta"> | number
+  pagadoA?: Prisma.EnumReceptorPagoFilter<"Venta"> | $Enums.ReceptorPago
   estado?: Prisma.EnumEstadoVentaFilter<"Venta"> | $Enums.EstadoVenta
   comprobanteUrl?: Prisma.StringNullableFilter<"Venta"> | string | null
   liquidacionId?: Prisma.IntNullableFilter<"Venta"> | number | null
@@ -909,6 +1006,9 @@ export type VentaCreateWithoutVapeInput = {
   precioVenta: number
   descuentoAdmin?: number
   descuentoVendedor?: number
+  montoParaAdmin?: number
+  montoParaVendedor?: number
+  pagadoA?: $Enums.ReceptorPago
   estado?: $Enums.EstadoVenta
   comprobanteUrl?: string | null
   createdAt?: Date | string
@@ -926,6 +1026,9 @@ export type VentaUncheckedCreateWithoutVapeInput = {
   precioVenta: number
   descuentoAdmin?: number
   descuentoVendedor?: number
+  montoParaAdmin?: number
+  montoParaVendedor?: number
+  pagadoA?: $Enums.ReceptorPago
   estado?: $Enums.EstadoVenta
   comprobanteUrl?: string | null
   liquidacionId?: number | null
@@ -964,6 +1067,9 @@ export type VentaCreateWithoutLiquidacionInput = {
   precioVenta: number
   descuentoAdmin?: number
   descuentoVendedor?: number
+  montoParaAdmin?: number
+  montoParaVendedor?: number
+  pagadoA?: $Enums.ReceptorPago
   estado?: $Enums.EstadoVenta
   comprobanteUrl?: string | null
   createdAt?: Date | string
@@ -982,6 +1088,9 @@ export type VentaUncheckedCreateWithoutLiquidacionInput = {
   precioVenta: number
   descuentoAdmin?: number
   descuentoVendedor?: number
+  montoParaAdmin?: number
+  montoParaVendedor?: number
+  pagadoA?: $Enums.ReceptorPago
   estado?: $Enums.EstadoVenta
   comprobanteUrl?: string | null
   createdAt?: Date | string
@@ -1022,6 +1131,9 @@ export type VentaCreateManyVendedorInput = {
   precioVenta: number
   descuentoAdmin?: number
   descuentoVendedor?: number
+  montoParaAdmin?: number
+  montoParaVendedor?: number
+  pagadoA?: $Enums.ReceptorPago
   estado?: $Enums.EstadoVenta
   comprobanteUrl?: string | null
   liquidacionId?: number | null
@@ -1037,6 +1149,9 @@ export type VentaCreateManyClienteInput = {
   precioVenta: number
   descuentoAdmin?: number
   descuentoVendedor?: number
+  montoParaAdmin?: number
+  montoParaVendedor?: number
+  pagadoA?: $Enums.ReceptorPago
   estado?: $Enums.EstadoVenta
   comprobanteUrl?: string | null
   liquidacionId?: number | null
@@ -1049,6 +1164,9 @@ export type VentaUpdateWithoutVendedorInput = {
   precioVenta?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  montoParaAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
+  montoParaVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  pagadoA?: Prisma.EnumReceptorPagoFieldUpdateOperationsInput | $Enums.ReceptorPago
   estado?: Prisma.EnumEstadoVentaFieldUpdateOperationsInput | $Enums.EstadoVenta
   comprobanteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1066,6 +1184,9 @@ export type VentaUncheckedUpdateWithoutVendedorInput = {
   precioVenta?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  montoParaAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
+  montoParaVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  pagadoA?: Prisma.EnumReceptorPagoFieldUpdateOperationsInput | $Enums.ReceptorPago
   estado?: Prisma.EnumEstadoVentaFieldUpdateOperationsInput | $Enums.EstadoVenta
   comprobanteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   liquidacionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1081,6 +1202,9 @@ export type VentaUncheckedUpdateManyWithoutVendedorInput = {
   precioVenta?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  montoParaAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
+  montoParaVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  pagadoA?: Prisma.EnumReceptorPagoFieldUpdateOperationsInput | $Enums.ReceptorPago
   estado?: Prisma.EnumEstadoVentaFieldUpdateOperationsInput | $Enums.EstadoVenta
   comprobanteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   liquidacionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1093,6 +1217,9 @@ export type VentaUpdateWithoutClienteInput = {
   precioVenta?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  montoParaAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
+  montoParaVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  pagadoA?: Prisma.EnumReceptorPagoFieldUpdateOperationsInput | $Enums.ReceptorPago
   estado?: Prisma.EnumEstadoVentaFieldUpdateOperationsInput | $Enums.EstadoVenta
   comprobanteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1110,6 +1237,9 @@ export type VentaUncheckedUpdateWithoutClienteInput = {
   precioVenta?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  montoParaAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
+  montoParaVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  pagadoA?: Prisma.EnumReceptorPagoFieldUpdateOperationsInput | $Enums.ReceptorPago
   estado?: Prisma.EnumEstadoVentaFieldUpdateOperationsInput | $Enums.EstadoVenta
   comprobanteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   liquidacionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1125,6 +1255,9 @@ export type VentaUncheckedUpdateManyWithoutClienteInput = {
   precioVenta?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  montoParaAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
+  montoParaVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  pagadoA?: Prisma.EnumReceptorPagoFieldUpdateOperationsInput | $Enums.ReceptorPago
   estado?: Prisma.EnumEstadoVentaFieldUpdateOperationsInput | $Enums.EstadoVenta
   comprobanteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   liquidacionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1140,6 +1273,9 @@ export type VentaCreateManyVapeInput = {
   precioVenta: number
   descuentoAdmin?: number
   descuentoVendedor?: number
+  montoParaAdmin?: number
+  montoParaVendedor?: number
+  pagadoA?: $Enums.ReceptorPago
   estado?: $Enums.EstadoVenta
   comprobanteUrl?: string | null
   liquidacionId?: number | null
@@ -1152,6 +1288,9 @@ export type VentaUpdateWithoutVapeInput = {
   precioVenta?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  montoParaAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
+  montoParaVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  pagadoA?: Prisma.EnumReceptorPagoFieldUpdateOperationsInput | $Enums.ReceptorPago
   estado?: Prisma.EnumEstadoVentaFieldUpdateOperationsInput | $Enums.EstadoVenta
   comprobanteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1169,6 +1308,9 @@ export type VentaUncheckedUpdateWithoutVapeInput = {
   precioVenta?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  montoParaAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
+  montoParaVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  pagadoA?: Prisma.EnumReceptorPagoFieldUpdateOperationsInput | $Enums.ReceptorPago
   estado?: Prisma.EnumEstadoVentaFieldUpdateOperationsInput | $Enums.EstadoVenta
   comprobanteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   liquidacionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1184,6 +1326,9 @@ export type VentaUncheckedUpdateManyWithoutVapeInput = {
   precioVenta?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  montoParaAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
+  montoParaVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  pagadoA?: Prisma.EnumReceptorPagoFieldUpdateOperationsInput | $Enums.ReceptorPago
   estado?: Prisma.EnumEstadoVentaFieldUpdateOperationsInput | $Enums.EstadoVenta
   comprobanteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   liquidacionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1200,6 +1345,9 @@ export type VentaCreateManyLiquidacionInput = {
   precioVenta: number
   descuentoAdmin?: number
   descuentoVendedor?: number
+  montoParaAdmin?: number
+  montoParaVendedor?: number
+  pagadoA?: $Enums.ReceptorPago
   estado?: $Enums.EstadoVenta
   comprobanteUrl?: string | null
   createdAt?: Date | string
@@ -1211,6 +1359,9 @@ export type VentaUpdateWithoutLiquidacionInput = {
   precioVenta?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  montoParaAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
+  montoParaVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  pagadoA?: Prisma.EnumReceptorPagoFieldUpdateOperationsInput | $Enums.ReceptorPago
   estado?: Prisma.EnumEstadoVentaFieldUpdateOperationsInput | $Enums.EstadoVenta
   comprobanteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1229,6 +1380,9 @@ export type VentaUncheckedUpdateWithoutLiquidacionInput = {
   precioVenta?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  montoParaAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
+  montoParaVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  pagadoA?: Prisma.EnumReceptorPagoFieldUpdateOperationsInput | $Enums.ReceptorPago
   estado?: Prisma.EnumEstadoVentaFieldUpdateOperationsInput | $Enums.EstadoVenta
   comprobanteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1244,6 +1398,9 @@ export type VentaUncheckedUpdateManyWithoutLiquidacionInput = {
   precioVenta?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  montoParaAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
+  montoParaVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  pagadoA?: Prisma.EnumReceptorPagoFieldUpdateOperationsInput | $Enums.ReceptorPago
   estado?: Prisma.EnumEstadoVentaFieldUpdateOperationsInput | $Enums.EstadoVenta
   comprobanteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1261,6 +1418,9 @@ export type VentaSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   precioVenta?: boolean
   descuentoAdmin?: boolean
   descuentoVendedor?: boolean
+  montoParaAdmin?: boolean
+  montoParaVendedor?: boolean
+  pagadoA?: boolean
   estado?: boolean
   comprobanteUrl?: boolean
   liquidacionId?: boolean
@@ -1281,6 +1441,9 @@ export type VentaSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   precioVenta?: boolean
   descuentoAdmin?: boolean
   descuentoVendedor?: boolean
+  montoParaAdmin?: boolean
+  montoParaVendedor?: boolean
+  pagadoA?: boolean
   estado?: boolean
   comprobanteUrl?: boolean
   liquidacionId?: boolean
@@ -1301,6 +1464,9 @@ export type VentaSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   precioVenta?: boolean
   descuentoAdmin?: boolean
   descuentoVendedor?: boolean
+  montoParaAdmin?: boolean
+  montoParaVendedor?: boolean
+  pagadoA?: boolean
   estado?: boolean
   comprobanteUrl?: boolean
   liquidacionId?: boolean
@@ -1321,13 +1487,16 @@ export type VentaSelectScalar = {
   precioVenta?: boolean
   descuentoAdmin?: boolean
   descuentoVendedor?: boolean
+  montoParaAdmin?: boolean
+  montoParaVendedor?: boolean
+  pagadoA?: boolean
   estado?: boolean
   comprobanteUrl?: boolean
   liquidacionId?: boolean
   createdAt?: boolean
 }
 
-export type VentaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "vendedorId" | "clienteId" | "vapeId" | "cantidad" | "costoAdquisicion" | "precioVenta" | "descuentoAdmin" | "descuentoVendedor" | "estado" | "comprobanteUrl" | "liquidacionId" | "createdAt", ExtArgs["result"]["venta"]>
+export type VentaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "vendedorId" | "clienteId" | "vapeId" | "cantidad" | "costoAdquisicion" | "precioVenta" | "descuentoAdmin" | "descuentoVendedor" | "montoParaAdmin" | "montoParaVendedor" | "pagadoA" | "estado" | "comprobanteUrl" | "liquidacionId" | "createdAt", ExtArgs["result"]["venta"]>
 export type VentaInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   vendedor?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   cliente?: boolean | Prisma.Venta$clienteArgs<ExtArgs>
@@ -1365,6 +1534,9 @@ export type $VentaPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     precioVenta: number
     descuentoAdmin: number
     descuentoVendedor: number
+    montoParaAdmin: number
+    montoParaVendedor: number
+    pagadoA: $Enums.ReceptorPago
     estado: $Enums.EstadoVenta
     comprobanteUrl: string | null
     liquidacionId: number | null
@@ -1805,6 +1977,9 @@ export interface VentaFieldRefs {
   readonly precioVenta: Prisma.FieldRef<"Venta", 'Float'>
   readonly descuentoAdmin: Prisma.FieldRef<"Venta", 'Float'>
   readonly descuentoVendedor: Prisma.FieldRef<"Venta", 'Float'>
+  readonly montoParaAdmin: Prisma.FieldRef<"Venta", 'Float'>
+  readonly montoParaVendedor: Prisma.FieldRef<"Venta", 'Float'>
+  readonly pagadoA: Prisma.FieldRef<"Venta", 'ReceptorPago'>
   readonly estado: Prisma.FieldRef<"Venta", 'EstadoVenta'>
   readonly comprobanteUrl: Prisma.FieldRef<"Venta", 'String'>
   readonly liquidacionId: Prisma.FieldRef<"Venta", 'Int'>

@@ -24,3 +24,11 @@ export const EstadoVenta = {
 } as const
 
 export type EstadoVenta = (typeof EstadoVenta)[keyof typeof EstadoVenta]
+
+
+export const ReceptorPago = {
+  ADMIN: 'ADMIN',
+  VENDEDOR: 'VENDEDOR'
+} as const
+
+export type ReceptorPago = (typeof ReceptorPago)[keyof typeof ReceptorPago]

@@ -18,6 +18,11 @@ enum EstadoVenta {
   LIQUIDADA
 }
 
+enum ReceptorPago {
+  ADMIN
+  VENDEDOR
+}
+
 model User {
   id                  Int                  @id @default(autoincrement())
   email               String?              @unique
@@ -26,6 +31,7 @@ model User {
   password            String
   role                Role                 @default(CLIENTE)
   nombre              String
+  totalVapesComprados Int                  @default(0)
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
   inventariosVendedor InventarioVendedor[] // Para vendedores
@@ -34,6 +40,7 @@ model User {
   suscripcion         Suscripcion?
   logros              LogroFidelidad[]
   liquidaciones       Liquidacion[]        @relation("VendedorLiquidacion")
+  entregasSuscripcion EntregaSuscripcion[] // Entregas hechas por el vendedor
 }
 
 model Vape {
@@ -48,6 +55,7 @@ model Vape {
   updatedAt   DateTime             @updatedAt
   inventarios InventarioVendedor[]
   Venta       Venta[]
+  entregas    EntregaSuscripcion[]
 }
 
 model InventarioVendedor {
@@ -74,6 +82,9 @@ model Venta {
   precioVenta       Float    // Precio al que se vendió finalmente (con o sin descuento)
   descuentoAdmin    Float    @default(0) // Monto del descuento absorbido por el admin
   descuentoVendedor Float    @default(0) // Monto del descuento absorbido por el vendedor
+  montoParaAdmin    Float    @default(0)
+  montoParaVendedor Float    @default(0)
+  pagadoA           ReceptorPago @default(VENDEDOR)
   estado            EstadoVenta @default(PENDIENTE_LIQUIDACION)
   comprobanteUrl    String?
   liquidacionId     Int?
@@ -98,13 +109,29 @@ model Liquidacion {
 }
 
 model Suscripcion {
-  id        Int      @id @default(autoincrement())
-  clienteId Int      @unique
-  activa    Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                Int      @id @default(autoincrement())
+  clienteId         Int      @unique
+  activa            Boolean  @default(true)
+  diasEntreEntregas Int      @default(60)
+  multaFija         Float?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
   cliente User @relation(fields: [clienteId], references: [id])
+  entregas EntregaSuscripcion[]
+}
+
+model EntregaSuscripcion {
+  id             Int      @id @default(autoincrement())
+  suscripcionId  Int
+  vendedorId     Int
+  vapeId         Int
+  multaAplicada  Float    @default(0)
+  createdAt      DateTime @default(now())
+
+  suscripcion    Suscripcion @relation(fields: [suscripcionId], references: [id])
+  vendedor       User        @relation(fields: [vendedorId], references: [id])
+  vape           Vape        @relation(fields: [vapeId], references: [id])
 }
 
 model LogroFidelidad {

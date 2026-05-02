@@ -390,6 +390,7 @@ export const ModelName = {
   Venta: 'Venta',
   Liquidacion: 'Liquidacion',
   Suscripcion: 'Suscripcion',
+  EntregaSuscripcion: 'EntregaSuscripcion',
   LogroFidelidad: 'LogroFidelidad'
 } as const
 
@@ -406,7 +407,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "vape" | "inventarioVendedor" | "venta" | "liquidacion" | "suscripcion" | "logroFidelidad"
+    modelProps: "user" | "vape" | "inventarioVendedor" | "venta" | "liquidacion" | "suscripcion" | "entregaSuscripcion" | "logroFidelidad"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -854,6 +855,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    EntregaSuscripcion: {
+      payload: Prisma.$EntregaSuscripcionPayload<ExtArgs>
+      fields: Prisma.EntregaSuscripcionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.EntregaSuscripcionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EntregaSuscripcionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.EntregaSuscripcionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EntregaSuscripcionPayload>
+        }
+        findFirst: {
+          args: Prisma.EntregaSuscripcionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EntregaSuscripcionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.EntregaSuscripcionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EntregaSuscripcionPayload>
+        }
+        findMany: {
+          args: Prisma.EntregaSuscripcionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EntregaSuscripcionPayload>[]
+        }
+        create: {
+          args: Prisma.EntregaSuscripcionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EntregaSuscripcionPayload>
+        }
+        createMany: {
+          args: Prisma.EntregaSuscripcionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.EntregaSuscripcionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EntregaSuscripcionPayload>[]
+        }
+        delete: {
+          args: Prisma.EntregaSuscripcionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EntregaSuscripcionPayload>
+        }
+        update: {
+          args: Prisma.EntregaSuscripcionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EntregaSuscripcionPayload>
+        }
+        deleteMany: {
+          args: Prisma.EntregaSuscripcionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.EntregaSuscripcionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.EntregaSuscripcionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EntregaSuscripcionPayload>[]
+        }
+        upsert: {
+          args: Prisma.EntregaSuscripcionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EntregaSuscripcionPayload>
+        }
+        aggregate: {
+          args: Prisma.EntregaSuscripcionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateEntregaSuscripcion>
+        }
+        groupBy: {
+          args: Prisma.EntregaSuscripcionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EntregaSuscripcionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.EntregaSuscripcionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EntregaSuscripcionCountAggregateOutputType> | number
+        }
+      }
+    }
     LogroFidelidad: {
       payload: Prisma.$LogroFidelidadPayload<ExtArgs>
       fields: Prisma.LogroFidelidadFieldRefs
@@ -975,6 +1050,7 @@ export const UserScalarFieldEnum = {
   password: 'password',
   role: 'role',
   nombre: 'nombre',
+  totalVapesComprados: 'totalVapesComprados',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1019,6 +1095,9 @@ export const VentaScalarFieldEnum = {
   precioVenta: 'precioVenta',
   descuentoAdmin: 'descuentoAdmin',
   descuentoVendedor: 'descuentoVendedor',
+  montoParaAdmin: 'montoParaAdmin',
+  montoParaVendedor: 'montoParaVendedor',
+  pagadoA: 'pagadoA',
   estado: 'estado',
   comprobanteUrl: 'comprobanteUrl',
   liquidacionId: 'liquidacionId',
@@ -1044,11 +1123,25 @@ export const SuscripcionScalarFieldEnum = {
   id: 'id',
   clienteId: 'clienteId',
   activa: 'activa',
+  diasEntreEntregas: 'diasEntreEntregas',
+  multaFija: 'multaFija',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type SuscripcionScalarFieldEnum = (typeof SuscripcionScalarFieldEnum)[keyof typeof SuscripcionScalarFieldEnum]
+
+
+export const EntregaSuscripcionScalarFieldEnum = {
+  id: 'id',
+  suscripcionId: 'suscripcionId',
+  vendedorId: 'vendedorId',
+  vapeId: 'vapeId',
+  multaAplicada: 'multaAplicada',
+  createdAt: 'createdAt'
+} as const
+
+export type EntregaSuscripcionScalarFieldEnum = (typeof EntregaSuscripcionScalarFieldEnum)[keyof typeof EntregaSuscripcionScalarFieldEnum]
 
 
 export const LogroFidelidadScalarFieldEnum = {
@@ -1159,6 +1252,20 @@ export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, '
  * Reference to a field of type 'Float[]'
  */
 export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+/**
+ * Reference to a field of type 'ReceptorPago'
+ */
+export type EnumReceptorPagoFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReceptorPago'>
+    
+
+
+/**
+ * Reference to a field of type 'ReceptorPago[]'
+ */
+export type ListEnumReceptorPagoFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReceptorPago[]'>
     
 
 
@@ -1298,6 +1405,7 @@ export type GlobalOmitConfig = {
   venta?: Prisma.VentaOmit
   liquidacion?: Prisma.LiquidacionOmit
   suscripcion?: Prisma.SuscripcionOmit
+  entregaSuscripcion?: Prisma.EntregaSuscripcionOmit
   logroFidelidad?: Prisma.LogroFidelidadOmit
 }
 

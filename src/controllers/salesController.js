@@ -2,11 +2,10 @@ import { prisma } from '../prisma.js';
 
 export const createVenta = async (req, res, next) => {
   try {
-    // req.user viene del middleware de auth (token)
     const vendedorId = req.user.id; 
     
-    // Parámetros de la venta
-    const { clienteId, vapeId, cantidad, precioVenta, quienAbsorbeDescuento } = req.body;
+    // El payload debe traer el objeto "reparto" para saber la partición de la ganancia
+    const { clienteId, vapeId, cantidad, precioVenta, pagadoA, reparto } = req.body;
     
     if (!vapeId || !cantidad || !precioVenta) {
       return res.status(400).json({ error: 'Parámetros obligatorios faltantes' });
@@ -37,28 +36,21 @@ export const createVenta = async (req, res, next) => {
         where: { id: parseInt(vapeId) }
       });
 
-      // Calcular descuentos
-      const precioVentaFinal = parseFloat(precioVenta);
-      const precioSugerido = vape.precio;
-      let descuentoTotal = 0;
-      
-      // Multiplicamos por cantidad para tener el descuento real si se venden varios a precio reducido
-      if (precioVentaFinal < precioSugerido) {
-        descuentoTotal = (precioSugerido - precioVentaFinal) * parseInt(cantidad);
-      }
+      // Cálculo del monto dinámico
+      const totalVenta = parseFloat(precioVenta) * parseInt(cantidad);
+      let montoParaAdmin = 0;
+      let montoParaVendedor = 0;
 
-      let descuentoAdmin = 0;
-      let descuentoVendedor = 0;
-
-      if (descuentoTotal > 0) {
-        if (quienAbsorbeDescuento === 'ADMIN') {
-          descuentoAdmin = descuentoTotal;
-        } else if (quienAbsorbeDescuento === 'VENDEDOR') {
-          descuentoVendedor = descuentoTotal;
-        } else {
-          // Si no se especifica, por defecto lo absorbe el vendedor
-          descuentoVendedor = descuentoTotal;
-        }
+      if (reparto && reparto.tipo === 'FIJO') {
+        montoParaAdmin = parseFloat(reparto.valorAdmin);
+        montoParaVendedor = totalVenta - montoParaAdmin;
+      } else if (reparto && reparto.tipo === 'PORCENTAJE') {
+        montoParaAdmin = totalVenta * (parseFloat(reparto.valorAdmin) / 100);
+        montoParaVendedor = totalVenta - montoParaAdmin;
+      } else {
+        // Fallback: Admin recupera su costo y Vendedor se lleva la ganancia restante
+        montoParaAdmin = vape.costo * parseInt(cantidad);
+        montoParaVendedor = totalVenta - montoParaAdmin;
       }
 
       // Restar stock del inventario del vendedor
@@ -82,21 +74,70 @@ export const createVenta = async (req, res, next) => {
           vapeId: parseInt(vapeId),
           cantidad: parseInt(cantidad),
           costoAdquisicion: vape.costo,
-          precioVenta: precioVentaFinal,
-          descuentoAdmin,
-          descuentoVendedor,
+          precioVenta: parseFloat(precioVenta),
+          montoParaAdmin,
+          montoParaVendedor,
+          pagadoA: pagadoA === 'ADMIN' ? 'ADMIN' : 'VENDEDOR',
           comprobanteUrl,
           estado: 'PENDIENTE_LIQUIDACION'
         }
       });
 
-      return nuevaVenta;
+      let alertaFidelidad = null;
+      if (clienteId) {
+        const clienteActualizado = await prismaClient.user.update({
+          where: { id: parseInt(clienteId) },
+          data: { totalVapesComprados: { increment: parseInt(cantidad) } }
+        });
+
+        if (clienteActualizado.totalVapesComprados >= 6) {
+          await prismaClient.user.update({
+            where: { id: parseInt(clienteId) },
+            data: { totalVapesComprados: clienteActualizado.totalVapesComprados - 6 }
+          });
+
+          await prismaClient.logroFidelidad.create({
+            data: {
+              clienteId: parseInt(clienteId),
+              nombre: 'Vape Gratis',
+              descripcion: 'Alcanzó 6 compras. Tiene derecho a 1 vape gratis en su próxima visita.'
+            }
+          });
+
+          alertaFidelidad = "¡Felicidades! El cliente ha acumulado 6 compras. Su próximo vape es GRATIS.";
+        }
+      }
+
+      return { nuevaVenta, alertaFidelidad };
     });
 
     res.status(201).json(venta);
   } catch (error) {
     if (error.message === 'Stock insuficiente en tu inventario') {
       return res.status(400).json({ error: error.message });
+    }
+    next(error);
+  }
+};
+
+export const updatePagadoA = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { pagadoA } = req.body;
+
+    if (pagadoA !== 'ADMIN' && pagadoA !== 'VENDEDOR') {
+      return res.status(400).json({ error: 'pagadoA debe ser ADMIN o VENDEDOR' });
+    }
+
+    const venta = await prisma.venta.update({
+      where: { id: parseInt(id) },
+      data: { pagadoA }
+    });
+
+    res.json(venta);
+  } catch (error) {
+    if (error.code === 'P2025') {
+      return res.status(404).json({ error: 'Venta no encontrada' });
     }
     next(error);
   }

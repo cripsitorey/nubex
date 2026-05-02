@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createVenta } from '../controllers/salesController.js';
+import { createVenta, updatePagadoA } from '../controllers/salesController.js';
 import { verifyToken, verifyRole } from '../middlewares/authMiddleware.js';
 import { upload, processImage } from '../middlewares/uploadMiddleware.js';
 
@@ -9,5 +9,6 @@ const router = Router();
 router.use(verifyToken, verifyRole(['ADMIN', 'VENDEDOR']));
 
 router.post('/', upload.single('comprobante'), processImage, createVenta);
+router.patch('/:id/pagadoA', updatePagadoA);
 
 export default router;
