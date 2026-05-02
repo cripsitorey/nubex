@@ -16,9 +16,11 @@ app.use(express.urlencoded({ extended: true }));
 // Servir archivos estáticos (imágenes subidas)
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-// TODO: Montar rutas
-// import vapeRoutes from './routes/vapeRoutes.js';
-// app.use('/api/vapes', vapeRoutes);
+// Montar rutas
+import authRoutes from './routes/auth.routes.js';
+import userRoutes from './routes/user.routes.js';
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
 
 // Manejo centralizado de errores
 app.use((err, req, res, next) => {

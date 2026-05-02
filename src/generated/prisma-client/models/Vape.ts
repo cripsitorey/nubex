@@ -471,10 +471,6 @@ export type VapeScalarRelationFilter = {
   isNot?: Prisma.VapeWhereInput
 }
 
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
-}
-
 export type FloatFieldUpdateOperationsInput = {
   set?: number
   increment?: number

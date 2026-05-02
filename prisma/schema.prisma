@@ -15,7 +15,9 @@ enum Role {
 
 model User {
   id                  Int                  @id @default(autoincrement())
-  email               String               @unique
+  email               String?              @unique
+  cedula              String?              @unique
+  telefono            String?              @unique
   password            String
   role                Role                 @default(CLIENTE)
   nombre              String
