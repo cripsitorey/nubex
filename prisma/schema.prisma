@@ -13,6 +13,11 @@ enum Role {
   CLIENTE
 }
 
+enum EstadoVenta {
+  PENDIENTE_LIQUIDACION
+  LIQUIDADA
+}
+
 model User {
   id                  Int                  @id @default(autoincrement())
   email               String?              @unique
@@ -69,6 +74,8 @@ model Venta {
   precioVenta       Float    // Precio al que se vendió finalmente (con o sin descuento)
   descuentoAdmin    Float    @default(0) // Monto del descuento absorbido por el admin
   descuentoVendedor Float    @default(0) // Monto del descuento absorbido por el vendedor
+  estado            EstadoVenta @default(PENDIENTE_LIQUIDACION)
+  comprobanteUrl    String?
   liquidacionId     Int?
   createdAt         DateTime @default(now())
 

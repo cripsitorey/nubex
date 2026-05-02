@@ -16,3 +16,11 @@ export const Role = {
 } as const
 
 export type Role = (typeof Role)[keyof typeof Role]
+
+
+export const EstadoVenta = {
+  PENDIENTE_LIQUIDACION: 'PENDIENTE_LIQUIDACION',
+  LIQUIDADA: 'LIQUIDADA'
+} as const
+
+export type EstadoVenta = (typeof EstadoVenta)[keyof typeof EstadoVenta]

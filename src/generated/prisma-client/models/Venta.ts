@@ -62,6 +62,8 @@ export type VentaMinAggregateOutputType = {
   precioVenta: number | null
   descuentoAdmin: number | null
   descuentoVendedor: number | null
+  estado: $Enums.EstadoVenta | null
+  comprobanteUrl: string | null
   liquidacionId: number | null
   createdAt: Date | null
 }
@@ -76,6 +78,8 @@ export type VentaMaxAggregateOutputType = {
   precioVenta: number | null
   descuentoAdmin: number | null
   descuentoVendedor: number | null
+  estado: $Enums.EstadoVenta | null
+  comprobanteUrl: string | null
   liquidacionId: number | null
   createdAt: Date | null
 }
@@ -90,6 +94,8 @@ export type VentaCountAggregateOutputType = {
   precioVenta: number
   descuentoAdmin: number
   descuentoVendedor: number
+  estado: number
+  comprobanteUrl: number
   liquidacionId: number
   createdAt: number
   _all: number
@@ -132,6 +138,8 @@ export type VentaMinAggregateInputType = {
   precioVenta?: true
   descuentoAdmin?: true
   descuentoVendedor?: true
+  estado?: true
+  comprobanteUrl?: true
   liquidacionId?: true
   createdAt?: true
 }
@@ -146,6 +154,8 @@ export type VentaMaxAggregateInputType = {
   precioVenta?: true
   descuentoAdmin?: true
   descuentoVendedor?: true
+  estado?: true
+  comprobanteUrl?: true
   liquidacionId?: true
   createdAt?: true
 }
@@ -160,6 +170,8 @@ export type VentaCountAggregateInputType = {
   precioVenta?: true
   descuentoAdmin?: true
   descuentoVendedor?: true
+  estado?: true
+  comprobanteUrl?: true
   liquidacionId?: true
   createdAt?: true
   _all?: true
@@ -261,6 +273,8 @@ export type VentaGroupByOutputType = {
   precioVenta: number
   descuentoAdmin: number
   descuentoVendedor: number
+  estado: $Enums.EstadoVenta
+  comprobanteUrl: string | null
   liquidacionId: number | null
   createdAt: Date
   _count: VentaCountAggregateOutputType | null
@@ -298,6 +312,8 @@ export type VentaWhereInput = {
   precioVenta?: Prisma.FloatFilter<"Venta"> | number
   descuentoAdmin?: Prisma.FloatFilter<"Venta"> | number
   descuentoVendedor?: Prisma.FloatFilter<"Venta"> | number
+  estado?: Prisma.EnumEstadoVentaFilter<"Venta"> | $Enums.EstadoVenta
+  comprobanteUrl?: Prisma.StringNullableFilter<"Venta"> | string | null
   liquidacionId?: Prisma.IntNullableFilter<"Venta"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Venta"> | Date | string
   vendedor?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -316,6 +332,8 @@ export type VentaOrderByWithRelationInput = {
   precioVenta?: Prisma.SortOrder
   descuentoAdmin?: Prisma.SortOrder
   descuentoVendedor?: Prisma.SortOrder
+  estado?: Prisma.SortOrder
+  comprobanteUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   liquidacionId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   vendedor?: Prisma.UserOrderByWithRelationInput
@@ -337,6 +355,8 @@ export type VentaWhereUniqueInput = Prisma.AtLeast<{
   precioVenta?: Prisma.FloatFilter<"Venta"> | number
   descuentoAdmin?: Prisma.FloatFilter<"Venta"> | number
   descuentoVendedor?: Prisma.FloatFilter<"Venta"> | number
+  estado?: Prisma.EnumEstadoVentaFilter<"Venta"> | $Enums.EstadoVenta
+  comprobanteUrl?: Prisma.StringNullableFilter<"Venta"> | string | null
   liquidacionId?: Prisma.IntNullableFilter<"Venta"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Venta"> | Date | string
   vendedor?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -355,6 +375,8 @@ export type VentaOrderByWithAggregationInput = {
   precioVenta?: Prisma.SortOrder
   descuentoAdmin?: Prisma.SortOrder
   descuentoVendedor?: Prisma.SortOrder
+  estado?: Prisma.SortOrder
+  comprobanteUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   liquidacionId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.VentaCountOrderByAggregateInput
@@ -377,6 +399,8 @@ export type VentaScalarWhereWithAggregatesInput = {
   precioVenta?: Prisma.FloatWithAggregatesFilter<"Venta"> | number
   descuentoAdmin?: Prisma.FloatWithAggregatesFilter<"Venta"> | number
   descuentoVendedor?: Prisma.FloatWithAggregatesFilter<"Venta"> | number
+  estado?: Prisma.EnumEstadoVentaWithAggregatesFilter<"Venta"> | $Enums.EstadoVenta
+  comprobanteUrl?: Prisma.StringNullableWithAggregatesFilter<"Venta"> | string | null
   liquidacionId?: Prisma.IntNullableWithAggregatesFilter<"Venta"> | number | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Venta"> | Date | string
 }
@@ -387,6 +411,8 @@ export type VentaCreateInput = {
   precioVenta: number
   descuentoAdmin?: number
   descuentoVendedor?: number
+  estado?: $Enums.EstadoVenta
+  comprobanteUrl?: string | null
   createdAt?: Date | string
   vendedor: Prisma.UserCreateNestedOneWithoutVentasRealizadasInput
   cliente?: Prisma.UserCreateNestedOneWithoutVentasCompradasInput
@@ -404,6 +430,8 @@ export type VentaUncheckedCreateInput = {
   precioVenta: number
   descuentoAdmin?: number
   descuentoVendedor?: number
+  estado?: $Enums.EstadoVenta
+  comprobanteUrl?: string | null
   liquidacionId?: number | null
   createdAt?: Date | string
 }
@@ -414,6 +442,8 @@ export type VentaUpdateInput = {
   precioVenta?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  estado?: Prisma.EnumEstadoVentaFieldUpdateOperationsInput | $Enums.EstadoVenta
+  comprobanteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   vendedor?: Prisma.UserUpdateOneRequiredWithoutVentasRealizadasNestedInput
   cliente?: Prisma.UserUpdateOneWithoutVentasCompradasNestedInput
@@ -431,6 +461,8 @@ export type VentaUncheckedUpdateInput = {
   precioVenta?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  estado?: Prisma.EnumEstadoVentaFieldUpdateOperationsInput | $Enums.EstadoVenta
+  comprobanteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   liquidacionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -445,6 +477,8 @@ export type VentaCreateManyInput = {
   precioVenta: number
   descuentoAdmin?: number
   descuentoVendedor?: number
+  estado?: $Enums.EstadoVenta
+  comprobanteUrl?: string | null
   liquidacionId?: number | null
   createdAt?: Date | string
 }
@@ -455,6 +489,8 @@ export type VentaUpdateManyMutationInput = {
   precioVenta?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  estado?: Prisma.EnumEstadoVentaFieldUpdateOperationsInput | $Enums.EstadoVenta
+  comprobanteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -468,6 +504,8 @@ export type VentaUncheckedUpdateManyInput = {
   precioVenta?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  estado?: Prisma.EnumEstadoVentaFieldUpdateOperationsInput | $Enums.EstadoVenta
+  comprobanteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   liquidacionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -492,6 +530,8 @@ export type VentaCountOrderByAggregateInput = {
   precioVenta?: Prisma.SortOrder
   descuentoAdmin?: Prisma.SortOrder
   descuentoVendedor?: Prisma.SortOrder
+  estado?: Prisma.SortOrder
+  comprobanteUrl?: Prisma.SortOrder
   liquidacionId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -519,6 +559,8 @@ export type VentaMaxOrderByAggregateInput = {
   precioVenta?: Prisma.SortOrder
   descuentoAdmin?: Prisma.SortOrder
   descuentoVendedor?: Prisma.SortOrder
+  estado?: Prisma.SortOrder
+  comprobanteUrl?: Prisma.SortOrder
   liquidacionId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -533,6 +575,8 @@ export type VentaMinOrderByAggregateInput = {
   precioVenta?: Prisma.SortOrder
   descuentoAdmin?: Prisma.SortOrder
   descuentoVendedor?: Prisma.SortOrder
+  estado?: Prisma.SortOrder
+  comprobanteUrl?: Prisma.SortOrder
   liquidacionId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -676,6 +720,10 @@ export type VentaUncheckedUpdateManyWithoutVapeNestedInput = {
   deleteMany?: Prisma.VentaScalarWhereInput | Prisma.VentaScalarWhereInput[]
 }
 
+export type EnumEstadoVentaFieldUpdateOperationsInput = {
+  set?: $Enums.EstadoVenta
+}
+
 export type NullableIntFieldUpdateOperationsInput = {
   set?: number | null
   increment?: number
@@ -732,6 +780,8 @@ export type VentaCreateWithoutVendedorInput = {
   precioVenta: number
   descuentoAdmin?: number
   descuentoVendedor?: number
+  estado?: $Enums.EstadoVenta
+  comprobanteUrl?: string | null
   createdAt?: Date | string
   cliente?: Prisma.UserCreateNestedOneWithoutVentasCompradasInput
   vape: Prisma.VapeCreateNestedOneWithoutVentaInput
@@ -747,6 +797,8 @@ export type VentaUncheckedCreateWithoutVendedorInput = {
   precioVenta: number
   descuentoAdmin?: number
   descuentoVendedor?: number
+  estado?: $Enums.EstadoVenta
+  comprobanteUrl?: string | null
   liquidacionId?: number | null
   createdAt?: Date | string
 }
@@ -767,6 +819,8 @@ export type VentaCreateWithoutClienteInput = {
   precioVenta: number
   descuentoAdmin?: number
   descuentoVendedor?: number
+  estado?: $Enums.EstadoVenta
+  comprobanteUrl?: string | null
   createdAt?: Date | string
   vendedor: Prisma.UserCreateNestedOneWithoutVentasRealizadasInput
   vape: Prisma.VapeCreateNestedOneWithoutVentaInput
@@ -782,6 +836,8 @@ export type VentaUncheckedCreateWithoutClienteInput = {
   precioVenta: number
   descuentoAdmin?: number
   descuentoVendedor?: number
+  estado?: $Enums.EstadoVenta
+  comprobanteUrl?: string | null
   liquidacionId?: number | null
   createdAt?: Date | string
 }
@@ -825,6 +881,8 @@ export type VentaScalarWhereInput = {
   precioVenta?: Prisma.FloatFilter<"Venta"> | number
   descuentoAdmin?: Prisma.FloatFilter<"Venta"> | number
   descuentoVendedor?: Prisma.FloatFilter<"Venta"> | number
+  estado?: Prisma.EnumEstadoVentaFilter<"Venta"> | $Enums.EstadoVenta
+  comprobanteUrl?: Prisma.StringNullableFilter<"Venta"> | string | null
   liquidacionId?: Prisma.IntNullableFilter<"Venta"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Venta"> | Date | string
 }
@@ -851,6 +909,8 @@ export type VentaCreateWithoutVapeInput = {
   precioVenta: number
   descuentoAdmin?: number
   descuentoVendedor?: number
+  estado?: $Enums.EstadoVenta
+  comprobanteUrl?: string | null
   createdAt?: Date | string
   vendedor: Prisma.UserCreateNestedOneWithoutVentasRealizadasInput
   cliente?: Prisma.UserCreateNestedOneWithoutVentasCompradasInput
@@ -866,6 +926,8 @@ export type VentaUncheckedCreateWithoutVapeInput = {
   precioVenta: number
   descuentoAdmin?: number
   descuentoVendedor?: number
+  estado?: $Enums.EstadoVenta
+  comprobanteUrl?: string | null
   liquidacionId?: number | null
   createdAt?: Date | string
 }
@@ -902,6 +964,8 @@ export type VentaCreateWithoutLiquidacionInput = {
   precioVenta: number
   descuentoAdmin?: number
   descuentoVendedor?: number
+  estado?: $Enums.EstadoVenta
+  comprobanteUrl?: string | null
   createdAt?: Date | string
   vendedor: Prisma.UserCreateNestedOneWithoutVentasRealizadasInput
   cliente?: Prisma.UserCreateNestedOneWithoutVentasCompradasInput
@@ -918,6 +982,8 @@ export type VentaUncheckedCreateWithoutLiquidacionInput = {
   precioVenta: number
   descuentoAdmin?: number
   descuentoVendedor?: number
+  estado?: $Enums.EstadoVenta
+  comprobanteUrl?: string | null
   createdAt?: Date | string
 }
 
@@ -956,6 +1022,8 @@ export type VentaCreateManyVendedorInput = {
   precioVenta: number
   descuentoAdmin?: number
   descuentoVendedor?: number
+  estado?: $Enums.EstadoVenta
+  comprobanteUrl?: string | null
   liquidacionId?: number | null
   createdAt?: Date | string
 }
@@ -969,6 +1037,8 @@ export type VentaCreateManyClienteInput = {
   precioVenta: number
   descuentoAdmin?: number
   descuentoVendedor?: number
+  estado?: $Enums.EstadoVenta
+  comprobanteUrl?: string | null
   liquidacionId?: number | null
   createdAt?: Date | string
 }
@@ -979,6 +1049,8 @@ export type VentaUpdateWithoutVendedorInput = {
   precioVenta?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  estado?: Prisma.EnumEstadoVentaFieldUpdateOperationsInput | $Enums.EstadoVenta
+  comprobanteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   cliente?: Prisma.UserUpdateOneWithoutVentasCompradasNestedInput
   vape?: Prisma.VapeUpdateOneRequiredWithoutVentaNestedInput
@@ -994,6 +1066,8 @@ export type VentaUncheckedUpdateWithoutVendedorInput = {
   precioVenta?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  estado?: Prisma.EnumEstadoVentaFieldUpdateOperationsInput | $Enums.EstadoVenta
+  comprobanteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   liquidacionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1007,6 +1081,8 @@ export type VentaUncheckedUpdateManyWithoutVendedorInput = {
   precioVenta?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  estado?: Prisma.EnumEstadoVentaFieldUpdateOperationsInput | $Enums.EstadoVenta
+  comprobanteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   liquidacionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1017,6 +1093,8 @@ export type VentaUpdateWithoutClienteInput = {
   precioVenta?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  estado?: Prisma.EnumEstadoVentaFieldUpdateOperationsInput | $Enums.EstadoVenta
+  comprobanteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   vendedor?: Prisma.UserUpdateOneRequiredWithoutVentasRealizadasNestedInput
   vape?: Prisma.VapeUpdateOneRequiredWithoutVentaNestedInput
@@ -1032,6 +1110,8 @@ export type VentaUncheckedUpdateWithoutClienteInput = {
   precioVenta?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  estado?: Prisma.EnumEstadoVentaFieldUpdateOperationsInput | $Enums.EstadoVenta
+  comprobanteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   liquidacionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1045,6 +1125,8 @@ export type VentaUncheckedUpdateManyWithoutClienteInput = {
   precioVenta?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  estado?: Prisma.EnumEstadoVentaFieldUpdateOperationsInput | $Enums.EstadoVenta
+  comprobanteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   liquidacionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1058,6 +1140,8 @@ export type VentaCreateManyVapeInput = {
   precioVenta: number
   descuentoAdmin?: number
   descuentoVendedor?: number
+  estado?: $Enums.EstadoVenta
+  comprobanteUrl?: string | null
   liquidacionId?: number | null
   createdAt?: Date | string
 }
@@ -1068,6 +1152,8 @@ export type VentaUpdateWithoutVapeInput = {
   precioVenta?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  estado?: Prisma.EnumEstadoVentaFieldUpdateOperationsInput | $Enums.EstadoVenta
+  comprobanteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   vendedor?: Prisma.UserUpdateOneRequiredWithoutVentasRealizadasNestedInput
   cliente?: Prisma.UserUpdateOneWithoutVentasCompradasNestedInput
@@ -1083,6 +1169,8 @@ export type VentaUncheckedUpdateWithoutVapeInput = {
   precioVenta?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  estado?: Prisma.EnumEstadoVentaFieldUpdateOperationsInput | $Enums.EstadoVenta
+  comprobanteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   liquidacionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1096,6 +1184,8 @@ export type VentaUncheckedUpdateManyWithoutVapeInput = {
   precioVenta?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  estado?: Prisma.EnumEstadoVentaFieldUpdateOperationsInput | $Enums.EstadoVenta
+  comprobanteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   liquidacionId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1110,6 +1200,8 @@ export type VentaCreateManyLiquidacionInput = {
   precioVenta: number
   descuentoAdmin?: number
   descuentoVendedor?: number
+  estado?: $Enums.EstadoVenta
+  comprobanteUrl?: string | null
   createdAt?: Date | string
 }
 
@@ -1119,6 +1211,8 @@ export type VentaUpdateWithoutLiquidacionInput = {
   precioVenta?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  estado?: Prisma.EnumEstadoVentaFieldUpdateOperationsInput | $Enums.EstadoVenta
+  comprobanteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   vendedor?: Prisma.UserUpdateOneRequiredWithoutVentasRealizadasNestedInput
   cliente?: Prisma.UserUpdateOneWithoutVentasCompradasNestedInput
@@ -1135,6 +1229,8 @@ export type VentaUncheckedUpdateWithoutLiquidacionInput = {
   precioVenta?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  estado?: Prisma.EnumEstadoVentaFieldUpdateOperationsInput | $Enums.EstadoVenta
+  comprobanteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -1148,6 +1244,8 @@ export type VentaUncheckedUpdateManyWithoutLiquidacionInput = {
   precioVenta?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoAdmin?: Prisma.FloatFieldUpdateOperationsInput | number
   descuentoVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  estado?: Prisma.EnumEstadoVentaFieldUpdateOperationsInput | $Enums.EstadoVenta
+  comprobanteUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -1163,6 +1261,8 @@ export type VentaSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   precioVenta?: boolean
   descuentoAdmin?: boolean
   descuentoVendedor?: boolean
+  estado?: boolean
+  comprobanteUrl?: boolean
   liquidacionId?: boolean
   createdAt?: boolean
   vendedor?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -1181,6 +1281,8 @@ export type VentaSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   precioVenta?: boolean
   descuentoAdmin?: boolean
   descuentoVendedor?: boolean
+  estado?: boolean
+  comprobanteUrl?: boolean
   liquidacionId?: boolean
   createdAt?: boolean
   vendedor?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -1199,6 +1301,8 @@ export type VentaSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   precioVenta?: boolean
   descuentoAdmin?: boolean
   descuentoVendedor?: boolean
+  estado?: boolean
+  comprobanteUrl?: boolean
   liquidacionId?: boolean
   createdAt?: boolean
   vendedor?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -1217,11 +1321,13 @@ export type VentaSelectScalar = {
   precioVenta?: boolean
   descuentoAdmin?: boolean
   descuentoVendedor?: boolean
+  estado?: boolean
+  comprobanteUrl?: boolean
   liquidacionId?: boolean
   createdAt?: boolean
 }
 
-export type VentaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "vendedorId" | "clienteId" | "vapeId" | "cantidad" | "costoAdquisicion" | "precioVenta" | "descuentoAdmin" | "descuentoVendedor" | "liquidacionId" | "createdAt", ExtArgs["result"]["venta"]>
+export type VentaOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "vendedorId" | "clienteId" | "vapeId" | "cantidad" | "costoAdquisicion" | "precioVenta" | "descuentoAdmin" | "descuentoVendedor" | "estado" | "comprobanteUrl" | "liquidacionId" | "createdAt", ExtArgs["result"]["venta"]>
 export type VentaInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   vendedor?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   cliente?: boolean | Prisma.Venta$clienteArgs<ExtArgs>
@@ -1259,6 +1365,8 @@ export type $VentaPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     precioVenta: number
     descuentoAdmin: number
     descuentoVendedor: number
+    estado: $Enums.EstadoVenta
+    comprobanteUrl: string | null
     liquidacionId: number | null
     createdAt: Date
   }, ExtArgs["result"]["venta"]>
@@ -1697,6 +1805,8 @@ export interface VentaFieldRefs {
   readonly precioVenta: Prisma.FieldRef<"Venta", 'Float'>
   readonly descuentoAdmin: Prisma.FieldRef<"Venta", 'Float'>
   readonly descuentoVendedor: Prisma.FieldRef<"Venta", 'Float'>
+  readonly estado: Prisma.FieldRef<"Venta", 'EstadoVenta'>
+  readonly comprobanteUrl: Prisma.FieldRef<"Venta", 'String'>
   readonly liquidacionId: Prisma.FieldRef<"Venta", 'Int'>
   readonly createdAt: Prisma.FieldRef<"Venta", 'DateTime'>
 }

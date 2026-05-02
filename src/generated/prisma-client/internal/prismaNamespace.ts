@@ -1019,6 +1019,8 @@ export const VentaScalarFieldEnum = {
   precioVenta: 'precioVenta',
   descuentoAdmin: 'descuentoAdmin',
   descuentoVendedor: 'descuentoVendedor',
+  estado: 'estado',
+  comprobanteUrl: 'comprobanteUrl',
   liquidacionId: 'liquidacionId',
   createdAt: 'createdAt'
 } as const
@@ -1157,6 +1159,20 @@ export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, '
  * Reference to a field of type 'Float[]'
  */
 export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+/**
+ * Reference to a field of type 'EstadoVenta'
+ */
+export type EnumEstadoVentaFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EstadoVenta'>
+    
+
+
+/**
+ * Reference to a field of type 'EstadoVenta[]'
+ */
+export type ListEnumEstadoVentaFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EstadoVenta[]'>
     
 
 

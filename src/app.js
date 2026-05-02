@@ -19,8 +19,12 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 // Montar rutas
 import authRoutes from './routes/auth.routes.js';
 import userRoutes from './routes/user.routes.js';
+import inventoryRoutes from './routes/inventory.routes.js';
+import salesRoutes from './routes/sales.routes.js';
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/inventory', inventoryRoutes);
+app.use('/api/sales', salesRoutes);
 
 // Manejo centralizado de errores
 app.use((err, req, res, next) => {

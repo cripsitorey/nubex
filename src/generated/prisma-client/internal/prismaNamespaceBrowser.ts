@@ -128,6 +128,8 @@ export const VentaScalarFieldEnum = {
   precioVenta: 'precioVenta',
   descuentoAdmin: 'descuentoAdmin',
   descuentoVendedor: 'descuentoVendedor',
+  estado: 'estado',
+  comprobanteUrl: 'comprobanteUrl',
   liquidacionId: 'liquidacionId',
   createdAt: 'createdAt'
 } as const
