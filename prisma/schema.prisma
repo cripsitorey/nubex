@@ -108,16 +108,29 @@ model Liquidacion {
   ventas   Venta[]
 }
 
+model PlanSuscripcion {
+  id                Int           @id @default(autoincrement())
+  nombre            String
+  diasEntreEntregas Int           @default(30)
+  precio            Float         @default(0)
+  limiteVapes       Int?          // Limite opcional de vapes por periodo
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  suscripciones     Suscripcion[]
+}
+
 model Suscripcion {
   id                Int      @id @default(autoincrement())
   clienteId         Int      @unique
+  planId            Int?     // Referencia opcional si aún no migramos todos
   activa            Boolean  @default(true)
-  diasEntreEntregas Int      @default(60)
+  diasEntreEntregas Int      @default(60) // Legacy
   multaFija         Float?
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
   cliente User @relation(fields: [clienteId], references: [id])
+  plan    PlanSuscripcion? @relation(fields: [planId], references: [id])
   entregas EntregaSuscripcion[]
 }
 

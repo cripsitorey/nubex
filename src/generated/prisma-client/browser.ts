@@ -43,6 +43,11 @@ export type Venta = Prisma.VentaModel
  */
 export type Liquidacion = Prisma.LiquidacionModel
 /**
+ * Model PlanSuscripcion
+ * 
+ */
+export type PlanSuscripcion = Prisma.PlanSuscripcionModel
+/**
  * Model Suscripcion
  * 
  */

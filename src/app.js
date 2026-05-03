@@ -23,6 +23,8 @@ import inventoryRoutes from './routes/inventory.routes.js';
 import salesRoutes from './routes/sales.routes.js';
 import liquidationRoutes from './routes/liquidation.routes.js';
 import subscriptionRoutes from './routes/subscription.routes.js';
+import vapeRoutes from './routes/vape.routes.js';
+import analyticsRoutes from './routes/analytics.routes.js';
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
@@ -30,6 +32,8 @@ app.use('/api/inventory', inventoryRoutes);
 app.use('/api/sales', salesRoutes);
 app.use('/api/liquidations', liquidationRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
+app.use('/api/vapes', vapeRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 // Manejo centralizado de errores
 app.use((err, req, res, next) => {

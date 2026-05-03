@@ -2,6 +2,8 @@ import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import BottomNav from "@/components/BottomNav";
 import CommandCenterProvider from "@/components/CommandCenterProvider";
+import NetworkProvider from "@/components/NetworkProvider";
+import { AuthProvider } from "@/hooks/useAuth";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -40,13 +42,18 @@ export default function RootLayout({ children }) {
       data-theme="nubexTheme"
     >
       <body className="h-full flex flex-col bg-base-100 text-base-content overflow-hidden">
-        <CommandCenterProvider>
-          <main className="flex-1 overflow-y-auto pb-16">
-            {children}
-          </main>
-          <BottomNav />
-        </CommandCenterProvider>
+        <AuthProvider>
+          <NetworkProvider>
+            <CommandCenterProvider>
+              <main className="flex-1 overflow-y-auto pb-16">
+                {children}
+              </main>
+              <BottomNav />
+            </CommandCenterProvider>
+          </NetworkProvider>
+        </AuthProvider>
       </body>
     </html>
   );
 }
+

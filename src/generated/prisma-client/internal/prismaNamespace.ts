@@ -389,6 +389,7 @@ export const ModelName = {
   InventarioVendedor: 'InventarioVendedor',
   Venta: 'Venta',
   Liquidacion: 'Liquidacion',
+  PlanSuscripcion: 'PlanSuscripcion',
   Suscripcion: 'Suscripcion',
   EntregaSuscripcion: 'EntregaSuscripcion',
   LogroFidelidad: 'LogroFidelidad'
@@ -407,7 +408,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "vape" | "inventarioVendedor" | "venta" | "liquidacion" | "suscripcion" | "entregaSuscripcion" | "logroFidelidad"
+    modelProps: "user" | "vape" | "inventarioVendedor" | "venta" | "liquidacion" | "planSuscripcion" | "suscripcion" | "entregaSuscripcion" | "logroFidelidad"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -781,6 +782,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    PlanSuscripcion: {
+      payload: Prisma.$PlanSuscripcionPayload<ExtArgs>
+      fields: Prisma.PlanSuscripcionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PlanSuscripcionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlanSuscripcionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PlanSuscripcionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlanSuscripcionPayload>
+        }
+        findFirst: {
+          args: Prisma.PlanSuscripcionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlanSuscripcionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PlanSuscripcionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlanSuscripcionPayload>
+        }
+        findMany: {
+          args: Prisma.PlanSuscripcionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlanSuscripcionPayload>[]
+        }
+        create: {
+          args: Prisma.PlanSuscripcionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlanSuscripcionPayload>
+        }
+        createMany: {
+          args: Prisma.PlanSuscripcionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PlanSuscripcionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlanSuscripcionPayload>[]
+        }
+        delete: {
+          args: Prisma.PlanSuscripcionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlanSuscripcionPayload>
+        }
+        update: {
+          args: Prisma.PlanSuscripcionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlanSuscripcionPayload>
+        }
+        deleteMany: {
+          args: Prisma.PlanSuscripcionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PlanSuscripcionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PlanSuscripcionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlanSuscripcionPayload>[]
+        }
+        upsert: {
+          args: Prisma.PlanSuscripcionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlanSuscripcionPayload>
+        }
+        aggregate: {
+          args: Prisma.PlanSuscripcionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePlanSuscripcion>
+        }
+        groupBy: {
+          args: Prisma.PlanSuscripcionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PlanSuscripcionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PlanSuscripcionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PlanSuscripcionCountAggregateOutputType> | number
+        }
+      }
+    }
     Suscripcion: {
       payload: Prisma.$SuscripcionPayload<ExtArgs>
       fields: Prisma.SuscripcionFieldRefs
@@ -1119,9 +1194,23 @@ export const LiquidacionScalarFieldEnum = {
 export type LiquidacionScalarFieldEnum = (typeof LiquidacionScalarFieldEnum)[keyof typeof LiquidacionScalarFieldEnum]
 
 
+export const PlanSuscripcionScalarFieldEnum = {
+  id: 'id',
+  nombre: 'nombre',
+  diasEntreEntregas: 'diasEntreEntregas',
+  precio: 'precio',
+  limiteVapes: 'limiteVapes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PlanSuscripcionScalarFieldEnum = (typeof PlanSuscripcionScalarFieldEnum)[keyof typeof PlanSuscripcionScalarFieldEnum]
+
+
 export const SuscripcionScalarFieldEnum = {
   id: 'id',
   clienteId: 'clienteId',
+  planId: 'planId',
   activa: 'activa',
   diasEntreEntregas: 'diasEntreEntregas',
   multaFija: 'multaFija',
@@ -1404,6 +1493,7 @@ export type GlobalOmitConfig = {
   inventarioVendedor?: Prisma.InventarioVendedorOmit
   venta?: Prisma.VentaOmit
   liquidacion?: Prisma.LiquidacionOmit
+  planSuscripcion?: Prisma.PlanSuscripcionOmit
   suscripcion?: Prisma.SuscripcionOmit
   entregaSuscripcion?: Prisma.EntregaSuscripcionOmit
   logroFidelidad?: Prisma.LogroFidelidadOmit

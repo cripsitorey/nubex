@@ -1,22 +1,43 @@
+"use client";
+
+import { useEffect } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
+import { Zap } from "lucide-react";
+
 export default function Home() {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (loading) return;
+
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+
+    // Redirigir según rol
+    switch (user.role) {
+      case "ADMIN":
+        router.push("/admin");
+        break;
+      case "VENDEDOR":
+        router.push("/vender");
+        break;
+      case "CLIENTE":
+      default:
+        router.push("/cliente");
+        break;
+    }
+  }, [user, loading, router]);
+
   return (
-    <div className="p-8">
-      <h1 className="text-4xl font-bold text-primary mb-4">Nubex Vapes</h1>
-      <p className="text-neutral-content/80 mb-8">
-        Sistema de inventario y ventas offline-first.
-      </p>
-      
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <div className="glass-card p-6 rounded-2xl">
-          <h2 className="text-xl font-semibold text-white mb-2">Presiona Ctrl + K</h2>
-          <p className="text-sm text-neutral-content/60">Para abrir el Command Center y navegar rápidamente.</p>
-        </div>
-        
-        <div className="glass-card p-6 rounded-2xl border-primary/20">
-          <h2 className="text-xl font-semibold text-success mb-2">Sincronización</h2>
-          <p className="text-sm text-neutral-content/60">Online - Datos actualizados.</p>
-        </div>
+    <div className="flex flex-col items-center justify-center h-full gap-4">
+      <div className="w-16 h-16 bg-primary/20 rounded-2xl flex items-center justify-center shadow-[0_0_30px_rgba(0,229,255,0.3)] animate-pulse">
+        <Zap className="w-8 h-8 text-primary" />
       </div>
+      <p className="text-neutral-content/60 text-sm">Cargando Nubex...</p>
     </div>
   );
 }

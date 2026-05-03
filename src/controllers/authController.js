@@ -44,7 +44,8 @@ export const login = async (req, res, next) => {
       where: {
         OR: [
           { cedula: identifier },
-          { telefono: identifier }
+          { telefono: identifier },
+          { email: identifier }
         ]
       }
     });

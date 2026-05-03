@@ -56,6 +56,7 @@ export const ModelName = {
   InventarioVendedor: 'InventarioVendedor',
   Venta: 'Venta',
   Liquidacion: 'Liquidacion',
+  PlanSuscripcion: 'PlanSuscripcion',
   Suscripcion: 'Suscripcion',
   EntregaSuscripcion: 'EntregaSuscripcion',
   LogroFidelidad: 'LogroFidelidad'
@@ -154,9 +155,23 @@ export const LiquidacionScalarFieldEnum = {
 export type LiquidacionScalarFieldEnum = (typeof LiquidacionScalarFieldEnum)[keyof typeof LiquidacionScalarFieldEnum]
 
 
+export const PlanSuscripcionScalarFieldEnum = {
+  id: 'id',
+  nombre: 'nombre',
+  diasEntreEntregas: 'diasEntreEntregas',
+  precio: 'precio',
+  limiteVapes: 'limiteVapes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PlanSuscripcionScalarFieldEnum = (typeof PlanSuscripcionScalarFieldEnum)[keyof typeof PlanSuscripcionScalarFieldEnum]
+
+
 export const SuscripcionScalarFieldEnum = {
   id: 'id',
   clienteId: 'clienteId',
+  planId: 'planId',
   activa: 'activa',
   diasEntreEntregas: 'diasEntreEntregas',
   multaFija: 'multaFija',

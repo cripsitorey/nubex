@@ -121,3 +121,60 @@ export const deliverSubscription = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getPlans = async (req, res, next) => {
+  try {
+    const planes = await prisma.planSuscripcion.findMany({
+      orderBy: { createdAt: 'asc' }
+    });
+    res.json(planes);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const createPlan = async (req, res, next) => {
+  try {
+    const { nombre, diasEntreEntregas, precio, limiteVapes } = req.body;
+    const plan = await prisma.planSuscripcion.create({
+      data: {
+        nombre,
+        diasEntreEntregas: parseInt(diasEntreEntregas),
+        precio: parseFloat(precio),
+        limiteVapes: limiteVapes ? parseInt(limiteVapes) : null
+      }
+    });
+    res.status(201).json(plan);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updatePlan = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { nombre, diasEntreEntregas, precio, limiteVapes } = req.body;
+    const plan = await prisma.planSuscripcion.update({
+      where: { id: parseInt(id) },
+      data: {
+        nombre,
+        diasEntreEntregas: parseInt(diasEntreEntregas),
+        precio: parseFloat(precio),
+        limiteVapes: limiteVapes ? parseInt(limiteVapes) : null
+      }
+    });
+    res.json(plan);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deletePlan = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    await prisma.planSuscripcion.delete({ where: { id: parseInt(id) } });
+    res.json({ message: 'Plan eliminado' });
+  } catch (error) {
+    next(error);
+  }
+};

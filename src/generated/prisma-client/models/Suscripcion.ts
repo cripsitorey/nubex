@@ -29,6 +29,7 @@ export type AggregateSuscripcion = {
 export type SuscripcionAvgAggregateOutputType = {
   id: number | null
   clienteId: number | null
+  planId: number | null
   diasEntreEntregas: number | null
   multaFija: number | null
 }
@@ -36,6 +37,7 @@ export type SuscripcionAvgAggregateOutputType = {
 export type SuscripcionSumAggregateOutputType = {
   id: number | null
   clienteId: number | null
+  planId: number | null
   diasEntreEntregas: number | null
   multaFija: number | null
 }
@@ -43,6 +45,7 @@ export type SuscripcionSumAggregateOutputType = {
 export type SuscripcionMinAggregateOutputType = {
   id: number | null
   clienteId: number | null
+  planId: number | null
   activa: boolean | null
   diasEntreEntregas: number | null
   multaFija: number | null
@@ -53,6 +56,7 @@ export type SuscripcionMinAggregateOutputType = {
 export type SuscripcionMaxAggregateOutputType = {
   id: number | null
   clienteId: number | null
+  planId: number | null
   activa: boolean | null
   diasEntreEntregas: number | null
   multaFija: number | null
@@ -63,6 +67,7 @@ export type SuscripcionMaxAggregateOutputType = {
 export type SuscripcionCountAggregateOutputType = {
   id: number
   clienteId: number
+  planId: number
   activa: number
   diasEntreEntregas: number
   multaFija: number
@@ -75,6 +80,7 @@ export type SuscripcionCountAggregateOutputType = {
 export type SuscripcionAvgAggregateInputType = {
   id?: true
   clienteId?: true
+  planId?: true
   diasEntreEntregas?: true
   multaFija?: true
 }
@@ -82,6 +88,7 @@ export type SuscripcionAvgAggregateInputType = {
 export type SuscripcionSumAggregateInputType = {
   id?: true
   clienteId?: true
+  planId?: true
   diasEntreEntregas?: true
   multaFija?: true
 }
@@ -89,6 +96,7 @@ export type SuscripcionSumAggregateInputType = {
 export type SuscripcionMinAggregateInputType = {
   id?: true
   clienteId?: true
+  planId?: true
   activa?: true
   diasEntreEntregas?: true
   multaFija?: true
@@ -99,6 +107,7 @@ export type SuscripcionMinAggregateInputType = {
 export type SuscripcionMaxAggregateInputType = {
   id?: true
   clienteId?: true
+  planId?: true
   activa?: true
   diasEntreEntregas?: true
   multaFija?: true
@@ -109,6 +118,7 @@ export type SuscripcionMaxAggregateInputType = {
 export type SuscripcionCountAggregateInputType = {
   id?: true
   clienteId?: true
+  planId?: true
   activa?: true
   diasEntreEntregas?: true
   multaFija?: true
@@ -206,6 +216,7 @@ export type SuscripcionGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inte
 export type SuscripcionGroupByOutputType = {
   id: number
   clienteId: number
+  planId: number | null
   activa: boolean
   diasEntreEntregas: number
   multaFija: number | null
@@ -239,24 +250,28 @@ export type SuscripcionWhereInput = {
   NOT?: Prisma.SuscripcionWhereInput | Prisma.SuscripcionWhereInput[]
   id?: Prisma.IntFilter<"Suscripcion"> | number
   clienteId?: Prisma.IntFilter<"Suscripcion"> | number
+  planId?: Prisma.IntNullableFilter<"Suscripcion"> | number | null
   activa?: Prisma.BoolFilter<"Suscripcion"> | boolean
   diasEntreEntregas?: Prisma.IntFilter<"Suscripcion"> | number
   multaFija?: Prisma.FloatNullableFilter<"Suscripcion"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Suscripcion"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Suscripcion"> | Date | string
   cliente?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  plan?: Prisma.XOR<Prisma.PlanSuscripcionNullableScalarRelationFilter, Prisma.PlanSuscripcionWhereInput> | null
   entregas?: Prisma.EntregaSuscripcionListRelationFilter
 }
 
 export type SuscripcionOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   clienteId?: Prisma.SortOrder
+  planId?: Prisma.SortOrderInput | Prisma.SortOrder
   activa?: Prisma.SortOrder
   diasEntreEntregas?: Prisma.SortOrder
   multaFija?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   cliente?: Prisma.UserOrderByWithRelationInput
+  plan?: Prisma.PlanSuscripcionOrderByWithRelationInput
   entregas?: Prisma.EntregaSuscripcionOrderByRelationAggregateInput
 }
 
@@ -266,18 +281,21 @@ export type SuscripcionWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.SuscripcionWhereInput | Prisma.SuscripcionWhereInput[]
   OR?: Prisma.SuscripcionWhereInput[]
   NOT?: Prisma.SuscripcionWhereInput | Prisma.SuscripcionWhereInput[]
+  planId?: Prisma.IntNullableFilter<"Suscripcion"> | number | null
   activa?: Prisma.BoolFilter<"Suscripcion"> | boolean
   diasEntreEntregas?: Prisma.IntFilter<"Suscripcion"> | number
   multaFija?: Prisma.FloatNullableFilter<"Suscripcion"> | number | null
   createdAt?: Prisma.DateTimeFilter<"Suscripcion"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Suscripcion"> | Date | string
   cliente?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  plan?: Prisma.XOR<Prisma.PlanSuscripcionNullableScalarRelationFilter, Prisma.PlanSuscripcionWhereInput> | null
   entregas?: Prisma.EntregaSuscripcionListRelationFilter
 }, "id" | "clienteId">
 
 export type SuscripcionOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   clienteId?: Prisma.SortOrder
+  planId?: Prisma.SortOrderInput | Prisma.SortOrder
   activa?: Prisma.SortOrder
   diasEntreEntregas?: Prisma.SortOrder
   multaFija?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -296,6 +314,7 @@ export type SuscripcionScalarWhereWithAggregatesInput = {
   NOT?: Prisma.SuscripcionScalarWhereWithAggregatesInput | Prisma.SuscripcionScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"Suscripcion"> | number
   clienteId?: Prisma.IntWithAggregatesFilter<"Suscripcion"> | number
+  planId?: Prisma.IntNullableWithAggregatesFilter<"Suscripcion"> | number | null
   activa?: Prisma.BoolWithAggregatesFilter<"Suscripcion"> | boolean
   diasEntreEntregas?: Prisma.IntWithAggregatesFilter<"Suscripcion"> | number
   multaFija?: Prisma.FloatNullableWithAggregatesFilter<"Suscripcion"> | number | null
@@ -310,12 +329,14 @@ export type SuscripcionCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   cliente: Prisma.UserCreateNestedOneWithoutSuscripcionInput
+  plan?: Prisma.PlanSuscripcionCreateNestedOneWithoutSuscripcionesInput
   entregas?: Prisma.EntregaSuscripcionCreateNestedManyWithoutSuscripcionInput
 }
 
 export type SuscripcionUncheckedCreateInput = {
   id?: number
   clienteId: number
+  planId?: number | null
   activa?: boolean
   diasEntreEntregas?: number
   multaFija?: number | null
@@ -331,12 +352,14 @@ export type SuscripcionUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   cliente?: Prisma.UserUpdateOneRequiredWithoutSuscripcionNestedInput
+  plan?: Prisma.PlanSuscripcionUpdateOneWithoutSuscripcionesNestedInput
   entregas?: Prisma.EntregaSuscripcionUpdateManyWithoutSuscripcionNestedInput
 }
 
 export type SuscripcionUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   clienteId?: Prisma.IntFieldUpdateOperationsInput | number
+  planId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   activa?: Prisma.BoolFieldUpdateOperationsInput | boolean
   diasEntreEntregas?: Prisma.IntFieldUpdateOperationsInput | number
   multaFija?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
@@ -348,6 +371,7 @@ export type SuscripcionUncheckedUpdateInput = {
 export type SuscripcionCreateManyInput = {
   id?: number
   clienteId: number
+  planId?: number | null
   activa?: boolean
   diasEntreEntregas?: number
   multaFija?: number | null
@@ -366,6 +390,7 @@ export type SuscripcionUpdateManyMutationInput = {
 export type SuscripcionUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   clienteId?: Prisma.IntFieldUpdateOperationsInput | number
+  planId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   activa?: Prisma.BoolFieldUpdateOperationsInput | boolean
   diasEntreEntregas?: Prisma.IntFieldUpdateOperationsInput | number
   multaFija?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
@@ -378,9 +403,20 @@ export type SuscripcionNullableScalarRelationFilter = {
   isNot?: Prisma.SuscripcionWhereInput | null
 }
 
+export type SuscripcionListRelationFilter = {
+  every?: Prisma.SuscripcionWhereInput
+  some?: Prisma.SuscripcionWhereInput
+  none?: Prisma.SuscripcionWhereInput
+}
+
+export type SuscripcionOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
+}
+
 export type SuscripcionCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   clienteId?: Prisma.SortOrder
+  planId?: Prisma.SortOrder
   activa?: Prisma.SortOrder
   diasEntreEntregas?: Prisma.SortOrder
   multaFija?: Prisma.SortOrder
@@ -391,6 +427,7 @@ export type SuscripcionCountOrderByAggregateInput = {
 export type SuscripcionAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
   clienteId?: Prisma.SortOrder
+  planId?: Prisma.SortOrder
   diasEntreEntregas?: Prisma.SortOrder
   multaFija?: Prisma.SortOrder
 }
@@ -398,6 +435,7 @@ export type SuscripcionAvgOrderByAggregateInput = {
 export type SuscripcionMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   clienteId?: Prisma.SortOrder
+  planId?: Prisma.SortOrder
   activa?: Prisma.SortOrder
   diasEntreEntregas?: Prisma.SortOrder
   multaFija?: Prisma.SortOrder
@@ -408,6 +446,7 @@ export type SuscripcionMaxOrderByAggregateInput = {
 export type SuscripcionMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   clienteId?: Prisma.SortOrder
+  planId?: Prisma.SortOrder
   activa?: Prisma.SortOrder
   diasEntreEntregas?: Prisma.SortOrder
   multaFija?: Prisma.SortOrder
@@ -418,6 +457,7 @@ export type SuscripcionMinOrderByAggregateInput = {
 export type SuscripcionSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   clienteId?: Prisma.SortOrder
+  planId?: Prisma.SortOrder
   diasEntreEntregas?: Prisma.SortOrder
   multaFija?: Prisma.SortOrder
 }
@@ -459,6 +499,48 @@ export type SuscripcionUncheckedUpdateOneWithoutClienteNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.SuscripcionUpdateToOneWithWhereWithoutClienteInput, Prisma.SuscripcionUpdateWithoutClienteInput>, Prisma.SuscripcionUncheckedUpdateWithoutClienteInput>
 }
 
+export type SuscripcionCreateNestedManyWithoutPlanInput = {
+  create?: Prisma.XOR<Prisma.SuscripcionCreateWithoutPlanInput, Prisma.SuscripcionUncheckedCreateWithoutPlanInput> | Prisma.SuscripcionCreateWithoutPlanInput[] | Prisma.SuscripcionUncheckedCreateWithoutPlanInput[]
+  connectOrCreate?: Prisma.SuscripcionCreateOrConnectWithoutPlanInput | Prisma.SuscripcionCreateOrConnectWithoutPlanInput[]
+  createMany?: Prisma.SuscripcionCreateManyPlanInputEnvelope
+  connect?: Prisma.SuscripcionWhereUniqueInput | Prisma.SuscripcionWhereUniqueInput[]
+}
+
+export type SuscripcionUncheckedCreateNestedManyWithoutPlanInput = {
+  create?: Prisma.XOR<Prisma.SuscripcionCreateWithoutPlanInput, Prisma.SuscripcionUncheckedCreateWithoutPlanInput> | Prisma.SuscripcionCreateWithoutPlanInput[] | Prisma.SuscripcionUncheckedCreateWithoutPlanInput[]
+  connectOrCreate?: Prisma.SuscripcionCreateOrConnectWithoutPlanInput | Prisma.SuscripcionCreateOrConnectWithoutPlanInput[]
+  createMany?: Prisma.SuscripcionCreateManyPlanInputEnvelope
+  connect?: Prisma.SuscripcionWhereUniqueInput | Prisma.SuscripcionWhereUniqueInput[]
+}
+
+export type SuscripcionUpdateManyWithoutPlanNestedInput = {
+  create?: Prisma.XOR<Prisma.SuscripcionCreateWithoutPlanInput, Prisma.SuscripcionUncheckedCreateWithoutPlanInput> | Prisma.SuscripcionCreateWithoutPlanInput[] | Prisma.SuscripcionUncheckedCreateWithoutPlanInput[]
+  connectOrCreate?: Prisma.SuscripcionCreateOrConnectWithoutPlanInput | Prisma.SuscripcionCreateOrConnectWithoutPlanInput[]
+  upsert?: Prisma.SuscripcionUpsertWithWhereUniqueWithoutPlanInput | Prisma.SuscripcionUpsertWithWhereUniqueWithoutPlanInput[]
+  createMany?: Prisma.SuscripcionCreateManyPlanInputEnvelope
+  set?: Prisma.SuscripcionWhereUniqueInput | Prisma.SuscripcionWhereUniqueInput[]
+  disconnect?: Prisma.SuscripcionWhereUniqueInput | Prisma.SuscripcionWhereUniqueInput[]
+  delete?: Prisma.SuscripcionWhereUniqueInput | Prisma.SuscripcionWhereUniqueInput[]
+  connect?: Prisma.SuscripcionWhereUniqueInput | Prisma.SuscripcionWhereUniqueInput[]
+  update?: Prisma.SuscripcionUpdateWithWhereUniqueWithoutPlanInput | Prisma.SuscripcionUpdateWithWhereUniqueWithoutPlanInput[]
+  updateMany?: Prisma.SuscripcionUpdateManyWithWhereWithoutPlanInput | Prisma.SuscripcionUpdateManyWithWhereWithoutPlanInput[]
+  deleteMany?: Prisma.SuscripcionScalarWhereInput | Prisma.SuscripcionScalarWhereInput[]
+}
+
+export type SuscripcionUncheckedUpdateManyWithoutPlanNestedInput = {
+  create?: Prisma.XOR<Prisma.SuscripcionCreateWithoutPlanInput, Prisma.SuscripcionUncheckedCreateWithoutPlanInput> | Prisma.SuscripcionCreateWithoutPlanInput[] | Prisma.SuscripcionUncheckedCreateWithoutPlanInput[]
+  connectOrCreate?: Prisma.SuscripcionCreateOrConnectWithoutPlanInput | Prisma.SuscripcionCreateOrConnectWithoutPlanInput[]
+  upsert?: Prisma.SuscripcionUpsertWithWhereUniqueWithoutPlanInput | Prisma.SuscripcionUpsertWithWhereUniqueWithoutPlanInput[]
+  createMany?: Prisma.SuscripcionCreateManyPlanInputEnvelope
+  set?: Prisma.SuscripcionWhereUniqueInput | Prisma.SuscripcionWhereUniqueInput[]
+  disconnect?: Prisma.SuscripcionWhereUniqueInput | Prisma.SuscripcionWhereUniqueInput[]
+  delete?: Prisma.SuscripcionWhereUniqueInput | Prisma.SuscripcionWhereUniqueInput[]
+  connect?: Prisma.SuscripcionWhereUniqueInput | Prisma.SuscripcionWhereUniqueInput[]
+  update?: Prisma.SuscripcionUpdateWithWhereUniqueWithoutPlanInput | Prisma.SuscripcionUpdateWithWhereUniqueWithoutPlanInput[]
+  updateMany?: Prisma.SuscripcionUpdateManyWithWhereWithoutPlanInput | Prisma.SuscripcionUpdateManyWithWhereWithoutPlanInput[]
+  deleteMany?: Prisma.SuscripcionScalarWhereInput | Prisma.SuscripcionScalarWhereInput[]
+}
+
 export type NullableFloatFieldUpdateOperationsInput = {
   set?: number | null
   increment?: number
@@ -487,11 +569,13 @@ export type SuscripcionCreateWithoutClienteInput = {
   multaFija?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  plan?: Prisma.PlanSuscripcionCreateNestedOneWithoutSuscripcionesInput
   entregas?: Prisma.EntregaSuscripcionCreateNestedManyWithoutSuscripcionInput
 }
 
 export type SuscripcionUncheckedCreateWithoutClienteInput = {
   id?: number
+  planId?: number | null
   activa?: boolean
   diasEntreEntregas?: number
   multaFija?: number | null
@@ -522,17 +606,80 @@ export type SuscripcionUpdateWithoutClienteInput = {
   multaFija?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  plan?: Prisma.PlanSuscripcionUpdateOneWithoutSuscripcionesNestedInput
   entregas?: Prisma.EntregaSuscripcionUpdateManyWithoutSuscripcionNestedInput
 }
 
 export type SuscripcionUncheckedUpdateWithoutClienteInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  planId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   activa?: Prisma.BoolFieldUpdateOperationsInput | boolean
   diasEntreEntregas?: Prisma.IntFieldUpdateOperationsInput | number
   multaFija?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   entregas?: Prisma.EntregaSuscripcionUncheckedUpdateManyWithoutSuscripcionNestedInput
+}
+
+export type SuscripcionCreateWithoutPlanInput = {
+  activa?: boolean
+  diasEntreEntregas?: number
+  multaFija?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  cliente: Prisma.UserCreateNestedOneWithoutSuscripcionInput
+  entregas?: Prisma.EntregaSuscripcionCreateNestedManyWithoutSuscripcionInput
+}
+
+export type SuscripcionUncheckedCreateWithoutPlanInput = {
+  id?: number
+  clienteId: number
+  activa?: boolean
+  diasEntreEntregas?: number
+  multaFija?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  entregas?: Prisma.EntregaSuscripcionUncheckedCreateNestedManyWithoutSuscripcionInput
+}
+
+export type SuscripcionCreateOrConnectWithoutPlanInput = {
+  where: Prisma.SuscripcionWhereUniqueInput
+  create: Prisma.XOR<Prisma.SuscripcionCreateWithoutPlanInput, Prisma.SuscripcionUncheckedCreateWithoutPlanInput>
+}
+
+export type SuscripcionCreateManyPlanInputEnvelope = {
+  data: Prisma.SuscripcionCreateManyPlanInput | Prisma.SuscripcionCreateManyPlanInput[]
+  skipDuplicates?: boolean
+}
+
+export type SuscripcionUpsertWithWhereUniqueWithoutPlanInput = {
+  where: Prisma.SuscripcionWhereUniqueInput
+  update: Prisma.XOR<Prisma.SuscripcionUpdateWithoutPlanInput, Prisma.SuscripcionUncheckedUpdateWithoutPlanInput>
+  create: Prisma.XOR<Prisma.SuscripcionCreateWithoutPlanInput, Prisma.SuscripcionUncheckedCreateWithoutPlanInput>
+}
+
+export type SuscripcionUpdateWithWhereUniqueWithoutPlanInput = {
+  where: Prisma.SuscripcionWhereUniqueInput
+  data: Prisma.XOR<Prisma.SuscripcionUpdateWithoutPlanInput, Prisma.SuscripcionUncheckedUpdateWithoutPlanInput>
+}
+
+export type SuscripcionUpdateManyWithWhereWithoutPlanInput = {
+  where: Prisma.SuscripcionScalarWhereInput
+  data: Prisma.XOR<Prisma.SuscripcionUpdateManyMutationInput, Prisma.SuscripcionUncheckedUpdateManyWithoutPlanInput>
+}
+
+export type SuscripcionScalarWhereInput = {
+  AND?: Prisma.SuscripcionScalarWhereInput | Prisma.SuscripcionScalarWhereInput[]
+  OR?: Prisma.SuscripcionScalarWhereInput[]
+  NOT?: Prisma.SuscripcionScalarWhereInput | Prisma.SuscripcionScalarWhereInput[]
+  id?: Prisma.IntFilter<"Suscripcion"> | number
+  clienteId?: Prisma.IntFilter<"Suscripcion"> | number
+  planId?: Prisma.IntNullableFilter<"Suscripcion"> | number | null
+  activa?: Prisma.BoolFilter<"Suscripcion"> | boolean
+  diasEntreEntregas?: Prisma.IntFilter<"Suscripcion"> | number
+  multaFija?: Prisma.FloatNullableFilter<"Suscripcion"> | number | null
+  createdAt?: Prisma.DateTimeFilter<"Suscripcion"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Suscripcion"> | Date | string
 }
 
 export type SuscripcionCreateWithoutEntregasInput = {
@@ -542,11 +689,13 @@ export type SuscripcionCreateWithoutEntregasInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   cliente: Prisma.UserCreateNestedOneWithoutSuscripcionInput
+  plan?: Prisma.PlanSuscripcionCreateNestedOneWithoutSuscripcionesInput
 }
 
 export type SuscripcionUncheckedCreateWithoutEntregasInput = {
   id?: number
   clienteId: number
+  planId?: number | null
   activa?: boolean
   diasEntreEntregas?: number
   multaFija?: number | null
@@ -577,9 +726,52 @@ export type SuscripcionUpdateWithoutEntregasInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   cliente?: Prisma.UserUpdateOneRequiredWithoutSuscripcionNestedInput
+  plan?: Prisma.PlanSuscripcionUpdateOneWithoutSuscripcionesNestedInput
 }
 
 export type SuscripcionUncheckedUpdateWithoutEntregasInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  clienteId?: Prisma.IntFieldUpdateOperationsInput | number
+  planId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  activa?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  diasEntreEntregas?: Prisma.IntFieldUpdateOperationsInput | number
+  multaFija?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type SuscripcionCreateManyPlanInput = {
+  id?: number
+  clienteId: number
+  activa?: boolean
+  diasEntreEntregas?: number
+  multaFija?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type SuscripcionUpdateWithoutPlanInput = {
+  activa?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  diasEntreEntregas?: Prisma.IntFieldUpdateOperationsInput | number
+  multaFija?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  cliente?: Prisma.UserUpdateOneRequiredWithoutSuscripcionNestedInput
+  entregas?: Prisma.EntregaSuscripcionUpdateManyWithoutSuscripcionNestedInput
+}
+
+export type SuscripcionUncheckedUpdateWithoutPlanInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  clienteId?: Prisma.IntFieldUpdateOperationsInput | number
+  activa?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  diasEntreEntregas?: Prisma.IntFieldUpdateOperationsInput | number
+  multaFija?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  entregas?: Prisma.EntregaSuscripcionUncheckedUpdateManyWithoutSuscripcionNestedInput
+}
+
+export type SuscripcionUncheckedUpdateManyWithoutPlanInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   clienteId?: Prisma.IntFieldUpdateOperationsInput | number
   activa?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -623,12 +815,14 @@ export type SuscripcionCountOutputTypeCountEntregasArgs<ExtArgs extends runtime.
 export type SuscripcionSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   clienteId?: boolean
+  planId?: boolean
   activa?: boolean
   diasEntreEntregas?: boolean
   multaFija?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   cliente?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  plan?: boolean | Prisma.Suscripcion$planArgs<ExtArgs>
   entregas?: boolean | Prisma.Suscripcion$entregasArgs<ExtArgs>
   _count?: boolean | Prisma.SuscripcionCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["suscripcion"]>
@@ -636,28 +830,33 @@ export type SuscripcionSelect<ExtArgs extends runtime.Types.Extensions.InternalA
 export type SuscripcionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   clienteId?: boolean
+  planId?: boolean
   activa?: boolean
   diasEntreEntregas?: boolean
   multaFija?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   cliente?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  plan?: boolean | Prisma.Suscripcion$planArgs<ExtArgs>
 }, ExtArgs["result"]["suscripcion"]>
 
 export type SuscripcionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   clienteId?: boolean
+  planId?: boolean
   activa?: boolean
   diasEntreEntregas?: boolean
   multaFija?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   cliente?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  plan?: boolean | Prisma.Suscripcion$planArgs<ExtArgs>
 }, ExtArgs["result"]["suscripcion"]>
 
 export type SuscripcionSelectScalar = {
   id?: boolean
   clienteId?: boolean
+  planId?: boolean
   activa?: boolean
   diasEntreEntregas?: boolean
   multaFija?: boolean
@@ -665,28 +864,33 @@ export type SuscripcionSelectScalar = {
   updatedAt?: boolean
 }
 
-export type SuscripcionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clienteId" | "activa" | "diasEntreEntregas" | "multaFija" | "createdAt" | "updatedAt", ExtArgs["result"]["suscripcion"]>
+export type SuscripcionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clienteId" | "planId" | "activa" | "diasEntreEntregas" | "multaFija" | "createdAt" | "updatedAt", ExtArgs["result"]["suscripcion"]>
 export type SuscripcionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   cliente?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  plan?: boolean | Prisma.Suscripcion$planArgs<ExtArgs>
   entregas?: boolean | Prisma.Suscripcion$entregasArgs<ExtArgs>
   _count?: boolean | Prisma.SuscripcionCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type SuscripcionIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   cliente?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  plan?: boolean | Prisma.Suscripcion$planArgs<ExtArgs>
 }
 export type SuscripcionIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   cliente?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  plan?: boolean | Prisma.Suscripcion$planArgs<ExtArgs>
 }
 
 export type $SuscripcionPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Suscripcion"
   objects: {
     cliente: Prisma.$UserPayload<ExtArgs>
+    plan: Prisma.$PlanSuscripcionPayload<ExtArgs> | null
     entregas: Prisma.$EntregaSuscripcionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     clienteId: number
+    planId: number | null
     activa: boolean
     diasEntreEntregas: number
     multaFija: number | null
@@ -1087,6 +1291,7 @@ readonly fields: SuscripcionFieldRefs;
 export interface Prisma__SuscripcionClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   cliente<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  plan<T extends Prisma.Suscripcion$planArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Suscripcion$planArgs<ExtArgs>>): Prisma.Prisma__PlanSuscripcionClient<runtime.Types.Result.GetResult<Prisma.$PlanSuscripcionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   entregas<T extends Prisma.Suscripcion$entregasArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Suscripcion$entregasArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EntregaSuscripcionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1119,6 +1324,7 @@ export interface Prisma__SuscripcionClient<T, Null = never, ExtArgs extends runt
 export interface SuscripcionFieldRefs {
   readonly id: Prisma.FieldRef<"Suscripcion", 'Int'>
   readonly clienteId: Prisma.FieldRef<"Suscripcion", 'Int'>
+  readonly planId: Prisma.FieldRef<"Suscripcion", 'Int'>
   readonly activa: Prisma.FieldRef<"Suscripcion", 'Boolean'>
   readonly diasEntreEntregas: Prisma.FieldRef<"Suscripcion", 'Int'>
   readonly multaFija: Prisma.FieldRef<"Suscripcion", 'Float'>
@@ -1522,6 +1728,25 @@ export type SuscripcionDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.I
    * Limit how many Suscripcions to delete.
    */
   limit?: number
+}
+
+/**
+ * Suscripcion.plan
+ */
+export type Suscripcion$planArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PlanSuscripcion
+   */
+  select?: Prisma.PlanSuscripcionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PlanSuscripcion
+   */
+  omit?: Prisma.PlanSuscripcionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PlanSuscripcionInclude<ExtArgs> | null
+  where?: Prisma.PlanSuscripcionWhereInput
 }
 
 /**
