@@ -3,8 +3,22 @@ import { prisma } from '../prisma.js';
 // Obtener todos los vapes
 export const getVapes = async (req, res, next) => {
   try {
-    const vapes = await prisma.vape.findMany();
-    res.json(vapes);
+    const vapes = await prisma.vape.findMany({
+      include: {
+        inventarios: true
+      }
+    });
+    
+    const vapesConStock = vapes.map(v => {
+      const stockVendedores = v.inventarios.reduce((acc, inv) => acc + inv.cantidad, 0);
+      const { inventarios, ...vapeRest } = v;
+      return {
+        ...vapeRest,
+        stockTotal: v.stockGlobal + stockVendedores
+      };
+    });
+    
+    res.json(vapesConStock);
   } catch (error) {
     next(error);
   }

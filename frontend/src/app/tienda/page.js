@@ -99,7 +99,7 @@ export default function TiendaPage() {
                   ) : (
                     <PackageSearch className="w-8 h-8 text-neutral-content/20" />
                   )}
-                  {vape.stockGlobal <= 0 && (
+                  {vape.stockTotal !== undefined && vape.stockTotal <= 0 && (
                     <div className="absolute inset-0 bg-base-100/80 backdrop-blur-sm flex items-center justify-center">
                       <span className="bg-error text-error-content text-xs font-bold px-2 py-1 rounded-full">
                         Agotado
@@ -115,7 +115,7 @@ export default function TiendaPage() {
                     <p className="text-lg text-primary font-bold">
                       {vape.mostrarPrecio !== false ? `$${parseFloat(vape.precio).toFixed(2)}` : "Consultar"}
                     </p>
-                    {vape.stockGlobal > 0 && vape.stockGlobal <= 3 && (
+                    {vape.stockTotal !== undefined && vape.stockTotal > 0 && vape.stockTotal <= 3 && (
                       <span className="text-[10px] text-warning uppercase font-mono font-bold">
                         Pocas unidades
                       </span>
@@ -205,12 +205,12 @@ export default function TiendaPage() {
                   </p>
                 </div>
 
-                {selectedVape.stockGlobal > 3 ? (
+                {selectedVape.stockTotal !== undefined && selectedVape.stockTotal > 3 ? (
                   <div className="inline-flex items-center gap-2 bg-success/10 text-success px-3 py-1.5 rounded-xl text-sm font-bold">
                     <div className="w-2 h-2 rounded-full bg-success animate-pulse"></div>
                     Disponible en Tienda
                   </div>
-                ) : selectedVape.stockGlobal > 0 ? (
+                ) : selectedVape.stockTotal !== undefined && selectedVape.stockTotal > 0 ? (
                   <div className="inline-flex items-center gap-2 bg-warning/10 text-warning px-3 py-1.5 rounded-xl text-sm font-bold">
                     <div className="w-2 h-2 rounded-full bg-warning animate-pulse"></div>
                     Pocas unidades restantes

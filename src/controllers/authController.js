@@ -71,3 +71,30 @@ export const login = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getMe = async (req, res, next) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.id },
+      include: {
+        suscripcion: true,
+        logros: {
+          where: { reclamado: false }
+        },
+        ventasCompradas: {
+          include: { vape: true },
+          orderBy: { createdAt: 'desc' }
+        }
+      }
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
+    const { password: _, ...userWithoutPassword } = user;
+    res.json(userWithoutPassword);
+  } catch (error) {
+    next(error);
+  }
+};

@@ -23,7 +23,9 @@ export default function CasualView({ user }) {
         if (navigator.onLine) {
           const data = await getVapes();
           const vapesArr = Array.isArray(data) ? data : data.data || [];
-          setVapes(vapesArr);
+          // Filtrar vapes agotados globalmente
+          const availableVapes = vapesArr.filter(v => typeof v.stockTotal !== 'undefined' ? v.stockTotal > 0 : true);
+          setVapes(availableVapes);
           setLoading(false);
           return;
         }
@@ -32,7 +34,9 @@ export default function CasualView({ user }) {
       }
 
       const { vapes } = await getCachedCatalog();
-      setVapes(vapes || []);
+      // Filtrar vapes agotados globalmente
+      const availableVapes = (vapes || []).filter(v => typeof v.stockTotal !== 'undefined' ? v.stockTotal > 0 : true);
+      setVapes(availableVapes);
       setLoading(false);
     }
     loadCatalog();
@@ -57,9 +61,16 @@ export default function CasualView({ user }) {
           </div>
         </div>
 
-        <p className="text-sm text-neutral-content/70 mb-4">
-          ¡Estás a <span className="text-white font-bold">{MAX_VAPES - progreso}</span> vapes de llevarte uno gratis!
-        </p>
+        {user.logros && user.logros.length > 0 ? (
+          <div className="bg-success/20 text-success-content p-3 rounded-xl mb-4 text-sm font-bold flex items-center gap-2">
+            <Gift className="w-4 h-4" />
+            ¡Tienes un vape gratis esperando! Pídelo en tu próxima compra.
+          </div>
+        ) : (
+          <p className="text-sm text-neutral-content/70 mb-4">
+            ¡Estás a <span className="text-white font-bold">{MAX_VAPES - progreso}</span> vapes de llevarte uno gratis!
+          </p>
+        )}
 
         <div className="w-full h-3 bg-base-300 rounded-full overflow-hidden">
           <div 

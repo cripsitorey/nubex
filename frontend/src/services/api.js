@@ -103,6 +103,12 @@ export function isAuthenticated() {
   return !!getToken();
 }
 
+export async function getMe() {
+  const res = await apiFetch("/auth/me");
+  if (!res.ok) throw new Error("Error al obtener perfil");
+  return res.json();
+}
+
 // ─── VAPES ────────────────────────────────────────────────────────────────────
 
 export async function getVapes() {

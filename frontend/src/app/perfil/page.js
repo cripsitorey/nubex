@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuth } from "@/hooks/useAuth";
-import { UserCircle, LogOut } from "lucide-react";
+import { UserCircle, LogOut, Gift, Clock, ShoppingBag } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -47,6 +47,51 @@ export default function Perfil() {
             <span className="text-sm text-white font-mono">{user.cedula}</span>
           </div>
         </div>
+
+        {/* Premios sin canjear */}
+        {user.logros && user.logros.length > 0 && (
+          <div className="bg-primary/20 border border-primary/30 p-4 rounded-2xl mb-8 flex items-start gap-3">
+            <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+              <Gift className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <h3 className="text-white font-bold text-sm">¡Tienes un premio sin canjear!</h3>
+              <p className="text-xs text-neutral-content/80 mt-1">Has alcanzado tu meta de fidelidad y tienes un vape gratis esperándote. Pídelo a tu vendedor.</p>
+            </div>
+          </div>
+        )}
+
+        {/* Historial de Compras */}
+        {user.role === 'CLIENTE' && (
+          <div className="mb-8">
+            <h3 className="text-lg font-bold text-white flex items-center gap-2 mb-4">
+              <Clock className="w-5 h-5 text-primary" />
+              Historial de Compras
+            </h3>
+            
+            {!user.ventasCompradas || user.ventasCompradas.length === 0 ? (
+              <div className="bg-base-200/50 p-6 rounded-2xl text-center">
+                <ShoppingBag className="w-8 h-8 text-neutral-content/30 mx-auto mb-2" />
+                <p className="text-sm text-neutral-content/60">Aún no has realizado compras.</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {user.ventasCompradas.map((venta) => (
+                  <div key={venta.id} className="bg-base-200/50 p-4 rounded-2xl flex justify-between items-center">
+                    <div>
+                      <p className="text-sm font-bold text-white">{venta.vape.nombre}</p>
+                      <p className="text-xs text-neutral-content/60">{new Date(venta.createdAt).toLocaleDateString()}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-bold text-primary font-mono">{venta.cantidad} unds</p>
+                      <p className="text-xs text-neutral-content/60">${parseFloat(venta.precioVenta).toFixed(2)}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         <button 
           onClick={logout}

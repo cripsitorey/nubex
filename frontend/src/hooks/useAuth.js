@@ -16,6 +16,16 @@ export function AuthProvider({ children }) {
     const stored = getCurrentUser();
     if (stored && isAuthenticated()) {
       setUser(stored);
+      
+      // Fetch silencioso para actualizar datos frescos (fidelidad, historial)
+      import("@/services/api").then(({ getMe }) => {
+        getMe().then(freshUser => {
+          setUser(freshUser);
+          localStorage.setItem("nubex_user", JSON.stringify(freshUser));
+        }).catch(err => {
+          console.error("Error refreshing profile:", err);
+        });
+      });
     }
     setLoading(false);
   }, []);
