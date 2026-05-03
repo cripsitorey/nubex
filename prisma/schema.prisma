@@ -51,6 +51,7 @@ model Vape {
   media       Json?
   costo       Float
   precio      Float
+  mostrarPrecio Boolean  @default(true)
   stockGlobal Int                  @default(0)
   createdAt   DateTime             @default(now())
   updatedAt   DateTime             @updatedAt

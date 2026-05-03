@@ -5,6 +5,8 @@ import { UserPlus, Wifi, WifiOff, Users, Edit2, Trash2, Loader2, Search } from "
 import { getCachedCatalog, addToSyncQueue } from "@/lib/syncService";
 import { registerUser, getUsers, updateUser, deleteUser } from "@/services/api";
 import { useNetwork } from "@/components/NetworkProvider";
+import { useAuth } from "@/hooks/useAuth";
+import { getPlans } from "@/services/api";
 
 export default function ClientRegistration({ onRegistered, standalone = false }) {
   const { isOnline } = useNetwork();
@@ -26,7 +28,9 @@ export default function ClientRegistration({ onRegistered, standalone = false })
   const [searchTerm, setSearchTerm] = useState("");
 
   const [editModal, setEditModal] = useState(null);
-  const [editData, setEditData] = useState({ nombre: "", email: "", telefono: "", cedula: "", planId: "", conSuscripcion: false });
+  const [editData, setEditData] = useState({ nombre: "", email: "", telefono: "", cedula: "", planId: "", newPassword: "" });
+  const { user: currentUser } = useAuth();
+  const isAdmin = currentUser?.role === "ADMIN";
 
   const loadData = useCallback(async () => {
     try {
@@ -34,6 +38,12 @@ export default function ClientRegistration({ onRegistered, standalone = false })
       const catalog = await getCachedCatalog();
       if (catalog && catalog.planes) {
         setPlanes(catalog.planes);
+      } else {
+        // Fallback: cargar planes directamente
+        try {
+          const fetchedPlans = await getPlans();
+          setPlanes(Array.isArray(fetchedPlans) ? fetchedPlans : []);
+        } catch { /* ignore */ }
       }
       
       if (isOnline) {
@@ -125,9 +135,13 @@ export default function ClientRegistration({ onRegistered, standalone = false })
     setError("");
     try {
       await updateUser(editModal.id, {
-        ...editData,
+        nombre: editData.nombre,
+        telefono: editData.telefono,
+        email: editData.email,
         role: "CLIENTE",
-        conSuscripcion: editData.planId !== "" || editData.conSuscripcion
+        ...(editData.newPassword ? { password: editData.newPassword } : {}),
+        conSuscripcion: editData.planId !== "",
+        planId: editData.planId ? parseInt(editData.planId) : undefined
       });
       setSuccess("Cliente actualizado exitosamente.");
       setEditModal(null);
@@ -258,12 +272,22 @@ export default function ClientRegistration({ onRegistered, standalone = false })
               </div>
             </div>
             <div>
-              <label className="text-xs text-neutral-content/60 uppercase font-mono">Suscripción</label>
-              <select className="w-full bg-base-200 border-0 rounded-xl p-3 text-white mt-1 focus:ring-2 focus:ring-warning outline-none" value={editData.conSuscripcion ? "true" : "false"} onChange={e => setEditData({...editData, conSuscripcion: e.target.value === "true"})}>
-                <option value="false">Sin Suscripción Activa</option>
-                <option value="true">Con Suscripción Activa</option>
+              <label className="text-xs text-neutral-content/60 uppercase font-mono">Plan de Suscripción</label>
+              <select className="w-full bg-base-200 border-0 rounded-xl p-3 text-white mt-1 focus:ring-2 focus:ring-warning outline-none appearance-none" value={editData.planId} onChange={e => setEditData({...editData, planId: e.target.value})}>
+                <option value="">Cliente Casual (Sin Plan)</option>
+                {planes.map(plan => (
+                  <option key={plan.id} value={plan.id}>
+                    {plan.nombre} - Cada {plan.diasEntreEntregas} días
+                  </option>
+                ))}
               </select>
             </div>
+            {isAdmin && (
+              <div>
+                <label className="text-xs text-neutral-content/60 uppercase font-mono">Resetear Contraseña (dejar vacío para no cambiar)</label>
+                <input type="password" value={editData.newPassword} onChange={e => setEditData({...editData, newPassword: e.target.value})} placeholder="Nueva contraseña..." className="w-full bg-base-200 border-0 rounded-xl p-3 text-white mt-1 focus:ring-2 focus:ring-warning outline-none placeholder:text-neutral-content/30" />
+              </div>
+            )}
             <div className="flex justify-end gap-2 mt-4">
               <button type="button" onClick={() => setEditModal(null)} className="btn btn-ghost text-neutral-content">Cancelar</button>
               <button type="submit" disabled={isSubmitting} className="btn btn-warning shadow-[0_0_15px_rgba(255,170,0,0.3)]">
@@ -323,7 +347,14 @@ export default function ClientRegistration({ onRegistered, standalone = false })
                       </td>
                       <td className="p-3 flex justify-end gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                         <button onClick={() => {
-                          setEditData({ nombre: c.nombre, email: c.email || "", telefono: c.telefono || "", cedula: c.cedula || "", conSuscripcion: !!c.suscripcion });
+                          setEditData({ 
+                            nombre: c.nombre, 
+                            email: c.email || "", 
+                            telefono: c.telefono || "", 
+                            cedula: c.cedula || "", 
+                            planId: c.suscripcion?.planId?.toString() || "",
+                            newPassword: ""
+                          });
                           setEditModal(c);
                         }} className="p-2 hover:bg-warning/20 rounded-lg text-warning transition-colors" title="Editar">
                           <Edit2 className="w-3 h-3" />

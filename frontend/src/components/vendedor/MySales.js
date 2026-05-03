@@ -4,6 +4,8 @@ import { useState, useEffect, useCallback } from "react";
 import { Receipt, Loader2, AlertCircle, FileImage, Search } from "lucide-react";
 import { getSales } from "@/services/api";
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") || "http://localhost:4000";
+
 export default function MySales() {
   const [sales, setSales] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -130,9 +132,9 @@ export default function MySales() {
               Cerrar
             </button>
             {receiptModal.endsWith('.mp4') || receiptModal.endsWith('.webm') ? (
-              <video src={`http://localhost:5000${receiptModal}`} controls className="w-full h-auto rounded-xl shadow-2xl" autoPlay />
+              <video src={`${API_BASE}${receiptModal}`} controls className="w-full h-auto rounded-xl shadow-2xl" autoPlay />
             ) : (
-              <img src={`http://localhost:5000${receiptModal}`} alt="Comprobante" className="w-full h-auto object-contain max-h-[85vh] rounded-xl shadow-2xl" />
+              <img src={`${API_BASE}${receiptModal}`} alt="Comprobante" className="w-full h-auto object-contain max-h-[85vh] rounded-xl shadow-2xl" />
             )}
           </div>
         </div>

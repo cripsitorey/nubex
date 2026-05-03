@@ -30,7 +30,7 @@ export const getVapeById = async (req, res, next) => {
 // Crear un nuevo vape
 export const createVape = async (req, res, next) => {
   try {
-    const { nombre, descripcion, costo, precio, stockGlobal } = req.body;
+    const { nombre, descripcion, costo, precio, stockGlobal, mostrarPrecio } = req.body;
     let imagenUrl = null;
     let media = [];
 
@@ -66,6 +66,7 @@ export const createVape = async (req, res, next) => {
         costo: parseFloat(costo),
         precio: parseFloat(precio),
         stockGlobal: stockGlobal ? parseInt(stockGlobal) : 0,
+        mostrarPrecio: mostrarPrecio !== undefined ? mostrarPrecio === 'true' || mostrarPrecio === true : true,
         imagenUrl,
         media
       }
@@ -81,7 +82,7 @@ export const createVape = async (req, res, next) => {
 export const updateVape = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { nombre, descripcion, costo, precio, stockGlobal } = req.body;
+    const { nombre, descripcion, costo, precio, stockGlobal, mostrarPrecio } = req.body;
     
     const updateData = {};
     if (nombre !== undefined) updateData.nombre = nombre;
@@ -89,6 +90,7 @@ export const updateVape = async (req, res, next) => {
     if (costo !== undefined) updateData.costo = parseFloat(costo);
     if (precio !== undefined) updateData.precio = parseFloat(precio);
     if (stockGlobal !== undefined) updateData.stockGlobal = parseInt(stockGlobal);
+    if (mostrarPrecio !== undefined) updateData.mostrarPrecio = mostrarPrecio === 'true' || mostrarPrecio === true;
 
     // Si se suben nuevos archivos, reemplazamos el array de media por completo
     // En una implementación más avanzada se podrían añadir o borrar individualmente

@@ -15,14 +15,14 @@ export default function StockCentral() {
   const [assignData, setAssignData] = useState({ vendedorId: "", cantidad: 1 });
   
   const [editVapeModal, setEditVapeModal] = useState(null);
-  const [editVapeData, setEditVapeData] = useState({ nombre: "", descripcion: "", costo: "", precio: "", stockGlobal: "", media: [] });
+  const [editVapeData, setEditVapeData] = useState({ nombre: "", descripcion: "", costo: "", precio: "", stockGlobal: "", media: [], mostrarPrecio: true });
 
   const [editAssignModal, setEditAssignModal] = useState(null);
   const [editAssignData, setEditAssignData] = useState({ cantidad: "" });
 
   const [submitting, setSubmitting] = useState(false);
   const [showNewProduct, setShowNewProduct] = useState(false);
-  const [newProduct, setNewProduct] = useState({ nombre: "", descripcion: "", costo: "", precio: "", stockGlobal: "", media: [] });
+  const [newProduct, setNewProduct] = useState({ nombre: "", descripcion: "", costo: "", precio: "", stockGlobal: "", media: [], mostrarPrecio: true });
   
   const [expandedRows, setExpandedRows] = useState({});
 
@@ -74,6 +74,7 @@ export default function StockCentral() {
       fd.append("costo", newProduct.costo);
       fd.append("precio", newProduct.precio);
       fd.append("stockGlobal", newProduct.stockGlobal);
+      fd.append("mostrarPrecio", newProduct.mostrarPrecio);
       
       if (newProduct.media && newProduct.media.length > 0) {
         for (let i = 0; i < newProduct.media.length; i++) {
@@ -83,7 +84,7 @@ export default function StockCentral() {
 
       await createVape(fd);
       setShowNewProduct(false);
-      setNewProduct({ nombre: "", descripcion: "", costo: "", precio: "", stockGlobal: "", media: [] });
+      setNewProduct({ nombre: "", descripcion: "", costo: "", precio: "", stockGlobal: "", media: [], mostrarPrecio: true });
       await fetchData();
     } catch (err) {
       setError(err.message);
@@ -103,6 +104,7 @@ export default function StockCentral() {
       fd.append("costo", editVapeData.costo);
       fd.append("precio", editVapeData.precio);
       fd.append("stockGlobal", editVapeData.stockGlobal);
+      fd.append("mostrarPrecio", editVapeData.mostrarPrecio);
 
       if (editVapeData.media && editVapeData.media.length > 0) {
         for (let i = 0; i < editVapeData.media.length; i++) {
@@ -208,6 +210,13 @@ export default function StockCentral() {
                 <p className="text-xs text-success mt-1">{newProduct.media.length} archivos seleccionados</p>
               )}
             </div>
+            <div className="md:col-span-2 flex items-center gap-3">
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" checked={newProduct.mostrarPrecio} onChange={e => setNewProduct({...newProduct, mostrarPrecio: e.target.checked})} className="sr-only peer" />
+                <div className="w-11 h-6 bg-base-300 rounded-full peer peer-checked:bg-primary peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+              </label>
+              <span className="text-sm text-neutral-content/80">Mostrar precio en la tienda</span>
+            </div>
             <div className="md:col-span-2 flex justify-end gap-2 mt-2">
               <button type="button" onClick={() => setShowNewProduct(false)} className="btn btn-ghost text-neutral-content">Cancelar</button>
               <button type="submit" disabled={submitting} className="btn btn-primary">
@@ -249,6 +258,13 @@ export default function StockCentral() {
               {editVapeData.media.length > 0 && (
                 <p className="text-xs text-warning mt-1">{editVapeData.media.length} archivos nuevos (Reemplazarán los actuales)</p>
               )}
+            </div>
+            <div className="md:col-span-2 flex items-center gap-3">
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" checked={editVapeData.mostrarPrecio} onChange={e => setEditVapeData({...editVapeData, mostrarPrecio: e.target.checked})} className="sr-only peer" />
+                <div className="w-11 h-6 bg-base-300 rounded-full peer peer-checked:bg-primary peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+              </label>
+              <span className="text-sm text-neutral-content/80">Mostrar precio en la tienda</span>
             </div>
             <div className="md:col-span-2 flex justify-end gap-2 mt-2">
               <button type="button" onClick={() => setEditVapeModal(null)} className="btn btn-ghost text-neutral-content">Cancelar</button>
@@ -352,7 +368,7 @@ export default function StockCentral() {
                         <ArrowRightLeft className="w-3 h-3" />
                       </button>
                       <button onClick={() => {
-                        setEditVapeData({ nombre: item.nombre, descripcion: item.descripcion || "", costo: item.costo, precio: item.precio, stockGlobal: item.stockGlobal, media: [] });
+                        setEditVapeData({ nombre: item.nombre, descripcion: item.descripcion || "", costo: item.costo, precio: item.precio, stockGlobal: item.stockGlobal, media: [], mostrarPrecio: item.mostrarPrecio !== false });
                         setEditVapeModal(item);
                       }} className="btn btn-xs btn-outline btn-warning" title="Editar Vape">
                         <Edit2 className="w-3 h-3" />

@@ -88,21 +88,28 @@ export default function CasualView({ user }) {
           </div>
         ) : vapes.length > 0 ? (
           <div className="grid grid-cols-2 gap-4">
-            {vapes.map(vape => (
+            {vapes.map(vape => {
+              const mainImg = vape.media && vape.media.length > 0 
+                ? (vape.media[0].type === 'image' ? resolveImageUrl(vape.media[0].url) : resolveImageUrl(vape.imagenUrl))
+                : resolveImageUrl(vape.imagenUrl);
+
+              return (
               <div key={vape.id} className="glass-card p-4 rounded-2xl flex flex-col justify-between">
                 <div className="w-full h-24 bg-base-300 rounded-xl mb-3 flex items-center justify-center overflow-hidden">
-                  {vape.imagenUrl ? (
-                    <img src={resolveImageUrl(vape.imagenUrl)} alt={vape.nombre} className="object-cover w-full h-full" />
+                  {mainImg ? (
+                    <img src={mainImg} alt={vape.nombre} className="object-cover w-full h-full" />
                   ) : (
                     <PackageSearch className="w-8 h-8 text-neutral-content/20" />
                   )}
                 </div>
                 <div>
                   <h4 className="font-bold text-sm truncate text-white">{vape.nombre}</h4>
-                  <p className="text-xs text-primary font-mono mt-1">${parseFloat(vape.precio).toFixed(2)}</p>
+                  <p className="text-xs text-primary font-mono mt-1">
+                    {vape.mostrarPrecio !== false ? `$${parseFloat(vape.precio).toFixed(2)}` : "Consultar"}
+                  </p>
                 </div>
               </div>
-            ))}
+            )})}
           </div>
         ) : (
           <div className="glass-card p-8 rounded-3xl text-center text-neutral-content/50">

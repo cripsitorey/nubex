@@ -99,7 +99,7 @@ export default function TiendaPage() {
                   ) : (
                     <PackageSearch className="w-8 h-8 text-neutral-content/20" />
                   )}
-                  {vape.stock <= 0 && (
+                  {vape.stockGlobal <= 0 && (
                     <div className="absolute inset-0 bg-base-100/80 backdrop-blur-sm flex items-center justify-center">
                       <span className="bg-error text-error-content text-xs font-bold px-2 py-1 rounded-full">
                         Agotado
@@ -110,10 +110,14 @@ export default function TiendaPage() {
                 <div>
                   <h4 className="font-bold text-sm truncate text-white" title={vape.nombre}>{vape.nombre}</h4>
                   <div className="flex justify-between items-end mt-2">
-                    <p className="text-lg text-primary font-bold">${parseFloat(vape.precio).toFixed(2)}</p>
-                    <span className="text-[10px] text-neutral-content/50 uppercase font-mono">
-                      {vape.stock > 0 ? `${vape.stock} disp.` : ''}
-                    </span>
+                    <p className="text-lg text-primary font-bold">
+                      {vape.mostrarPrecio !== false ? `$${parseFloat(vape.precio).toFixed(2)}` : "Consultar"}
+                    </p>
+                    {vape.stockGlobal > 0 && vape.stockGlobal <= 3 && (
+                      <span className="text-[10px] text-warning uppercase font-mono font-bold">
+                        Pocas unidades
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -171,7 +175,9 @@ export default function TiendaPage() {
             <div className="p-6">
               <div className="flex justify-between items-start gap-4 mb-4">
                 <h3 className="text-2xl font-bold text-white">{selectedVape.nombre}</h3>
-                <span className="text-2xl font-bold text-primary">${parseFloat(selectedVape.precio).toFixed(2)}</span>
+                <span className="text-2xl font-bold text-primary">
+                  {selectedVape.mostrarPrecio !== false ? `$${parseFloat(selectedVape.precio).toFixed(2)}` : "Consultar precio"}
+                </span>
               </div>
               
               <div className="space-y-4">
@@ -182,10 +188,15 @@ export default function TiendaPage() {
                   </p>
                 </div>
 
-                {selectedVape.stock > 0 ? (
+                {selectedVape.stockGlobal > 3 ? (
                   <div className="inline-flex items-center gap-2 bg-success/10 text-success px-3 py-1.5 rounded-xl text-sm font-bold">
                     <div className="w-2 h-2 rounded-full bg-success animate-pulse"></div>
                     Disponible en Tienda
+                  </div>
+                ) : selectedVape.stockGlobal > 0 ? (
+                  <div className="inline-flex items-center gap-2 bg-warning/10 text-warning px-3 py-1.5 rounded-xl text-sm font-bold">
+                    <div className="w-2 h-2 rounded-full bg-warning animate-pulse"></div>
+                    Pocas unidades restantes
                   </div>
                 ) : (
                   <div className="inline-flex items-center gap-2 bg-error/10 text-error px-3 py-1.5 rounded-xl text-sm font-bold">

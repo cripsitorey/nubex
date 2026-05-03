@@ -4,12 +4,14 @@ import { verifyToken, verifyRole } from '../middlewares/authMiddleware.js';
 
 const router = Router();
 
-// Rutas protegidas por token y rol ADMIN
-router.use(verifyToken, verifyRole(['ADMIN']));
+router.use(verifyToken);
 
-router.post('/', createUserByAdmin);
-router.get('/', getUsers);
-router.put('/:id', updateUser);
-router.delete('/:id', deleteUser);
+// GET /users -> ADMIN y VENDEDOR pueden listar usuarios
+router.get('/', verifyRole(['ADMIN', 'VENDEDOR']), getUsers);
+
+// POST, PUT, DELETE -> Solo ADMIN
+router.post('/', verifyRole(['ADMIN']), createUserByAdmin);
+router.put('/:id', verifyRole(['ADMIN']), updateUser);
+router.delete('/:id', verifyRole(['ADMIN']), deleteUser);
 
 export default router;
