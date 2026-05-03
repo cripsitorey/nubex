@@ -7,7 +7,7 @@ import { getPlans, createPlan, updatePlan, deletePlan } from "@/services/api";
 export default function PlanesManager() {
   const [planes, setPlanes] = useState([]);
   const [isEditing, setIsEditing] = useState(null);
-  const [formData, setFormData] = useState({ nombre: "", diasEntreEntregas: 30, precio: 0, limiteVapes: 1 });
+  const [formData, setFormData] = useState({ nombre: "", diasEntreEntregas: 30, precio: 0, limiteVapes: "", limitePuffs: "" });
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -35,13 +35,14 @@ export default function PlanesManager() {
       nombre: plan.nombre,
       diasEntreEntregas: plan.diasEntreEntregas,
       precio: plan.precio,
-      limiteVapes: plan.limiteVapes || 1,
+      limiteVapes: plan.limiteVapes || "",
+      limitePuffs: plan.limitePuffs || "",
     });
   };
 
   const handleCancel = () => {
     setIsEditing(null);
-    setFormData({ nombre: "", diasEntreEntregas: 30, precio: 0, limiteVapes: 1 });
+    setFormData({ nombre: "", diasEntreEntregas: 30, precio: 0, limiteVapes: "", limitePuffs: "" });
     setError("");
   };
 
@@ -123,7 +124,11 @@ export default function PlanesManager() {
             </div>
             <div>
               <label className="text-xs text-neutral-content/60 uppercase font-mono">Límite de Vapes</label>
-              <input type="number" value={formData.limiteVapes} onChange={e => setFormData({...formData, limiteVapes: parseInt(e.target.value)})} className="w-full bg-base-200 border-0 rounded-xl p-3 text-white mt-1 focus:ring-2 focus:ring-primary outline-none" />
+              <input type="number" placeholder="Vacío = sin límite" value={formData.limiteVapes} onChange={e => setFormData({...formData, limiteVapes: e.target.value})} className="w-full bg-base-200 border-0 rounded-xl p-3 text-white mt-1 focus:ring-2 focus:ring-primary outline-none" />
+            </div>
+            <div>
+              <label className="text-xs text-neutral-content/60 uppercase font-mono">Límite de Puffs (Total)</label>
+              <input type="number" placeholder="Vacío = sin límite" value={formData.limitePuffs} onChange={e => setFormData({...formData, limitePuffs: e.target.value})} className="w-full bg-base-200 border-0 rounded-xl p-3 text-white mt-1 focus:ring-2 focus:ring-primary outline-none" />
             </div>
             <div className="md:col-span-2 flex justify-end gap-2 mt-2">
               <button type="button" onClick={handleCancel} className="btn btn-ghost text-neutral-content hover:bg-white/10">Cancelar</button>
@@ -152,7 +157,16 @@ export default function PlanesManager() {
                 <td className="p-4 font-bold text-white">{plan.nombre}</td>
                 <td className="p-4"><span className="badge badge-outline badge-primary font-mono">{plan.diasEntreEntregas} días</span></td>
                 <td className="p-4 font-mono text-success">${parseFloat(plan.precio).toFixed(2)}</td>
-                <td className="p-4">{plan.limiteVapes || 'Sin límite'}</td>
+                <td className="p-4">
+                  {plan.limiteVapes && plan.limitePuffs
+                    ? <span><span className="font-mono text-info">{plan.limiteVapes}</span> vapes · <span className="font-mono text-info">{plan.limitePuffs.toLocaleString()}</span> puffs</span>
+                    : plan.limiteVapes
+                    ? <span><span className="font-mono text-info">{plan.limiteVapes}</span> vapes</span>
+                    : plan.limitePuffs
+                    ? <span><span className="font-mono text-info">{plan.limitePuffs.toLocaleString()}</span> puffs</span>
+                    : <span className="text-neutral-content/50">Sin límite</span>
+                  }
+                </td>
                 <td className="p-4 flex justify-end gap-2">
                   <button onClick={() => handleEdit(plan)} className="btn btn-xs btn-ghost btn-circle text-neutral-content hover:text-white"><Edit2 className="w-4 h-4" /></button>
                   <button onClick={() => handleDelete(plan.id)} className="btn btn-xs btn-ghost btn-circle text-error hover:bg-error/20"><Trash2 className="w-4 h-4" /></button>

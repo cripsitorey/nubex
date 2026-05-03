@@ -135,13 +135,14 @@ export const getPlans = async (req, res, next) => {
 
 export const createPlan = async (req, res, next) => {
   try {
-    const { nombre, diasEntreEntregas, precio, limiteVapes } = req.body;
+    const { nombre, diasEntreEntregas, precio, limiteVapes, limitePuffs } = req.body;
     const plan = await prisma.planSuscripcion.create({
       data: {
         nombre,
         diasEntreEntregas: parseInt(diasEntreEntregas),
         precio: parseFloat(precio),
-        limiteVapes: limiteVapes ? parseInt(limiteVapes) : null
+        limiteVapes: limiteVapes ? parseInt(limiteVapes) : null,
+        limitePuffs: limitePuffs ? parseInt(limitePuffs) : null
       }
     });
     res.status(201).json(plan);
@@ -153,14 +154,15 @@ export const createPlan = async (req, res, next) => {
 export const updatePlan = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { nombre, diasEntreEntregas, precio, limiteVapes } = req.body;
+    const { nombre, diasEntreEntregas, precio, limiteVapes, limitePuffs } = req.body;
     const plan = await prisma.planSuscripcion.update({
       where: { id: parseInt(id) },
       data: {
         nombre,
         diasEntreEntregas: parseInt(diasEntreEntregas),
         precio: parseFloat(precio),
-        limiteVapes: limiteVapes ? parseInt(limiteVapes) : null
+        limiteVapes: limiteVapes ? parseInt(limiteVapes) : null,
+        limitePuffs: limitePuffs ? parseInt(limitePuffs) : null
       }
     });
     res.json(plan);

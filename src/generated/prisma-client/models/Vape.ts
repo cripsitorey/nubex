@@ -30,6 +30,8 @@ export type VapeAvgAggregateOutputType = {
   id: number | null
   costo: number | null
   precio: number | null
+  precioVendedor: number | null
+  puffs: number | null
   stockGlobal: number | null
 }
 
@@ -37,6 +39,8 @@ export type VapeSumAggregateOutputType = {
   id: number | null
   costo: number | null
   precio: number | null
+  precioVendedor: number | null
+  puffs: number | null
   stockGlobal: number | null
 }
 
@@ -47,6 +51,10 @@ export type VapeMinAggregateOutputType = {
   imagenUrl: string | null
   costo: number | null
   precio: number | null
+  precioVendedor: number | null
+  puffs: number | null
+  sabor: string | null
+  mostrarPrecio: boolean | null
   stockGlobal: number | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -59,6 +67,10 @@ export type VapeMaxAggregateOutputType = {
   imagenUrl: string | null
   costo: number | null
   precio: number | null
+  precioVendedor: number | null
+  puffs: number | null
+  sabor: string | null
+  mostrarPrecio: boolean | null
   stockGlobal: number | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -69,8 +81,13 @@ export type VapeCountAggregateOutputType = {
   nombre: number
   descripcion: number
   imagenUrl: number
+  media: number
   costo: number
   precio: number
+  precioVendedor: number
+  puffs: number
+  sabor: number
+  mostrarPrecio: number
   stockGlobal: number
   createdAt: number
   updatedAt: number
@@ -82,6 +99,8 @@ export type VapeAvgAggregateInputType = {
   id?: true
   costo?: true
   precio?: true
+  precioVendedor?: true
+  puffs?: true
   stockGlobal?: true
 }
 
@@ -89,6 +108,8 @@ export type VapeSumAggregateInputType = {
   id?: true
   costo?: true
   precio?: true
+  precioVendedor?: true
+  puffs?: true
   stockGlobal?: true
 }
 
@@ -99,6 +120,10 @@ export type VapeMinAggregateInputType = {
   imagenUrl?: true
   costo?: true
   precio?: true
+  precioVendedor?: true
+  puffs?: true
+  sabor?: true
+  mostrarPrecio?: true
   stockGlobal?: true
   createdAt?: true
   updatedAt?: true
@@ -111,6 +136,10 @@ export type VapeMaxAggregateInputType = {
   imagenUrl?: true
   costo?: true
   precio?: true
+  precioVendedor?: true
+  puffs?: true
+  sabor?: true
+  mostrarPrecio?: true
   stockGlobal?: true
   createdAt?: true
   updatedAt?: true
@@ -121,8 +150,13 @@ export type VapeCountAggregateInputType = {
   nombre?: true
   descripcion?: true
   imagenUrl?: true
+  media?: true
   costo?: true
   precio?: true
+  precioVendedor?: true
+  puffs?: true
+  sabor?: true
+  mostrarPrecio?: true
   stockGlobal?: true
   createdAt?: true
   updatedAt?: true
@@ -220,8 +254,13 @@ export type VapeGroupByOutputType = {
   nombre: string
   descripcion: string | null
   imagenUrl: string | null
+  media: runtime.JsonValue | null
   costo: number
   precio: number
+  precioVendedor: number
+  puffs: number
+  sabor: string
+  mostrarPrecio: boolean
   stockGlobal: number
   createdAt: Date
   updatedAt: Date
@@ -255,8 +294,13 @@ export type VapeWhereInput = {
   nombre?: Prisma.StringFilter<"Vape"> | string
   descripcion?: Prisma.StringNullableFilter<"Vape"> | string | null
   imagenUrl?: Prisma.StringNullableFilter<"Vape"> | string | null
+  media?: Prisma.JsonNullableFilter<"Vape">
   costo?: Prisma.FloatFilter<"Vape"> | number
   precio?: Prisma.FloatFilter<"Vape"> | number
+  precioVendedor?: Prisma.FloatFilter<"Vape"> | number
+  puffs?: Prisma.IntFilter<"Vape"> | number
+  sabor?: Prisma.StringFilter<"Vape"> | string
+  mostrarPrecio?: Prisma.BoolFilter<"Vape"> | boolean
   stockGlobal?: Prisma.IntFilter<"Vape"> | number
   createdAt?: Prisma.DateTimeFilter<"Vape"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Vape"> | Date | string
@@ -270,8 +314,13 @@ export type VapeOrderByWithRelationInput = {
   nombre?: Prisma.SortOrder
   descripcion?: Prisma.SortOrderInput | Prisma.SortOrder
   imagenUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  media?: Prisma.SortOrderInput | Prisma.SortOrder
   costo?: Prisma.SortOrder
   precio?: Prisma.SortOrder
+  precioVendedor?: Prisma.SortOrder
+  puffs?: Prisma.SortOrder
+  sabor?: Prisma.SortOrder
+  mostrarPrecio?: Prisma.SortOrder
   stockGlobal?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -288,8 +337,13 @@ export type VapeWhereUniqueInput = Prisma.AtLeast<{
   nombre?: Prisma.StringFilter<"Vape"> | string
   descripcion?: Prisma.StringNullableFilter<"Vape"> | string | null
   imagenUrl?: Prisma.StringNullableFilter<"Vape"> | string | null
+  media?: Prisma.JsonNullableFilter<"Vape">
   costo?: Prisma.FloatFilter<"Vape"> | number
   precio?: Prisma.FloatFilter<"Vape"> | number
+  precioVendedor?: Prisma.FloatFilter<"Vape"> | number
+  puffs?: Prisma.IntFilter<"Vape"> | number
+  sabor?: Prisma.StringFilter<"Vape"> | string
+  mostrarPrecio?: Prisma.BoolFilter<"Vape"> | boolean
   stockGlobal?: Prisma.IntFilter<"Vape"> | number
   createdAt?: Prisma.DateTimeFilter<"Vape"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Vape"> | Date | string
@@ -303,8 +357,13 @@ export type VapeOrderByWithAggregationInput = {
   nombre?: Prisma.SortOrder
   descripcion?: Prisma.SortOrderInput | Prisma.SortOrder
   imagenUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  media?: Prisma.SortOrderInput | Prisma.SortOrder
   costo?: Prisma.SortOrder
   precio?: Prisma.SortOrder
+  precioVendedor?: Prisma.SortOrder
+  puffs?: Prisma.SortOrder
+  sabor?: Prisma.SortOrder
+  mostrarPrecio?: Prisma.SortOrder
   stockGlobal?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -323,8 +382,13 @@ export type VapeScalarWhereWithAggregatesInput = {
   nombre?: Prisma.StringWithAggregatesFilter<"Vape"> | string
   descripcion?: Prisma.StringNullableWithAggregatesFilter<"Vape"> | string | null
   imagenUrl?: Prisma.StringNullableWithAggregatesFilter<"Vape"> | string | null
+  media?: Prisma.JsonNullableWithAggregatesFilter<"Vape">
   costo?: Prisma.FloatWithAggregatesFilter<"Vape"> | number
   precio?: Prisma.FloatWithAggregatesFilter<"Vape"> | number
+  precioVendedor?: Prisma.FloatWithAggregatesFilter<"Vape"> | number
+  puffs?: Prisma.IntWithAggregatesFilter<"Vape"> | number
+  sabor?: Prisma.StringWithAggregatesFilter<"Vape"> | string
+  mostrarPrecio?: Prisma.BoolWithAggregatesFilter<"Vape"> | boolean
   stockGlobal?: Prisma.IntWithAggregatesFilter<"Vape"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Vape"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Vape"> | Date | string
@@ -334,8 +398,13 @@ export type VapeCreateInput = {
   nombre: string
   descripcion?: string | null
   imagenUrl?: string | null
+  media?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   costo: number
   precio: number
+  precioVendedor: number
+  puffs: number
+  sabor: string
+  mostrarPrecio?: boolean
   stockGlobal?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -349,8 +418,13 @@ export type VapeUncheckedCreateInput = {
   nombre: string
   descripcion?: string | null
   imagenUrl?: string | null
+  media?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   costo: number
   precio: number
+  precioVendedor: number
+  puffs: number
+  sabor: string
+  mostrarPrecio?: boolean
   stockGlobal?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -363,8 +437,13 @@ export type VapeUpdateInput = {
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagenUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  media?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   costo?: Prisma.FloatFieldUpdateOperationsInput | number
   precio?: Prisma.FloatFieldUpdateOperationsInput | number
+  precioVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  puffs?: Prisma.IntFieldUpdateOperationsInput | number
+  sabor?: Prisma.StringFieldUpdateOperationsInput | string
+  mostrarPrecio?: Prisma.BoolFieldUpdateOperationsInput | boolean
   stockGlobal?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -378,8 +457,13 @@ export type VapeUncheckedUpdateInput = {
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagenUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  media?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   costo?: Prisma.FloatFieldUpdateOperationsInput | number
   precio?: Prisma.FloatFieldUpdateOperationsInput | number
+  precioVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  puffs?: Prisma.IntFieldUpdateOperationsInput | number
+  sabor?: Prisma.StringFieldUpdateOperationsInput | string
+  mostrarPrecio?: Prisma.BoolFieldUpdateOperationsInput | boolean
   stockGlobal?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -393,8 +477,13 @@ export type VapeCreateManyInput = {
   nombre: string
   descripcion?: string | null
   imagenUrl?: string | null
+  media?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   costo: number
   precio: number
+  precioVendedor: number
+  puffs: number
+  sabor: string
+  mostrarPrecio?: boolean
   stockGlobal?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -404,8 +493,13 @@ export type VapeUpdateManyMutationInput = {
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagenUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  media?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   costo?: Prisma.FloatFieldUpdateOperationsInput | number
   precio?: Prisma.FloatFieldUpdateOperationsInput | number
+  precioVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  puffs?: Prisma.IntFieldUpdateOperationsInput | number
+  sabor?: Prisma.StringFieldUpdateOperationsInput | string
+  mostrarPrecio?: Prisma.BoolFieldUpdateOperationsInput | boolean
   stockGlobal?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -416,8 +510,13 @@ export type VapeUncheckedUpdateManyInput = {
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagenUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  media?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   costo?: Prisma.FloatFieldUpdateOperationsInput | number
   precio?: Prisma.FloatFieldUpdateOperationsInput | number
+  precioVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  puffs?: Prisma.IntFieldUpdateOperationsInput | number
+  sabor?: Prisma.StringFieldUpdateOperationsInput | string
+  mostrarPrecio?: Prisma.BoolFieldUpdateOperationsInput | boolean
   stockGlobal?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -428,8 +527,13 @@ export type VapeCountOrderByAggregateInput = {
   nombre?: Prisma.SortOrder
   descripcion?: Prisma.SortOrder
   imagenUrl?: Prisma.SortOrder
+  media?: Prisma.SortOrder
   costo?: Prisma.SortOrder
   precio?: Prisma.SortOrder
+  precioVendedor?: Prisma.SortOrder
+  puffs?: Prisma.SortOrder
+  sabor?: Prisma.SortOrder
+  mostrarPrecio?: Prisma.SortOrder
   stockGlobal?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -439,6 +543,8 @@ export type VapeAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
   costo?: Prisma.SortOrder
   precio?: Prisma.SortOrder
+  precioVendedor?: Prisma.SortOrder
+  puffs?: Prisma.SortOrder
   stockGlobal?: Prisma.SortOrder
 }
 
@@ -449,6 +555,10 @@ export type VapeMaxOrderByAggregateInput = {
   imagenUrl?: Prisma.SortOrder
   costo?: Prisma.SortOrder
   precio?: Prisma.SortOrder
+  precioVendedor?: Prisma.SortOrder
+  puffs?: Prisma.SortOrder
+  sabor?: Prisma.SortOrder
+  mostrarPrecio?: Prisma.SortOrder
   stockGlobal?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -461,6 +571,10 @@ export type VapeMinOrderByAggregateInput = {
   imagenUrl?: Prisma.SortOrder
   costo?: Prisma.SortOrder
   precio?: Prisma.SortOrder
+  precioVendedor?: Prisma.SortOrder
+  puffs?: Prisma.SortOrder
+  sabor?: Prisma.SortOrder
+  mostrarPrecio?: Prisma.SortOrder
   stockGlobal?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -470,6 +584,8 @@ export type VapeSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   costo?: Prisma.SortOrder
   precio?: Prisma.SortOrder
+  precioVendedor?: Prisma.SortOrder
+  puffs?: Prisma.SortOrder
   stockGlobal?: Prisma.SortOrder
 }
 
@@ -484,6 +600,10 @@ export type FloatFieldUpdateOperationsInput = {
   decrement?: number
   multiply?: number
   divide?: number
+}
+
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
 }
 
 export type VapeCreateNestedOneWithoutInventariosInput = {
@@ -532,8 +652,13 @@ export type VapeCreateWithoutInventariosInput = {
   nombre: string
   descripcion?: string | null
   imagenUrl?: string | null
+  media?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   costo: number
   precio: number
+  precioVendedor: number
+  puffs: number
+  sabor: string
+  mostrarPrecio?: boolean
   stockGlobal?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -546,8 +671,13 @@ export type VapeUncheckedCreateWithoutInventariosInput = {
   nombre: string
   descripcion?: string | null
   imagenUrl?: string | null
+  media?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   costo: number
   precio: number
+  precioVendedor: number
+  puffs: number
+  sabor: string
+  mostrarPrecio?: boolean
   stockGlobal?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -575,8 +705,13 @@ export type VapeUpdateWithoutInventariosInput = {
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagenUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  media?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   costo?: Prisma.FloatFieldUpdateOperationsInput | number
   precio?: Prisma.FloatFieldUpdateOperationsInput | number
+  precioVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  puffs?: Prisma.IntFieldUpdateOperationsInput | number
+  sabor?: Prisma.StringFieldUpdateOperationsInput | string
+  mostrarPrecio?: Prisma.BoolFieldUpdateOperationsInput | boolean
   stockGlobal?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -589,8 +724,13 @@ export type VapeUncheckedUpdateWithoutInventariosInput = {
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagenUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  media?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   costo?: Prisma.FloatFieldUpdateOperationsInput | number
   precio?: Prisma.FloatFieldUpdateOperationsInput | number
+  precioVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  puffs?: Prisma.IntFieldUpdateOperationsInput | number
+  sabor?: Prisma.StringFieldUpdateOperationsInput | string
+  mostrarPrecio?: Prisma.BoolFieldUpdateOperationsInput | boolean
   stockGlobal?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -602,8 +742,13 @@ export type VapeCreateWithoutVentaInput = {
   nombre: string
   descripcion?: string | null
   imagenUrl?: string | null
+  media?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   costo: number
   precio: number
+  precioVendedor: number
+  puffs: number
+  sabor: string
+  mostrarPrecio?: boolean
   stockGlobal?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -616,8 +761,13 @@ export type VapeUncheckedCreateWithoutVentaInput = {
   nombre: string
   descripcion?: string | null
   imagenUrl?: string | null
+  media?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   costo: number
   precio: number
+  precioVendedor: number
+  puffs: number
+  sabor: string
+  mostrarPrecio?: boolean
   stockGlobal?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -645,8 +795,13 @@ export type VapeUpdateWithoutVentaInput = {
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagenUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  media?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   costo?: Prisma.FloatFieldUpdateOperationsInput | number
   precio?: Prisma.FloatFieldUpdateOperationsInput | number
+  precioVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  puffs?: Prisma.IntFieldUpdateOperationsInput | number
+  sabor?: Prisma.StringFieldUpdateOperationsInput | string
+  mostrarPrecio?: Prisma.BoolFieldUpdateOperationsInput | boolean
   stockGlobal?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -659,8 +814,13 @@ export type VapeUncheckedUpdateWithoutVentaInput = {
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagenUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  media?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   costo?: Prisma.FloatFieldUpdateOperationsInput | number
   precio?: Prisma.FloatFieldUpdateOperationsInput | number
+  precioVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  puffs?: Prisma.IntFieldUpdateOperationsInput | number
+  sabor?: Prisma.StringFieldUpdateOperationsInput | string
+  mostrarPrecio?: Prisma.BoolFieldUpdateOperationsInput | boolean
   stockGlobal?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -672,8 +832,13 @@ export type VapeCreateWithoutEntregasInput = {
   nombre: string
   descripcion?: string | null
   imagenUrl?: string | null
+  media?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   costo: number
   precio: number
+  precioVendedor: number
+  puffs: number
+  sabor: string
+  mostrarPrecio?: boolean
   stockGlobal?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -686,8 +851,13 @@ export type VapeUncheckedCreateWithoutEntregasInput = {
   nombre: string
   descripcion?: string | null
   imagenUrl?: string | null
+  media?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   costo: number
   precio: number
+  precioVendedor: number
+  puffs: number
+  sabor: string
+  mostrarPrecio?: boolean
   stockGlobal?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -715,8 +885,13 @@ export type VapeUpdateWithoutEntregasInput = {
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagenUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  media?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   costo?: Prisma.FloatFieldUpdateOperationsInput | number
   precio?: Prisma.FloatFieldUpdateOperationsInput | number
+  precioVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  puffs?: Prisma.IntFieldUpdateOperationsInput | number
+  sabor?: Prisma.StringFieldUpdateOperationsInput | string
+  mostrarPrecio?: Prisma.BoolFieldUpdateOperationsInput | boolean
   stockGlobal?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -729,8 +904,13 @@ export type VapeUncheckedUpdateWithoutEntregasInput = {
   nombre?: Prisma.StringFieldUpdateOperationsInput | string
   descripcion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   imagenUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  media?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   costo?: Prisma.FloatFieldUpdateOperationsInput | number
   precio?: Prisma.FloatFieldUpdateOperationsInput | number
+  precioVendedor?: Prisma.FloatFieldUpdateOperationsInput | number
+  puffs?: Prisma.IntFieldUpdateOperationsInput | number
+  sabor?: Prisma.StringFieldUpdateOperationsInput | string
+  mostrarPrecio?: Prisma.BoolFieldUpdateOperationsInput | boolean
   stockGlobal?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -792,8 +972,13 @@ export type VapeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   nombre?: boolean
   descripcion?: boolean
   imagenUrl?: boolean
+  media?: boolean
   costo?: boolean
   precio?: boolean
+  precioVendedor?: boolean
+  puffs?: boolean
+  sabor?: boolean
+  mostrarPrecio?: boolean
   stockGlobal?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -808,8 +993,13 @@ export type VapeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   nombre?: boolean
   descripcion?: boolean
   imagenUrl?: boolean
+  media?: boolean
   costo?: boolean
   precio?: boolean
+  precioVendedor?: boolean
+  puffs?: boolean
+  sabor?: boolean
+  mostrarPrecio?: boolean
   stockGlobal?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -820,8 +1010,13 @@ export type VapeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   nombre?: boolean
   descripcion?: boolean
   imagenUrl?: boolean
+  media?: boolean
   costo?: boolean
   precio?: boolean
+  precioVendedor?: boolean
+  puffs?: boolean
+  sabor?: boolean
+  mostrarPrecio?: boolean
   stockGlobal?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -832,14 +1027,19 @@ export type VapeSelectScalar = {
   nombre?: boolean
   descripcion?: boolean
   imagenUrl?: boolean
+  media?: boolean
   costo?: boolean
   precio?: boolean
+  precioVendedor?: boolean
+  puffs?: boolean
+  sabor?: boolean
+  mostrarPrecio?: boolean
   stockGlobal?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type VapeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nombre" | "descripcion" | "imagenUrl" | "costo" | "precio" | "stockGlobal" | "createdAt" | "updatedAt", ExtArgs["result"]["vape"]>
+export type VapeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nombre" | "descripcion" | "imagenUrl" | "media" | "costo" | "precio" | "precioVendedor" | "puffs" | "sabor" | "mostrarPrecio" | "stockGlobal" | "createdAt" | "updatedAt", ExtArgs["result"]["vape"]>
 export type VapeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   inventarios?: boolean | Prisma.Vape$inventariosArgs<ExtArgs>
   Venta?: boolean | Prisma.Vape$VentaArgs<ExtArgs>
@@ -861,8 +1061,13 @@ export type $VapePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     nombre: string
     descripcion: string | null
     imagenUrl: string | null
+    media: runtime.JsonValue | null
     costo: number
     precio: number
+    precioVendedor: number
+    puffs: number
+    sabor: string
+    mostrarPrecio: boolean
     stockGlobal: number
     createdAt: Date
     updatedAt: Date
@@ -1296,8 +1501,13 @@ export interface VapeFieldRefs {
   readonly nombre: Prisma.FieldRef<"Vape", 'String'>
   readonly descripcion: Prisma.FieldRef<"Vape", 'String'>
   readonly imagenUrl: Prisma.FieldRef<"Vape", 'String'>
+  readonly media: Prisma.FieldRef<"Vape", 'Json'>
   readonly costo: Prisma.FieldRef<"Vape", 'Float'>
   readonly precio: Prisma.FieldRef<"Vape", 'Float'>
+  readonly precioVendedor: Prisma.FieldRef<"Vape", 'Float'>
+  readonly puffs: Prisma.FieldRef<"Vape", 'Int'>
+  readonly sabor: Prisma.FieldRef<"Vape", 'String'>
+  readonly mostrarPrecio: Prisma.FieldRef<"Vape", 'Boolean'>
   readonly stockGlobal: Prisma.FieldRef<"Vape", 'Int'>
   readonly createdAt: Prisma.FieldRef<"Vape", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Vape", 'DateTime'>

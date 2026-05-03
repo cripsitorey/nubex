@@ -152,7 +152,7 @@ export default function PointOfSale({ client, onSaleComplete }) {
           >
             <option value="">Seleccione un vape...</option>
             {vapes.map(v => (
-              <option key={v.id} value={v.id}>{v.nombre} - ${parseFloat(v.precio).toFixed(2)}</option>
+              <option key={v.id} value={v.id}>{v.nombre}{v.sabor ? ` — ${v.sabor}` : ''}{v.puffs ? ` (${v.puffs}p)` : ''} - ${parseFloat(v.precio).toFixed(2)}</option>
             ))}
           </select>
         </div>
@@ -183,9 +183,15 @@ export default function PointOfSale({ client, onSaleComplete }) {
 
         <div className="py-2 border-t border-b border-white/10 my-4">
           <div className="flex justify-between items-center text-sm mb-1">
-            <span className="text-neutral-content/80">Subtotal:</span>
+            <span className="text-neutral-content/80">Subtotal (Sugerido):</span>
             <span className="font-mono text-white">${subtotal.toFixed(2)}</span>
           </div>
+          {selectedVape && selectedVape.precioVendedor && (
+            <div className="flex justify-between items-center text-sm mb-1 text-warning">
+              <span>Entregas al admin:</span>
+              <span className="font-mono">${(parseFloat(selectedVape.precioVendedor) * cantidad).toFixed(2)}</span>
+            </div>
+          )}
           {multaSugerida > 0 && (
             <div className="flex justify-between items-center text-sm mb-1 text-warning">
               <span>Multa sugerida:</span>

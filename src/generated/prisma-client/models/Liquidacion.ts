@@ -462,10 +462,6 @@ export type LiquidacionUpdateOneWithoutVentasNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.LiquidacionUpdateToOneWithWhereWithoutVentasInput, Prisma.LiquidacionUpdateWithoutVentasInput>, Prisma.LiquidacionUncheckedUpdateWithoutVentasInput>
 }
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
-}
-
 export type LiquidacionCreateWithoutVendedorInput = {
   montoTotal?: number
   cerrada?: boolean

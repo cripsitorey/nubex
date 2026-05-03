@@ -30,7 +30,12 @@ export const getVapeById = async (req, res, next) => {
 // Crear un nuevo vape
 export const createVape = async (req, res, next) => {
   try {
-    const { nombre, descripcion, costo, precio, stockGlobal, mostrarPrecio } = req.body;
+    const { nombre, descripcion, costo, precio, precioVendedor, puffs, sabor, stockGlobal, mostrarPrecio } = req.body;
+
+    if (!nombre || !costo || !precio || !precioVendedor || !puffs || !sabor) {
+      return res.status(400).json({ error: 'Campos obligatorios faltantes: nombre, costo, precio, precioVendedor, puffs, sabor' });
+    }
+
     let imagenUrl = null;
     let media = [];
 
@@ -65,6 +70,9 @@ export const createVape = async (req, res, next) => {
         descripcion,
         costo: parseFloat(costo),
         precio: parseFloat(precio),
+        precioVendedor: parseFloat(precioVendedor),
+        puffs: parseInt(puffs),
+        sabor,
         stockGlobal: stockGlobal ? parseInt(stockGlobal) : 0,
         mostrarPrecio: mostrarPrecio !== undefined ? mostrarPrecio === 'true' || mostrarPrecio === true : true,
         imagenUrl,
@@ -82,13 +90,16 @@ export const createVape = async (req, res, next) => {
 export const updateVape = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { nombre, descripcion, costo, precio, stockGlobal, mostrarPrecio } = req.body;
+    const { nombre, descripcion, costo, precio, precioVendedor, puffs, sabor, stockGlobal, mostrarPrecio } = req.body;
     
     const updateData = {};
     if (nombre !== undefined) updateData.nombre = nombre;
     if (descripcion !== undefined) updateData.descripcion = descripcion;
     if (costo !== undefined) updateData.costo = parseFloat(costo);
     if (precio !== undefined) updateData.precio = parseFloat(precio);
+    if (precioVendedor !== undefined) updateData.precioVendedor = parseFloat(precioVendedor);
+    if (puffs !== undefined) updateData.puffs = parseInt(puffs);
+    if (sabor !== undefined) updateData.sabor = sabor;
     if (stockGlobal !== undefined) updateData.stockGlobal = parseInt(stockGlobal);
     if (mostrarPrecio !== undefined) updateData.mostrarPrecio = mostrarPrecio === 'true' || mostrarPrecio === true;
 

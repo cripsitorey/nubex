@@ -69,15 +69,19 @@ export const createVenta = async (req, res, next) => {
       let montoParaAdmin = 0;
       let montoParaVendedor = 0;
 
-      if (reparto && reparto.tipo === 'FIJO') {
+      if (req.user.role === 'ADMIN') {
+        // Admin vende directamente: recibe todo el dinero
+        montoParaAdmin = totalVenta;
+        montoParaVendedor = 0;
+      } else if (reparto && reparto.tipo === 'FIJO') {
         montoParaAdmin = parseFloat(reparto.valorAdmin);
         montoParaVendedor = totalVenta - montoParaAdmin;
       } else if (reparto && reparto.tipo === 'PORCENTAJE') {
         montoParaAdmin = totalVenta * (parseFloat(reparto.valorAdmin) / 100);
         montoParaVendedor = totalVenta - montoParaAdmin;
       } else {
-        // Fallback: Admin recupera su costo y Vendedor se lleva la ganancia restante
-        montoParaAdmin = vape.costo * parseInt(cantidad);
+        // Fallback: Admin recibe el precioVendedor por cada unidad
+        montoParaAdmin = vape.precioVendedor * parseInt(cantidad);
         montoParaVendedor = totalVenta - montoParaAdmin;
       }
 

@@ -52,7 +52,11 @@ export default function MyStock() {
             
             <div className="relative z-10 flex flex-col h-full">
               <div className="flex justify-between items-start mb-4">
-                <h3 className="font-bold text-lg text-white leading-tight">{item.vape.nombre}</h3>
+                <div>
+                  <h3 className="font-bold text-lg text-white leading-tight">{item.vape.nombre}</h3>
+                  {item.vape.sabor && <p className="text-xs text-primary/80">{item.vape.sabor}</p>}
+                  {item.vape.puffs && <p className="text-[10px] text-neutral-content/50 font-mono">{item.vape.puffs} puffs</p>}
+                </div>
                 <div className={`px-3 py-1 rounded-full text-sm font-bold shadow-lg ${item.cantidad === 0 ? 'bg-error text-error-content' : item.cantidad < 5 ? 'bg-warning text-warning-content' : 'bg-primary text-primary-content'}`}>
                   {item.cantidad} unds
                 </div>
@@ -60,9 +64,15 @@ export default function MyStock() {
               
               <div className="space-y-2 mt-auto">
                 <div className="flex justify-between text-sm">
-                  <span className="text-neutral-content/70">Precio Venta:</span>
+                  <span className="text-neutral-content/70">Precio Sugerido:</span>
                   <span className="font-mono text-primary font-bold">${parseFloat(item.vape.precio).toFixed(2)}</span>
                 </div>
+                {item.vape.precioVendedor && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-neutral-content/70">Tu precio al admin:</span>
+                    <span className="font-mono text-warning font-bold">${parseFloat(item.vape.precioVendedor).toFixed(2)}</span>
+                  </div>
+                )}
                 {item.vape.descripcion && (
                   <p className="text-xs text-neutral-content/60 italic line-clamp-2 mt-2">{item.vape.descripcion}</p>
                 )}

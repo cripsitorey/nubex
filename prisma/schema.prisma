@@ -49,9 +49,12 @@ model Vape {
   descripcion String?
   imagenUrl   String?
   media       Json?
-  costo       Float
-  precio      Float
-  mostrarPrecio Boolean  @default(true)
+  costo          Float
+  precio         Float                // Precio sugerido al público
+  precioVendedor Float                // Precio que el vendedor paga al admin
+  puffs          Int                  // Número de puffs del dispositivo
+  sabor          String               // Sabor del vape
+  mostrarPrecio  Boolean  @default(true)
   stockGlobal Int                  @default(0)
   createdAt   DateTime             @default(now())
   updatedAt   DateTime             @updatedAt
@@ -115,7 +118,8 @@ model PlanSuscripcion {
   nombre            String
   diasEntreEntregas Int           @default(30)
   precio            Float         @default(0)
-  limiteVapes       Int?          // Limite opcional de vapes por periodo
+  limiteVapes       Int?          // Límite opcional de vapes por periodo
+  limitePuffs       Int?          // Límite opcional de puffs totales por periodo
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt
   suscripciones     Suscripcion[]

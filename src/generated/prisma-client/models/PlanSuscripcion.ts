@@ -31,6 +31,7 @@ export type PlanSuscripcionAvgAggregateOutputType = {
   diasEntreEntregas: number | null
   precio: number | null
   limiteVapes: number | null
+  limitePuffs: number | null
 }
 
 export type PlanSuscripcionSumAggregateOutputType = {
@@ -38,6 +39,7 @@ export type PlanSuscripcionSumAggregateOutputType = {
   diasEntreEntregas: number | null
   precio: number | null
   limiteVapes: number | null
+  limitePuffs: number | null
 }
 
 export type PlanSuscripcionMinAggregateOutputType = {
@@ -46,6 +48,7 @@ export type PlanSuscripcionMinAggregateOutputType = {
   diasEntreEntregas: number | null
   precio: number | null
   limiteVapes: number | null
+  limitePuffs: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -56,6 +59,7 @@ export type PlanSuscripcionMaxAggregateOutputType = {
   diasEntreEntregas: number | null
   precio: number | null
   limiteVapes: number | null
+  limitePuffs: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -66,6 +70,7 @@ export type PlanSuscripcionCountAggregateOutputType = {
   diasEntreEntregas: number
   precio: number
   limiteVapes: number
+  limitePuffs: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -77,6 +82,7 @@ export type PlanSuscripcionAvgAggregateInputType = {
   diasEntreEntregas?: true
   precio?: true
   limiteVapes?: true
+  limitePuffs?: true
 }
 
 export type PlanSuscripcionSumAggregateInputType = {
@@ -84,6 +90,7 @@ export type PlanSuscripcionSumAggregateInputType = {
   diasEntreEntregas?: true
   precio?: true
   limiteVapes?: true
+  limitePuffs?: true
 }
 
 export type PlanSuscripcionMinAggregateInputType = {
@@ -92,6 +99,7 @@ export type PlanSuscripcionMinAggregateInputType = {
   diasEntreEntregas?: true
   precio?: true
   limiteVapes?: true
+  limitePuffs?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -102,6 +110,7 @@ export type PlanSuscripcionMaxAggregateInputType = {
   diasEntreEntregas?: true
   precio?: true
   limiteVapes?: true
+  limitePuffs?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -112,6 +121,7 @@ export type PlanSuscripcionCountAggregateInputType = {
   diasEntreEntregas?: true
   precio?: true
   limiteVapes?: true
+  limitePuffs?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -209,6 +219,7 @@ export type PlanSuscripcionGroupByOutputType = {
   diasEntreEntregas: number
   precio: number
   limiteVapes: number | null
+  limitePuffs: number | null
   createdAt: Date
   updatedAt: Date
   _count: PlanSuscripcionCountAggregateOutputType | null
@@ -242,6 +253,7 @@ export type PlanSuscripcionWhereInput = {
   diasEntreEntregas?: Prisma.IntFilter<"PlanSuscripcion"> | number
   precio?: Prisma.FloatFilter<"PlanSuscripcion"> | number
   limiteVapes?: Prisma.IntNullableFilter<"PlanSuscripcion"> | number | null
+  limitePuffs?: Prisma.IntNullableFilter<"PlanSuscripcion"> | number | null
   createdAt?: Prisma.DateTimeFilter<"PlanSuscripcion"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"PlanSuscripcion"> | Date | string
   suscripciones?: Prisma.SuscripcionListRelationFilter
@@ -253,6 +265,7 @@ export type PlanSuscripcionOrderByWithRelationInput = {
   diasEntreEntregas?: Prisma.SortOrder
   precio?: Prisma.SortOrder
   limiteVapes?: Prisma.SortOrderInput | Prisma.SortOrder
+  limitePuffs?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   suscripciones?: Prisma.SuscripcionOrderByRelationAggregateInput
@@ -267,6 +280,7 @@ export type PlanSuscripcionWhereUniqueInput = Prisma.AtLeast<{
   diasEntreEntregas?: Prisma.IntFilter<"PlanSuscripcion"> | number
   precio?: Prisma.FloatFilter<"PlanSuscripcion"> | number
   limiteVapes?: Prisma.IntNullableFilter<"PlanSuscripcion"> | number | null
+  limitePuffs?: Prisma.IntNullableFilter<"PlanSuscripcion"> | number | null
   createdAt?: Prisma.DateTimeFilter<"PlanSuscripcion"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"PlanSuscripcion"> | Date | string
   suscripciones?: Prisma.SuscripcionListRelationFilter
@@ -278,6 +292,7 @@ export type PlanSuscripcionOrderByWithAggregationInput = {
   diasEntreEntregas?: Prisma.SortOrder
   precio?: Prisma.SortOrder
   limiteVapes?: Prisma.SortOrderInput | Prisma.SortOrder
+  limitePuffs?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.PlanSuscripcionCountOrderByAggregateInput
@@ -296,6 +311,7 @@ export type PlanSuscripcionScalarWhereWithAggregatesInput = {
   diasEntreEntregas?: Prisma.IntWithAggregatesFilter<"PlanSuscripcion"> | number
   precio?: Prisma.FloatWithAggregatesFilter<"PlanSuscripcion"> | number
   limiteVapes?: Prisma.IntNullableWithAggregatesFilter<"PlanSuscripcion"> | number | null
+  limitePuffs?: Prisma.IntNullableWithAggregatesFilter<"PlanSuscripcion"> | number | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"PlanSuscripcion"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"PlanSuscripcion"> | Date | string
 }
@@ -305,6 +321,7 @@ export type PlanSuscripcionCreateInput = {
   diasEntreEntregas?: number
   precio?: number
   limiteVapes?: number | null
+  limitePuffs?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   suscripciones?: Prisma.SuscripcionCreateNestedManyWithoutPlanInput
@@ -316,6 +333,7 @@ export type PlanSuscripcionUncheckedCreateInput = {
   diasEntreEntregas?: number
   precio?: number
   limiteVapes?: number | null
+  limitePuffs?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
   suscripciones?: Prisma.SuscripcionUncheckedCreateNestedManyWithoutPlanInput
@@ -326,6 +344,7 @@ export type PlanSuscripcionUpdateInput = {
   diasEntreEntregas?: Prisma.IntFieldUpdateOperationsInput | number
   precio?: Prisma.FloatFieldUpdateOperationsInput | number
   limiteVapes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  limitePuffs?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   suscripciones?: Prisma.SuscripcionUpdateManyWithoutPlanNestedInput
@@ -337,6 +356,7 @@ export type PlanSuscripcionUncheckedUpdateInput = {
   diasEntreEntregas?: Prisma.IntFieldUpdateOperationsInput | number
   precio?: Prisma.FloatFieldUpdateOperationsInput | number
   limiteVapes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  limitePuffs?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   suscripciones?: Prisma.SuscripcionUncheckedUpdateManyWithoutPlanNestedInput
@@ -348,6 +368,7 @@ export type PlanSuscripcionCreateManyInput = {
   diasEntreEntregas?: number
   precio?: number
   limiteVapes?: number | null
+  limitePuffs?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -357,6 +378,7 @@ export type PlanSuscripcionUpdateManyMutationInput = {
   diasEntreEntregas?: Prisma.IntFieldUpdateOperationsInput | number
   precio?: Prisma.FloatFieldUpdateOperationsInput | number
   limiteVapes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  limitePuffs?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -367,6 +389,7 @@ export type PlanSuscripcionUncheckedUpdateManyInput = {
   diasEntreEntregas?: Prisma.IntFieldUpdateOperationsInput | number
   precio?: Prisma.FloatFieldUpdateOperationsInput | number
   limiteVapes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  limitePuffs?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -377,6 +400,7 @@ export type PlanSuscripcionCountOrderByAggregateInput = {
   diasEntreEntregas?: Prisma.SortOrder
   precio?: Prisma.SortOrder
   limiteVapes?: Prisma.SortOrder
+  limitePuffs?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -386,6 +410,7 @@ export type PlanSuscripcionAvgOrderByAggregateInput = {
   diasEntreEntregas?: Prisma.SortOrder
   precio?: Prisma.SortOrder
   limiteVapes?: Prisma.SortOrder
+  limitePuffs?: Prisma.SortOrder
 }
 
 export type PlanSuscripcionMaxOrderByAggregateInput = {
@@ -394,6 +419,7 @@ export type PlanSuscripcionMaxOrderByAggregateInput = {
   diasEntreEntregas?: Prisma.SortOrder
   precio?: Prisma.SortOrder
   limiteVapes?: Prisma.SortOrder
+  limitePuffs?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -404,6 +430,7 @@ export type PlanSuscripcionMinOrderByAggregateInput = {
   diasEntreEntregas?: Prisma.SortOrder
   precio?: Prisma.SortOrder
   limiteVapes?: Prisma.SortOrder
+  limitePuffs?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -413,6 +440,7 @@ export type PlanSuscripcionSumOrderByAggregateInput = {
   diasEntreEntregas?: Prisma.SortOrder
   precio?: Prisma.SortOrder
   limiteVapes?: Prisma.SortOrder
+  limitePuffs?: Prisma.SortOrder
 }
 
 export type PlanSuscripcionNullableScalarRelationFilter = {
@@ -441,6 +469,7 @@ export type PlanSuscripcionCreateWithoutSuscripcionesInput = {
   diasEntreEntregas?: number
   precio?: number
   limiteVapes?: number | null
+  limitePuffs?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -451,6 +480,7 @@ export type PlanSuscripcionUncheckedCreateWithoutSuscripcionesInput = {
   diasEntreEntregas?: number
   precio?: number
   limiteVapes?: number | null
+  limitePuffs?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -476,6 +506,7 @@ export type PlanSuscripcionUpdateWithoutSuscripcionesInput = {
   diasEntreEntregas?: Prisma.IntFieldUpdateOperationsInput | number
   precio?: Prisma.FloatFieldUpdateOperationsInput | number
   limiteVapes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  limitePuffs?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -486,6 +517,7 @@ export type PlanSuscripcionUncheckedUpdateWithoutSuscripcionesInput = {
   diasEntreEntregas?: Prisma.IntFieldUpdateOperationsInput | number
   precio?: Prisma.FloatFieldUpdateOperationsInput | number
   limiteVapes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  limitePuffs?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -527,6 +559,7 @@ export type PlanSuscripcionSelect<ExtArgs extends runtime.Types.Extensions.Inter
   diasEntreEntregas?: boolean
   precio?: boolean
   limiteVapes?: boolean
+  limitePuffs?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   suscripciones?: boolean | Prisma.PlanSuscripcion$suscripcionesArgs<ExtArgs>
@@ -539,6 +572,7 @@ export type PlanSuscripcionSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   diasEntreEntregas?: boolean
   precio?: boolean
   limiteVapes?: boolean
+  limitePuffs?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["planSuscripcion"]>
@@ -549,6 +583,7 @@ export type PlanSuscripcionSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   diasEntreEntregas?: boolean
   precio?: boolean
   limiteVapes?: boolean
+  limitePuffs?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["planSuscripcion"]>
@@ -559,11 +594,12 @@ export type PlanSuscripcionSelectScalar = {
   diasEntreEntregas?: boolean
   precio?: boolean
   limiteVapes?: boolean
+  limitePuffs?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type PlanSuscripcionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nombre" | "diasEntreEntregas" | "precio" | "limiteVapes" | "createdAt" | "updatedAt", ExtArgs["result"]["planSuscripcion"]>
+export type PlanSuscripcionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "nombre" | "diasEntreEntregas" | "precio" | "limiteVapes" | "limitePuffs" | "createdAt" | "updatedAt", ExtArgs["result"]["planSuscripcion"]>
 export type PlanSuscripcionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   suscripciones?: boolean | Prisma.PlanSuscripcion$suscripcionesArgs<ExtArgs>
   _count?: boolean | Prisma.PlanSuscripcionCountOutputTypeDefaultArgs<ExtArgs>
@@ -582,6 +618,7 @@ export type $PlanSuscripcionPayload<ExtArgs extends runtime.Types.Extensions.Int
     diasEntreEntregas: number
     precio: number
     limiteVapes: number | null
+    limitePuffs: number | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["planSuscripcion"]>
@@ -1013,6 +1050,7 @@ export interface PlanSuscripcionFieldRefs {
   readonly diasEntreEntregas: Prisma.FieldRef<"PlanSuscripcion", 'Int'>
   readonly precio: Prisma.FieldRef<"PlanSuscripcion", 'Float'>
   readonly limiteVapes: Prisma.FieldRef<"PlanSuscripcion", 'Int'>
+  readonly limitePuffs: Prisma.FieldRef<"PlanSuscripcion", 'Int'>
   readonly createdAt: Prisma.FieldRef<"PlanSuscripcion", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"PlanSuscripcion", 'DateTime'>
 }

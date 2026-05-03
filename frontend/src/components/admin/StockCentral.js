@@ -15,14 +15,14 @@ export default function StockCentral() {
   const [assignData, setAssignData] = useState({ vendedorId: "", cantidad: 1 });
   
   const [editVapeModal, setEditVapeModal] = useState(null);
-  const [editVapeData, setEditVapeData] = useState({ nombre: "", descripcion: "", costo: "", precio: "", stockGlobal: "", media: [], mostrarPrecio: true });
+  const [editVapeData, setEditVapeData] = useState({ nombre: "", descripcion: "", costo: "", precio: "", precioVendedor: "", puffs: "", sabor: "", stockGlobal: "", media: [], mostrarPrecio: true });
 
   const [editAssignModal, setEditAssignModal] = useState(null);
   const [editAssignData, setEditAssignData] = useState({ cantidad: "" });
 
   const [submitting, setSubmitting] = useState(false);
   const [showNewProduct, setShowNewProduct] = useState(false);
-  const [newProduct, setNewProduct] = useState({ nombre: "", descripcion: "", costo: "", precio: "", stockGlobal: "", media: [], mostrarPrecio: true });
+  const [newProduct, setNewProduct] = useState({ nombre: "", descripcion: "", costo: "", precio: "", precioVendedor: "", puffs: "", sabor: "", stockGlobal: "", media: [], mostrarPrecio: true });
   
   const [expandedRows, setExpandedRows] = useState({});
 
@@ -73,6 +73,9 @@ export default function StockCentral() {
       fd.append("descripcion", newProduct.descripcion);
       fd.append("costo", newProduct.costo);
       fd.append("precio", newProduct.precio);
+      if (newProduct.precioVendedor) fd.append("precioVendedor", newProduct.precioVendedor);
+      if (newProduct.puffs) fd.append("puffs", newProduct.puffs);
+      if (newProduct.sabor) fd.append("sabor", newProduct.sabor);
       fd.append("stockGlobal", newProduct.stockGlobal);
       fd.append("mostrarPrecio", newProduct.mostrarPrecio);
       
@@ -84,7 +87,7 @@ export default function StockCentral() {
 
       await createVape(fd);
       setShowNewProduct(false);
-      setNewProduct({ nombre: "", descripcion: "", costo: "", precio: "", stockGlobal: "", media: [], mostrarPrecio: true });
+      setNewProduct({ nombre: "", descripcion: "", costo: "", precio: "", precioVendedor: "", puffs: "", sabor: "", stockGlobal: "", media: [], mostrarPrecio: true });
       await fetchData();
     } catch (err) {
       setError(err.message);
@@ -103,6 +106,9 @@ export default function StockCentral() {
       fd.append("descripcion", editVapeData.descripcion);
       fd.append("costo", editVapeData.costo);
       fd.append("precio", editVapeData.precio);
+      if (editVapeData.precioVendedor) fd.append("precioVendedor", editVapeData.precioVendedor);
+      if (editVapeData.puffs) fd.append("puffs", editVapeData.puffs);
+      if (editVapeData.sabor) fd.append("sabor", editVapeData.sabor);
       fd.append("stockGlobal", editVapeData.stockGlobal);
       fd.append("mostrarPrecio", editVapeData.mostrarPrecio);
 
@@ -196,8 +202,20 @@ export default function StockCentral() {
               <input type="number" step="0.01" required value={newProduct.costo} onChange={e => setNewProduct({...newProduct, costo: e.target.value})} className="w-full bg-base-200 border-0 rounded-xl p-3 text-white mt-1" />
             </div>
             <div>
-              <label className="text-xs text-neutral-content/60 uppercase font-mono">Precio ($)</label>
+              <label className="text-xs text-neutral-content/60 uppercase font-mono">Precio Sugerido ($)</label>
               <input type="number" step="0.01" required value={newProduct.precio} onChange={e => setNewProduct({...newProduct, precio: e.target.value})} className="w-full bg-base-200 border-0 rounded-xl p-3 text-white mt-1" />
+            </div>
+            <div>
+              <label className="text-xs text-neutral-content/60 uppercase font-mono">Precio Vendedor ($)</label>
+              <input type="number" step="0.01" required value={newProduct.precioVendedor} onChange={e => setNewProduct({...newProduct, precioVendedor: e.target.value})} className="w-full bg-base-200 border-0 rounded-xl p-3 text-white mt-1" placeholder="Lo que el vendedor te paga" />
+            </div>
+            <div>
+              <label className="text-xs text-neutral-content/60 uppercase font-mono">Puffs</label>
+              <input type="number" required value={newProduct.puffs} onChange={e => setNewProduct({...newProduct, puffs: e.target.value})} className="w-full bg-base-200 border-0 rounded-xl p-3 text-white mt-1" placeholder="Ej. 6000" />
+            </div>
+            <div>
+              <label className="text-xs text-neutral-content/60 uppercase font-mono">Sabor</label>
+              <input type="text" required value={newProduct.sabor} onChange={e => setNewProduct({...newProduct, sabor: e.target.value})} className="w-full bg-base-200 border-0 rounded-xl p-3 text-white mt-1" placeholder="Ej. Mango Ice" />
             </div>
             <div>
               <label className="text-xs text-neutral-content/60 uppercase font-mono">Stock Bodega Inicial</label>
@@ -245,8 +263,20 @@ export default function StockCentral() {
               <input type="number" step="0.01" required value={editVapeData.costo} onChange={e => setEditVapeData({...editVapeData, costo: e.target.value})} className="w-full bg-base-200 border-0 rounded-xl p-3 text-white mt-1" />
             </div>
             <div>
-              <label className="text-xs text-neutral-content/60 uppercase font-mono">Precio ($)</label>
+              <label className="text-xs text-neutral-content/60 uppercase font-mono">Precio Sugerido ($)</label>
               <input type="number" step="0.01" required value={editVapeData.precio} onChange={e => setEditVapeData({...editVapeData, precio: e.target.value})} className="w-full bg-base-200 border-0 rounded-xl p-3 text-white mt-1" />
+            </div>
+            <div>
+              <label className="text-xs text-neutral-content/60 uppercase font-mono">Precio Vendedor ($)</label>
+              <input type="number" step="0.01" required value={editVapeData.precioVendedor} onChange={e => setEditVapeData({...editVapeData, precioVendedor: e.target.value})} className="w-full bg-base-200 border-0 rounded-xl p-3 text-white mt-1" placeholder="Lo que el vendedor te paga" />
+            </div>
+            <div>
+              <label className="text-xs text-neutral-content/60 uppercase font-mono">Puffs</label>
+              <input type="number" required value={editVapeData.puffs} onChange={e => setEditVapeData({...editVapeData, puffs: e.target.value})} className="w-full bg-base-200 border-0 rounded-xl p-3 text-white mt-1" placeholder="Ej. 6000" />
+            </div>
+            <div>
+              <label className="text-xs text-neutral-content/60 uppercase font-mono">Sabor</label>
+              <input type="text" required value={editVapeData.sabor} onChange={e => setEditVapeData({...editVapeData, sabor: e.target.value})} className="w-full bg-base-200 border-0 rounded-xl p-3 text-white mt-1" placeholder="Ej. Mango Ice" />
             </div>
             <div>
               <label className="text-xs text-neutral-content/60 uppercase font-mono">Stock Bodega</label>
@@ -352,7 +382,9 @@ export default function StockCentral() {
                     </td>
                     <td className="p-4">
                       <div className="font-bold text-white">{item.nombre}</div>
-                      <div className="text-xs text-neutral-content/60">${parseFloat(item.precio).toFixed(2)} c/u</div>
+                      {item.sabor && <div className="text-xs text-primary/80">{item.sabor}</div>}
+                      {item.puffs && <div className="text-xs text-neutral-content/50">{item.puffs} puffs</div>}
+                      <div className="text-xs text-neutral-content/60">Sugerido: ${parseFloat(item.precio).toFixed(2)}{item.precioVendedor ? ` · Vendedor: $${parseFloat(item.precioVendedor).toFixed(2)}` : ''}</div>
                     </td>
                     <td className="p-4 text-center">
                       <span className={`font-mono font-bold ${item.stockGlobal < 10 ? 'text-warning' : 'text-success'}`}>
@@ -368,7 +400,7 @@ export default function StockCentral() {
                         <ArrowRightLeft className="w-3 h-3" />
                       </button>
                       <button onClick={() => {
-                        setEditVapeData({ nombre: item.nombre, descripcion: item.descripcion || "", costo: item.costo, precio: item.precio, stockGlobal: item.stockGlobal, media: [], mostrarPrecio: item.mostrarPrecio !== false });
+                        setEditVapeData({ nombre: item.nombre, descripcion: item.descripcion || "", costo: item.costo, precio: item.precio, precioVendedor: item.precioVendedor || "", puffs: item.puffs || "", sabor: item.sabor || "", stockGlobal: item.stockGlobal, media: [], mostrarPrecio: item.mostrarPrecio !== false });
                         setEditVapeModal(item);
                       }} className="btn btn-xs btn-outline btn-warning" title="Editar Vape">
                         <Edit2 className="w-3 h-3" />

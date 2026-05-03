@@ -109,6 +109,8 @@ export default function TiendaPage() {
                 </div>
                 <div>
                   <h4 className="font-bold text-sm truncate text-white" title={vape.nombre}>{vape.nombre}</h4>
+                  {vape.sabor && <p className="text-xs text-primary/80 truncate">{vape.sabor}</p>}
+                  {vape.puffs && <p className="text-[10px] text-neutral-content/50 font-mono">{vape.puffs} puffs</p>}
                   <div className="flex justify-between items-end mt-2">
                     <p className="text-lg text-primary font-bold">
                       {vape.mostrarPrecio !== false ? `$${parseFloat(vape.precio).toFixed(2)}` : "Consultar"}
@@ -181,6 +183,21 @@ export default function TiendaPage() {
               </div>
               
               <div className="space-y-4">
+                {(selectedVape.sabor || selectedVape.puffs) && (
+                  <div className="flex flex-wrap gap-2">
+                    {selectedVape.sabor && (
+                      <span className="inline-flex items-center gap-1 bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold">
+                        {selectedVape.sabor}
+                      </span>
+                    )}
+                    {selectedVape.puffs && (
+                      <span className="inline-flex items-center gap-1 bg-info/10 text-info px-3 py-1 rounded-full text-xs font-mono font-bold">
+                        {selectedVape.puffs} puffs
+                      </span>
+                    )}
+                  </div>
+                )}
+
                 <div>
                   <h4 className="text-xs uppercase tracking-wider font-mono text-neutral-content/50 mb-1">Descripción</h4>
                   <p className="text-sm text-neutral-content/80 whitespace-pre-wrap leading-relaxed">

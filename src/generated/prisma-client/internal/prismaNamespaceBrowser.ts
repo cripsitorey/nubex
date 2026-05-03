@@ -99,8 +99,13 @@ export const VapeScalarFieldEnum = {
   nombre: 'nombre',
   descripcion: 'descripcion',
   imagenUrl: 'imagenUrl',
+  media: 'media',
   costo: 'costo',
   precio: 'precio',
+  precioVendedor: 'precioVendedor',
+  puffs: 'puffs',
+  sabor: 'sabor',
+  mostrarPrecio: 'mostrarPrecio',
   stockGlobal: 'stockGlobal',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -161,6 +166,7 @@ export const PlanSuscripcionScalarFieldEnum = {
   diasEntreEntregas: 'diasEntreEntregas',
   precio: 'precio',
   limiteVapes: 'limiteVapes',
+  limitePuffs: 'limitePuffs',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -213,6 +219,14 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
 export const QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
@@ -227,4 +241,13 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
