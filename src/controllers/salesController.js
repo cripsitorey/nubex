@@ -16,6 +16,19 @@ export const createVenta = async (req, res, next) => {
       comprobanteUrl = `/uploads/${req.file.filename}`;
     }
 
+    // Validar que el cliente existe si se envía clienteId
+    let clienteIdFinal = null;
+    if (clienteId) {
+      const clienteExiste = await prisma.user.findUnique({ where: { id: parseInt(clienteId) } });
+      if (!clienteExiste) {
+        return res.status(400).json({ error: 'El cliente especificado no existe' });
+      }
+      clienteIdFinal = parseInt(clienteId);
+    }
+
+    // Si es admin, forzar pagadoA a ADMIN
+    const pagadoAFinal = req.user.role === 'ADMIN' ? 'ADMIN' : (pagadoA === 'ADMIN' ? 'ADMIN' : 'VENDEDOR');
+
     const venta = await prisma.$transaction(async (prismaClient) => {
       // Obtener snapshot del vape (costo actual)
       const vape = await prismaClient.vape.findUnique({
@@ -89,14 +102,14 @@ export const createVenta = async (req, res, next) => {
       const nuevaVenta = await prismaClient.venta.create({
         data: {
           vendedorId: parseInt(vendedorId),
-          clienteId: clienteId ? parseInt(clienteId) : null,
+          clienteId: clienteIdFinal,
           vapeId: parseInt(vapeId),
           cantidad: parseInt(cantidad),
           costoAdquisicion: vape.costo,
           precioVenta: parseFloat(precioVenta),
           montoParaAdmin,
           montoParaVendedor,
-          pagadoA: pagadoA === 'ADMIN' ? 'ADMIN' : 'VENDEDOR',
+          pagadoA: pagadoAFinal,
           comprobanteUrl,
           estado: 'PENDIENTE_LIQUIDACION'
         }

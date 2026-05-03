@@ -147,7 +147,8 @@ export default function VendedorDashboard() {
         {activeTab === "POS" && selectedClient && (
           <PointOfSale 
             client={selectedClient} 
-            onSaleComplete={handleSaleComplete} 
+            onSaleComplete={handleSaleComplete}
+            userRole={user.role}
           />
         )}
 

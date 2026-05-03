@@ -6,16 +6,19 @@ import { getCachedCatalog, addToSyncQueue } from "@/lib/syncService";
 import { createSale, ApiError } from "@/services/api";
 import { useNetwork } from "@/components/NetworkProvider";
 
-export default function PointOfSale({ client, onSaleComplete }) {
+export default function PointOfSale({ client, onSaleComplete, userRole }) {
   const { isOnline } = useNetwork();
   const [vapes, setVapes] = useState([]);
   const [selectedVapeId, setSelectedVapeId] = useState("");
   const [cantidad, setCantidad] = useState(1);
+  const [precioFinal, setPrecioFinal] = useState("");
   const [comprobanteFile, setComprobanteFile] = useState(null);
   const [comprobanteBase64, setComprobanteBase64] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [preview, setPreview] = useState(null);
   const [pagadoA, setPagadoA] = useState("VENDEDOR");
+
+  const isAdmin = userRole === "ADMIN";
 
   useEffect(() => {
     async function loadCatalog() {
@@ -47,7 +50,18 @@ export default function PointOfSale({ client, onSaleComplete }) {
   };
 
   const selectedVape = vapes.find(v => v.id === parseInt(selectedVapeId));
-  const subtotal = selectedVape ? selectedVape.precio * cantidad : 0;
+
+  // Cuando se selecciona un vape, pre-llenar el precio sugerido
+  useEffect(() => {
+    if (selectedVape) {
+      setPrecioFinal(parseFloat(selectedVape.precio).toFixed(2));
+    } else {
+      setPrecioFinal("");
+    }
+  }, [selectedVapeId]);
+
+  const precioUnitario = parseFloat(precioFinal) || 0;
+  const subtotal = precioUnitario * cantidad;
 
   const hasPlan = client?.suscripcion || client?.asignarSuscripcion;
   let multaSugerida = 0;
@@ -57,6 +71,10 @@ export default function PointOfSale({ client, onSaleComplete }) {
     e.preventDefault();
     if (!selectedVapeId || (!comprobanteFile && !comprobanteBase64)) {
       alert("Selecciona un vape y sube el comprobante de pago.");
+      return;
+    }
+    if (!precioFinal || precioUnitario <= 0) {
+      alert("Introduce un precio de venta válido.");
       return;
     }
 
@@ -69,8 +87,8 @@ export default function PointOfSale({ client, onSaleComplete }) {
         if (client.id > 0) formData.append("clienteId", client.id);
         formData.append("vapeId", parseInt(selectedVapeId));
         formData.append("cantidad", parseInt(cantidad));
-        formData.append("precioVenta", total);
-        formData.append("pagadoA", pagadoA);
+        formData.append("precioVenta", precioUnitario);
+        formData.append("pagadoA", isAdmin ? "ADMIN" : pagadoA);
         formData.append("comprobante", comprobanteFile);
 
         const result = await createSale(formData);
@@ -85,14 +103,12 @@ export default function PointOfSale({ client, onSaleComplete }) {
         return;
       } catch (err) {
         if (err.name === 'ApiError' && err.status >= 400 && err.status < 500) {
-          // Error de validación de la API (ej. sin stock, cliente inválido)
           setIsSubmitting(false);
           alert(`La venta no se pudo procesar: ${err.message}`);
           return;
         }
 
         console.warn("Envío online falló por error de red/servidor, encolando offline:", err.message);
-        // Fall through to offline queue
       }
     }
 
@@ -102,8 +118,8 @@ export default function PointOfSale({ client, onSaleComplete }) {
       vapeId: parseInt(selectedVapeId),
       cantidad: parseInt(cantidad),
       costoAdquisicion: selectedVape.costo,
-      precioVenta: total,
-      pagadoA,
+      precioVenta: precioUnitario,
+      pagadoA: isAdmin ? "ADMIN" : pagadoA,
       comprobanteBase64,
     };
 
@@ -170,26 +186,53 @@ export default function PointOfSale({ client, onSaleComplete }) {
         </div>
 
         <div>
-          <label className="text-xs text-neutral-content/60 uppercase font-mono">¿Quién recibió el pago?</label>
-          <div className="flex gap-2 mt-1">
-            <button type="button" onClick={() => setPagadoA("VENDEDOR")}
-              className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all ${pagadoA === "VENDEDOR" ? "bg-primary text-primary-content shadow-lg" : "bg-base-200 text-neutral-content/60"}`}
-            >Vendedor</button>
-            <button type="button" onClick={() => setPagadoA("ADMIN")}
-              className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all ${pagadoA === "ADMIN" ? "bg-primary text-primary-content shadow-lg" : "bg-base-200 text-neutral-content/60"}`}
-            >Admin</button>
-          </div>
+          <label className="text-xs text-neutral-content/60 uppercase font-mono">Precio de Venta (por unidad)</label>
+          <input
+            type="number"
+            step="0.01"
+            min="0"
+            className="w-full bg-base-200 border-0 rounded-xl p-3 text-white mt-1 focus:ring-2 focus:ring-primary outline-none"
+            value={precioFinal}
+            onChange={(e) => setPrecioFinal(e.target.value)}
+            required
+            placeholder="Precio al que se vendió"
+          />
+          {selectedVape && precioUnitario !== parseFloat(selectedVape.precio) && (
+            <p className="text-xs text-warning mt-1">Sugerido: ${parseFloat(selectedVape.precio).toFixed(2)} — Modificado</p>
+          )}
         </div>
+
+        {/* Solo mostrar selector de pagadoA para vendedores */}
+        {!isAdmin && (
+          <div>
+            <label className="text-xs text-neutral-content/60 uppercase font-mono">¿Quién recibió el pago?</label>
+            <div className="flex gap-2 mt-1">
+              <button type="button" onClick={() => setPagadoA("VENDEDOR")}
+                className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all ${pagadoA === "VENDEDOR" ? "bg-primary text-primary-content shadow-lg" : "bg-base-200 text-neutral-content/60"}`}
+              >Vendedor</button>
+              <button type="button" onClick={() => setPagadoA("ADMIN")}
+                className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all ${pagadoA === "ADMIN" ? "bg-primary text-primary-content shadow-lg" : "bg-base-200 text-neutral-content/60"}`}
+              >Admin</button>
+            </div>
+          </div>
+        )}
 
         <div className="py-2 border-t border-b border-white/10 my-4">
           <div className="flex justify-between items-center text-sm mb-1">
-            <span className="text-neutral-content/80">Subtotal (Sugerido):</span>
+            <span className="text-neutral-content/80">Subtotal:</span>
             <span className="font-mono text-white">${subtotal.toFixed(2)}</span>
           </div>
-          {selectedVape && selectedVape.precioVendedor && (
+          {/* Solo mostrar desglose para vendedores */}
+          {!isAdmin && selectedVape && selectedVape.precioVendedor && (
             <div className="flex justify-between items-center text-sm mb-1 text-warning">
               <span>Entregas al admin:</span>
               <span className="font-mono">${(parseFloat(selectedVape.precioVendedor) * cantidad).toFixed(2)}</span>
+            </div>
+          )}
+          {!isAdmin && selectedVape && selectedVape.precioVendedor && (
+            <div className="flex justify-between items-center text-sm mb-1 text-success">
+              <span>Tu ganancia:</span>
+              <span className="font-mono">${(subtotal - (parseFloat(selectedVape.precioVendedor) * cantidad)).toFixed(2)}</span>
             </div>
           )}
           {multaSugerida > 0 && (
