@@ -32,10 +32,31 @@ export const createVape = async (req, res, next) => {
   try {
     const { nombre, descripcion, costo, precio, stockGlobal } = req.body;
     let imagenUrl = null;
+    let media = [];
 
-    if (req.file) {
-      // req.file ya fue procesado por processImage en uploadMiddleware
+    // req.files fue procesado por processMedia
+    if (req.files && req.files.length > 0) {
+      // Usar la primera imagen como imagenUrl (legacy/principal)
+      const primeraImagen = req.files.find(f => f.mimetype.startsWith('image/'));
+      if (primeraImagen) {
+        imagenUrl = `/uploads/${primeraImagen.filename}`;
+      } else {
+        imagenUrl = `/uploads/${req.files[0].filename}`; // Fallback si es un video principal
+      }
+
+      media = req.files.map(f => ({
+        url: `/uploads/${f.filename}`,
+        type: f.mimetype.startsWith('image/') ? 'image' : 'video',
+        mimetype: f.mimetype
+      }));
+    } else if (req.file) {
+      // Por si se envía con upload.single
       imagenUrl = `/uploads/${req.file.filename}`;
+      media = [{
+        url: imagenUrl,
+        type: req.file.mimetype.startsWith('image/') ? 'image' : 'video',
+        mimetype: req.file.mimetype
+      }];
     }
 
     const newVape = await prisma.vape.create({
@@ -45,7 +66,8 @@ export const createVape = async (req, res, next) => {
         costo: parseFloat(costo),
         precio: parseFloat(precio),
         stockGlobal: stockGlobal ? parseInt(stockGlobal) : 0,
-        imagenUrl
+        imagenUrl,
+        media
       }
     });
 
@@ -68,8 +90,28 @@ export const updateVape = async (req, res, next) => {
     if (precio !== undefined) updateData.precio = parseFloat(precio);
     if (stockGlobal !== undefined) updateData.stockGlobal = parseInt(stockGlobal);
 
-    if (req.file) {
+    // Si se suben nuevos archivos, reemplazamos el array de media por completo
+    // En una implementación más avanzada se podrían añadir o borrar individualmente
+    if (req.files && req.files.length > 0) {
+      const primeraImagen = req.files.find(f => f.mimetype.startsWith('image/'));
+      if (primeraImagen) {
+        updateData.imagenUrl = `/uploads/${primeraImagen.filename}`;
+      } else {
+        updateData.imagenUrl = `/uploads/${req.files[0].filename}`;
+      }
+
+      updateData.media = req.files.map(f => ({
+        url: `/uploads/${f.filename}`,
+        type: f.mimetype.startsWith('image/') ? 'image' : 'video',
+        mimetype: f.mimetype
+      }));
+    } else if (req.file) {
       updateData.imagenUrl = `/uploads/${req.file.filename}`;
+      updateData.media = [{
+        url: updateData.imagenUrl,
+        type: req.file.mimetype.startsWith('image/') ? 'image' : 'video',
+        mimetype: req.file.mimetype
+      }];
     }
 
     const updatedVape = await prisma.vape.update({

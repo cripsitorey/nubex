@@ -4,7 +4,9 @@ import { useState } from "react";
 import ScannerQR from "@/components/vendedor/ScannerQR";
 import ClientRegistration from "@/components/vendedor/ClientRegistration";
 import PointOfSale from "@/components/vendedor/PointOfSale";
-import { UserPlus, ScanLine, ArrowLeft } from "lucide-react";
+import MyStock from "@/components/vendedor/MyStock";
+import MySales from "@/components/vendedor/MySales";
+import { UserPlus, ScanLine, ArrowLeft, Package, Receipt } from "lucide-react";
 import { getUsers } from "@/services/api";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
@@ -111,6 +113,18 @@ export default function VendedorDashboard() {
           >
             <UserPlus className="w-4 h-4" /> Nuevo Cliente
           </button>
+          <button
+            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-colors ${activeTab === 'STOCK' ? 'bg-primary text-primary-content shadow-lg' : 'text-neutral-content/60'}`}
+            onClick={() => setActiveTab("STOCK")}
+          >
+            <Package className="w-4 h-4" /> Mi Stock
+          </button>
+          <button
+            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-colors ${activeTab === 'SALES' ? 'bg-primary text-primary-content shadow-lg' : 'text-neutral-content/60'}`}
+            onClick={() => setActiveTab("SALES")}
+          >
+            <Receipt className="w-4 h-4" /> Mis Ventas
+          </button>
         </div>
       )}
 
@@ -135,6 +149,14 @@ export default function VendedorDashboard() {
             client={selectedClient} 
             onSaleComplete={handleSaleComplete} 
           />
+        )}
+
+        {activeTab === "STOCK" && (
+          <MyStock />
+        )}
+
+        {activeTab === "SALES" && (
+          <MySales />
         )}
       </div>
     </div>

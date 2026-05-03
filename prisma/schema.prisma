@@ -48,6 +48,7 @@ model Vape {
   nombre      String
   descripcion String?
   imagenUrl   String?
+  media       Json?
   costo       Float
   precio      Float
   stockGlobal Int                  @default(0)

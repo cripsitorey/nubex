@@ -15,6 +15,7 @@ export default function TiendaPage() {
   
   const [vapes, setVapes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedVape, setSelectedVape] = useState(null);
 
   useEffect(() => {
     if (!loading) {
@@ -76,12 +77,22 @@ export default function TiendaPage() {
           </div>
         ) : vapes.length > 0 ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            {vapes.map(vape => (
-              <div key={vape.id} className="glass-card p-4 rounded-2xl flex flex-col justify-between hover:border-primary/50 transition-colors group">
+            {vapes.map(vape => {
+              // Legacy support para imagenUrl principal
+              const mainImg = vape.media && vape.media.length > 0 
+                ? (vape.media[0].type === 'image' ? resolveImageUrl(vape.media[0].url) : resolveImageUrl(vape.imagenUrl))
+                : resolveImageUrl(vape.imagenUrl);
+
+              return (
+              <div 
+                key={vape.id} 
+                onClick={() => setSelectedVape(vape)}
+                className="glass-card p-4 rounded-2xl flex flex-col justify-between hover:border-primary/50 transition-all cursor-pointer group hover:shadow-[0_0_20px_rgba(0,229,255,0.2)]"
+              >
                 <div className="w-full h-32 bg-base-300 rounded-xl mb-3 flex items-center justify-center overflow-hidden relative">
-                  {vape.imagenUrl ? (
+                  {mainImg ? (
                     <img 
-                      src={resolveImageUrl(vape.imagenUrl)} 
+                      src={mainImg} 
                       alt={vape.nombre} 
                       className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500" 
                     />
@@ -106,7 +117,7 @@ export default function TiendaPage() {
                   </div>
                 </div>
               </div>
-            ))}
+            )})}
           </div>
         ) : (
           <div className="glass-card p-12 rounded-3xl text-center flex flex-col items-center justify-center">
@@ -118,6 +129,74 @@ export default function TiendaPage() {
           </div>
         )}
       </div>
+
+      {/* MODAL DETALLE DE PRODUCTO */}
+      {selectedVape && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in zoom-in duration-200" onClick={() => setSelectedVape(null)}>
+          <div className="glass-card max-w-xl w-full rounded-3xl overflow-hidden relative shadow-2xl border border-primary/20" onClick={e => e.stopPropagation()}>
+            <button 
+              onClick={() => setSelectedVape(null)}
+              className="absolute top-4 right-4 z-10 w-8 h-8 bg-black/50 text-white rounded-full flex items-center justify-center hover:bg-error transition-colors"
+            >
+              ✕
+            </button>
+            
+            <div className="w-full h-64 bg-base-300 relative overflow-x-auto flex snap-x snap-mandatory hide-scrollbar">
+              {selectedVape.media && selectedVape.media.length > 0 ? (
+                selectedVape.media.map((m, i) => (
+                  <div key={i} className="min-w-full h-full snap-center flex items-center justify-center bg-black/40 relative">
+                    {m.type === 'video' || m.mimetype?.startsWith('video') ? (
+                      <video src={resolveImageUrl(m.url)} controls className="max-w-full max-h-full object-contain" autoPlay muted loop />
+                    ) : (
+                      <img src={resolveImageUrl(m.url)} alt={`${selectedVape.nombre} - ${i}`} className="max-w-full max-h-full object-contain" />
+                    )}
+                    {selectedVape.media.length > 1 && (
+                      <div className="absolute bottom-2 right-2 bg-black/60 px-2 py-1 rounded text-xs font-mono text-white">
+                        {i + 1}/{selectedVape.media.length}
+                      </div>
+                    )}
+                  </div>
+                ))
+              ) : selectedVape.imagenUrl ? (
+                <div className="min-w-full h-full snap-center flex items-center justify-center bg-black/40">
+                  <img src={resolveImageUrl(selectedVape.imagenUrl)} alt={selectedVape.nombre} className="max-w-full max-h-full object-contain" />
+                </div>
+              ) : (
+                <div className="min-w-full h-full flex items-center justify-center text-neutral-content/30">
+                  <PackageSearch className="w-16 h-16" />
+                </div>
+              )}
+            </div>
+
+            <div className="p-6">
+              <div className="flex justify-between items-start gap-4 mb-4">
+                <h3 className="text-2xl font-bold text-white">{selectedVape.nombre}</h3>
+                <span className="text-2xl font-bold text-primary">${parseFloat(selectedVape.precio).toFixed(2)}</span>
+              </div>
+              
+              <div className="space-y-4">
+                <div>
+                  <h4 className="text-xs uppercase tracking-wider font-mono text-neutral-content/50 mb-1">Descripción</h4>
+                  <p className="text-sm text-neutral-content/80 whitespace-pre-wrap leading-relaxed">
+                    {selectedVape.descripcion || "Sin descripción detallada."}
+                  </p>
+                </div>
+
+                {selectedVape.stock > 0 ? (
+                  <div className="inline-flex items-center gap-2 bg-success/10 text-success px-3 py-1.5 rounded-xl text-sm font-bold">
+                    <div className="w-2 h-2 rounded-full bg-success animate-pulse"></div>
+                    Disponible en Tienda
+                  </div>
+                ) : (
+                  <div className="inline-flex items-center gap-2 bg-error/10 text-error px-3 py-1.5 rounded-xl text-sm font-bold">
+                    Agotado Temporalmente
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

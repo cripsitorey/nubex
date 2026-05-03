@@ -17,24 +17,52 @@ export const createVenta = async (req, res, next) => {
     }
 
     const venta = await prisma.$transaction(async (prismaClient) => {
-      // Verificar si el vendedor tiene stock
-      const inventario = await prismaClient.inventarioVendedor.findUnique({
-        where: {
-          vendedorId_vapeId: {
-            vendedorId: parseInt(vendedorId),
-            vapeId: parseInt(vapeId)
-          }
-        }
-      });
-
-      if (!inventario || inventario.cantidad < parseInt(cantidad)) {
-        throw new Error('Stock insuficiente en tu inventario');
-      }
-
       // Obtener snapshot del vape (costo actual)
       const vape = await prismaClient.vape.findUnique({
         where: { id: parseInt(vapeId) }
       });
+
+      if (!vape) {
+        throw new Error('Vape no encontrado');
+      }
+
+      if (req.user.role === 'ADMIN') {
+        if (vape.stockGlobal < parseInt(cantidad)) {
+          throw new Error('Stock insuficiente en la bodega central');
+        }
+        // Restar stock global
+        await prismaClient.vape.update({
+          where: { id: parseInt(vapeId) },
+          data: { stockGlobal: vape.stockGlobal - parseInt(cantidad) }
+        });
+      } else {
+        // Verificar si el vendedor tiene stock
+        const inventario = await prismaClient.inventarioVendedor.findUnique({
+          where: {
+            vendedorId_vapeId: {
+              vendedorId: parseInt(vendedorId),
+              vapeId: parseInt(vapeId)
+            }
+          }
+        });
+
+        if (!inventario || inventario.cantidad < parseInt(cantidad)) {
+          throw new Error('Stock insuficiente en tu inventario asignado');
+        }
+
+        // Restar stock del inventario del vendedor
+        await prismaClient.inventarioVendedor.update({
+          where: {
+            vendedorId_vapeId: {
+              vendedorId: parseInt(vendedorId),
+              vapeId: parseInt(vapeId)
+            }
+          },
+          data: {
+            cantidad: inventario.cantidad - parseInt(cantidad)
+          }
+        });
+      }
 
       // Cálculo del monto dinámico
       const totalVenta = parseFloat(precioVenta) * parseInt(cantidad);
@@ -52,19 +80,6 @@ export const createVenta = async (req, res, next) => {
         montoParaAdmin = vape.costo * parseInt(cantidad);
         montoParaVendedor = totalVenta - montoParaAdmin;
       }
-
-      // Restar stock del inventario del vendedor
-      await prismaClient.inventarioVendedor.update({
-        where: {
-          vendedorId_vapeId: {
-            vendedorId: parseInt(vendedorId),
-            vapeId: parseInt(vapeId)
-          }
-        },
-        data: {
-          cantidad: inventario.cantidad - parseInt(cantidad)
-        }
-      });
 
       // Registrar la venta
       const nuevaVenta = await prismaClient.venta.create({
@@ -113,7 +128,7 @@ export const createVenta = async (req, res, next) => {
 
     res.status(201).json(venta);
   } catch (error) {
-    if (error.message === 'Stock insuficiente en tu inventario') {
+    if (error.message === 'Stock insuficiente en tu inventario asignado' || error.message === 'Stock insuficiente en la bodega central') {
       return res.status(400).json({ error: error.message });
     }
     next(error);
@@ -134,11 +149,44 @@ export const updatePagadoA = async (req, res, next) => {
       data: { pagadoA }
     });
 
-    res.json(venta);
+    res.json({ message: 'Receptor de pago actualizado', venta });
   } catch (error) {
     if (error.code === 'P2025') {
       return res.status(404).json({ error: 'Venta no encontrada' });
     }
+    next(error);
+  }
+};
+
+export const getSales = async (req, res, next) => {
+  try {
+    const role = req.user.role;
+    let ventas = [];
+
+    if (role === 'ADMIN') {
+      ventas = await prisma.venta.findMany({
+        orderBy: { createdAt: 'desc' },
+        include: {
+          vendedor: { select: { id: true, nombre: true } },
+          cliente: { select: { id: true, nombre: true } },
+          vape: { select: { id: true, nombre: true } }
+        }
+      });
+    } else if (role === 'VENDEDOR') {
+      ventas = await prisma.venta.findMany({
+        where: { vendedorId: req.user.id },
+        orderBy: { createdAt: 'desc' },
+        include: {
+          cliente: { select: { id: true, nombre: true } },
+          vape: { select: { id: true, nombre: true } }
+        }
+      });
+    } else {
+      return res.status(403).json({ error: 'No tienes permiso para ver ventas' });
+    }
+
+    res.json(ventas);
+  } catch (error) {
     next(error);
   }
 };

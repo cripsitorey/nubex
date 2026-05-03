@@ -6,15 +6,19 @@ import PlanesManager from "@/components/admin/PlanesManager";
 import VendedoresManager from "@/components/admin/VendedoresManager";
 import StockCentral from "@/components/admin/StockCentral";
 import LiquidationManager from "@/components/admin/LiquidationManager";
-import { BarChart3, Layers, Users, Package, Wallet } from "lucide-react";
+import ClientRegistration from "@/components/vendedor/ClientRegistration";
+import SalesHistory from "@/components/admin/SalesHistory";
+import { BarChart3, Layers, Users, Package, Wallet, UserCircle, Receipt } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 const TABS = [
   { key: "analytics", label: "Métricas", icon: BarChart3 },
+  { key: "ventas", label: "Ventas", icon: Receipt },
   { key: "planes", label: "Planes", icon: Layers },
   { key: "vendedores", label: "Vendedores", icon: Users },
+  { key: "clientes", label: "Clientes", icon: UserCircle },
   { key: "stock", label: "Stock", icon: Package },
   { key: "liquidaciones", label: "Cierres", icon: Wallet },
 ];
@@ -65,8 +69,10 @@ export default function AdminDashboard() {
       {/* Tab Content */}
       <div className="min-h-[50vh]">
         {activeTab === "analytics" && <AnalyticsDashboard />}
+        {activeTab === "ventas" && <SalesHistory />}
         {activeTab === "planes" && <PlanesManager />}
         {activeTab === "vendedores" && <VendedoresManager />}
+        {activeTab === "clientes" && <ClientRegistration standalone={true} />}
         {activeTab === "stock" && <StockCentral />}
         {activeTab === "liquidaciones" && <LiquidationManager />}
       </div>

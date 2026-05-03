@@ -168,6 +168,27 @@ export async function createUserByAdmin(userData) {
   return res.json();
 }
 
+export async function updateUser(id, userData) {
+  const res = await apiFetch(`/users/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(userData),
+  });
+  if (!res.ok) {
+    const data = await res.json();
+    throw new Error(data.error || "Error al actualizar usuario");
+  }
+  return res.json();
+}
+
+export async function deleteUser(id) {
+  const res = await apiFetch(`/users/${id}`, { method: "DELETE" });
+  if (!res.ok) {
+    const data = await res.json();
+    throw new Error(data.error || "Error al eliminar usuario");
+  }
+  return res.json();
+}
+
 // ─── PLANES ───────────────────────────────────────────────────────────────────
 
 export async function getPlans() {
@@ -207,6 +228,12 @@ export async function deletePlan(id) {
 }
 
 // ─── VENTAS ───────────────────────────────────────────────────────────────────
+
+export async function getSales() {
+  const res = await apiFetch("/sales");
+  if (!res.ok) throw new Error("Error al obtener el historial de ventas");
+  return res.json();
+}
 
 export async function createSale(saleFormData) {
   // saleFormData: FormData con campos + comprobante
@@ -276,6 +303,33 @@ export async function assignInventory(vendedorId, vapeId, cantidad) {
   if (!res.ok) {
     const data = await res.json();
     throw new Error(data.error || "Error al asignar inventario");
+  }
+  return res.json();
+}
+
+export async function getInventory() {
+  const res = await apiFetch("/inventory");
+  if (!res.ok) throw new Error("Error al obtener inventario detallado");
+  return res.json();
+}
+
+export async function updateAssignedInventory(id, cantidad) {
+  const res = await apiFetch(`/inventory/${id}`, {
+    method: "PUT",
+    body: JSON.stringify({ cantidad }),
+  });
+  if (!res.ok) {
+    const data = await res.json();
+    throw new Error(data.error || "Error al actualizar asignación");
+  }
+  return res.json();
+}
+
+export async function removeAssignedInventory(id) {
+  const res = await apiFetch(`/inventory/${id}`, { method: "DELETE" });
+  if (!res.ok) {
+    const data = await res.json();
+    throw new Error(data.error || "Error al remover asignación");
   }
   return res.json();
 }
