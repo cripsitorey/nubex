@@ -104,12 +104,22 @@ export async function processSyncQueue() {
           `[Sync] ✅ Item ${item.id} (${item.type}) synced successfully.`
         );
       } else {
-        await markQueueFailed(item.id, result.error);
-        failed++;
-        errors.push(`${item.type} #${item.id}: ${result.error}`);
-        console.error(
-          `[Sync] ❌ Item ${item.id} failed: ${result.error} (retry ${item.retryCount + 1})`
-        );
+        if (result.isValidationError) {
+          // Error irrecuperable (ej. falta stock), eliminar de la cola
+          await removeFromQueue(item.id);
+          failed++;
+          errors.push(`${item.type} #${item.id}: Rechazado por validación (${result.error})`);
+          console.error(
+            `[Sync] ❌ Item ${item.id} rejected permanently: ${result.error}`
+          );
+        } else {
+          await markQueueFailed(item.id, result.error);
+          failed++;
+          errors.push(`${item.type} #${item.id}: ${result.error}`);
+          console.error(
+            `[Sync] ❌ Item ${item.id} failed: ${result.error} (retry ${item.retryCount + 1})`
+          );
+        }
       }
     } catch (error) {
       // Error de red: detener el procesamiento
@@ -213,6 +223,9 @@ async function processSingleItem(item) {
     return { success: true };
   }
 
+  // Si es un error 400-499 (ej. error de validación), es irrecuperable
+  const isValidationError = res.status >= 400 && res.status < 500;
+
   // Leer error del backend
   let errorMsg = `HTTP ${res.status}`;
   try {
@@ -222,5 +235,5 @@ async function processSingleItem(item) {
     // Si el body no es JSON, usar el status code
   }
 
-  return { success: false, error: errorMsg };
+  return { success: false, error: errorMsg, isValidationError };
 }

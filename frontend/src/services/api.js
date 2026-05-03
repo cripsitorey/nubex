@@ -1,6 +1,14 @@
 // Cliente HTTP base con inyección automática de JWT
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
 
+export class ApiError extends Error {
+  constructor(message, status) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+  }
+}
+
 function getToken() {
   if (typeof window === "undefined") return null;
   return localStorage.getItem("nubex_token");
@@ -208,7 +216,7 @@ export async function createSale(saleFormData) {
   });
   if (!res.ok) {
     const data = await res.json();
-    throw new Error(data.error || "Error al registrar venta");
+    throw new ApiError(data.error || "Error al registrar venta", res.status);
   }
   return res.json();
 }

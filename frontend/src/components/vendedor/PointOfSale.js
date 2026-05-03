@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { ShoppingCart, Camera, Image as ImageIcon, Receipt, Wifi, WifiOff } from "lucide-react";
 import { getCachedCatalog, addToSyncQueue } from "@/lib/syncService";
-import { createSale } from "@/services/api";
+import { createSale, ApiError } from "@/services/api";
 import { useNetwork } from "@/components/NetworkProvider";
 
 export default function PointOfSale({ client, onSaleComplete }) {
@@ -84,7 +84,14 @@ export default function PointOfSale({ client, onSaleComplete }) {
         onSaleComplete();
         return;
       } catch (err) {
-        console.warn("Envío online falló, encolando offline:", err.message);
+        if (err.name === 'ApiError' && err.status >= 400 && err.status < 500) {
+          // Error de validación de la API (ej. sin stock, cliente inválido)
+          setIsSubmitting(false);
+          alert(`La venta no se pudo procesar: ${err.message}`);
+          return;
+        }
+
+        console.warn("Envío online falló por error de red/servidor, encolando offline:", err.message);
         // Fall through to offline queue
       }
     }
