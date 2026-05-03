@@ -159,6 +159,7 @@ model LogroFidelidad {
   nombre      String
   descripcion String?
   obtenidoEn  DateTime @default(now())
+  reclamado   Boolean  @default(false)
 
   cliente User @relation(fields: [clienteId], references: [id])
 }

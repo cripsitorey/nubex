@@ -13,7 +13,7 @@ export default function Home() {
     if (loading) return;
 
     if (!user) {
-      router.push("/login");
+      router.push("/tienda");
       return;
     }
 

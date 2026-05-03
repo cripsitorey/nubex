@@ -18,17 +18,14 @@ export default function TiendaPage() {
   const [selectedVape, setSelectedVape] = useState(null);
 
   useEffect(() => {
-    if (!loading) {
-      if (!user) router.push("/login");
-      else if (user.role !== "CLIENTE") router.push("/");
+    if (!loading && user && user.role !== "CLIENTE" && user.role !== "ADMIN" && user.role !== "VENDEDOR") {
+      router.push("/");
     }
   }, [user, loading, router]);
 
   useEffect(() => {
-    if (user && user.role === "CLIENTE") {
-      loadCatalog();
-    }
-  }, [user]);
+    loadCatalog();
+  }, []);
 
   async function loadCatalog() {
     try {
@@ -54,18 +51,29 @@ export default function TiendaPage() {
     return `${API_BASE}${url}`;
   };
 
-  if (loading || !user || user.role !== "CLIENTE") return null;
+  if (loading) return null;
 
   return (
     <div className="p-4 sm:p-8 space-y-6 animate-in fade-in duration-500">
-      <div className="flex items-center gap-3 mb-8">
-        <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
-          <ShoppingBag className="w-6 h-6 text-primary" />
+      <div className="flex items-center justify-between gap-3 mb-8">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
+            <ShoppingBag className="w-6 h-6 text-primary" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-white">Tienda Nubex</h1>
+            <p className="text-sm text-neutral-content/60">Catálogo de productos disponibles</p>
+          </div>
         </div>
-        <div>
-          <h1 className="text-2xl font-bold text-white">Tienda Nubex</h1>
-          <p className="text-sm text-neutral-content/60">Catálogo de productos disponibles</p>
-        </div>
+        
+        {!user && (
+          <button 
+            onClick={() => router.push('/login')}
+            className="btn btn-primary btn-sm shadow-lg"
+          >
+            Iniciar Sesión
+          </button>
+        )}
       </div>
 
       <div>
