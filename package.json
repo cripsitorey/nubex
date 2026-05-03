@@ -11,6 +11,9 @@
     "db:studio": "npx prisma studio",
     "db:reset": "npx prisma db push --force-reset && node prisma/seed.js"
   },
+  "engines": {
+    "node": "22.19.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/cripsitorey/nubex.git"
