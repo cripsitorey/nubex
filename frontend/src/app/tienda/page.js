@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") || "http://localhost:4000";
-const LOGO_URL = `${API_BASE}/uploads/0dcba916-637e-4a4a-991d-1782007f316b.webp`;
+const LOGO_URL = "/icon-512x512.png";
 const WHATSAPP_NUMBER = "593962736099";
 
 export default function TiendaPage() {
