@@ -4,7 +4,9 @@ import BottomNav from "@/components/BottomNav";
 import CommandCenterProvider from "@/components/CommandCenterProvider";
 import NetworkProvider from "@/components/NetworkProvider";
 import { AuthProvider } from "@/hooks/useAuth";
+import SeoCanonical from "@/components/SeoCanonical";
 
+const isDev = (process.env.APP_ENV || process.env.NODE_ENV) !== "production";
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
   subsets: ["latin"],
@@ -24,6 +26,7 @@ export const metadata = {
     statusBarStyle: "black-translucent",
     title: "Nubex",
   },
+  robots: isDev ? { index: false, follow: false } : { index: true, follow: true },
 };
 
 export const viewport = {
@@ -42,6 +45,7 @@ export default function RootLayout({ children }) {
       data-theme="nubexTheme"
     >
       <body className="h-full flex flex-col bg-base-100 text-base-content overflow-hidden">
+        {isDev && <SeoCanonical />}
         <AuthProvider>
           <NetworkProvider>
             <CommandCenterProvider>

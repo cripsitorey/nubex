@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { getVapes } from "@/services/api";
 import { getCachedCatalog } from "@/lib/syncService";
 import { 
@@ -326,15 +327,15 @@ export default function TiendaPage() {
                 {filteredVapes.map((vape, idx) => {
                   const mainImg = vape.media && vape.media.length > 0 ? (vape.media[0].type === 'image' ? resolveImageUrl(vape.media[0].url) : resolveImageUrl(vape.imagenUrl)) : resolveImageUrl(vape.imagenUrl);
                   return (
-                  <div 
+                  <Link 
+                    href={`/tienda/${vape.id || idx}`}
                     key={vape.id || idx} 
-                    onClick={() => setSelectedVape(vape)}
                     className="glass-card p-5 rounded-[3rem] flex flex-col justify-between hover:border-primary/40 transition-all cursor-pointer group hover:shadow-[0_30px_60px_rgba(0,0,0,0.5),0_0_20px_rgba(0,229,255,0.15)] relative overflow-hidden animate-in fade-in slide-in-from-bottom-8 duration-700 fill-mode-both"
                     style={{ animationDelay: `${idx * 100}ms` }}
                   >
                     <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-10 transition-opacity z-10 scanlines" />
                     <div className="w-full h-48 bg-black/40 rounded-[2.5rem] mb-5 flex items-center justify-center overflow-hidden relative border border-white/5">
-                      {mainImg ? <img src={mainImg} alt={vape.nombre} className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-1000 ease-out" /> : <PackageSearch className="w-12 h-12 text-neutral-content/10" />}
+                      {mainImg ? <img src={mainImg} alt={`Foto de ${vape.nombre}`} loading={idx > 4 ? "lazy" : "eager"} className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-1000 ease-out" /> : <PackageSearch className="w-12 h-12 text-neutral-content/10" />}
                       {vape.stockTotal !== undefined && vape.stockTotal <= 0 && (
                         <div className="absolute inset-0 bg-base-100/60 backdrop-blur-[4px] flex items-center justify-center z-20">
                           <span className="bg-error/90 text-white text-[9px] uppercase tracking-[0.3em] font-black px-4 py-1.5 rounded-full shadow-2xl">Agotado</span>
@@ -361,7 +362,7 @@ export default function TiendaPage() {
                         </button>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 )})}
               </div>
             ) : (
