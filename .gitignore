@@ -34,3 +34,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+frontend/src/app/tienda/test-data.js
+prisma/seed_vape.js
+uploads/solo_bar_test.png
