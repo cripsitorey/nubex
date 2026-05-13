@@ -2,6 +2,7 @@ import { getVapeById } from "@/services/api";
 import { notFound } from "next/navigation";
 import { PackageSearch, ChevronLeft, ShoppingBag, MessageCircle } from "lucide-react";
 import Link from "next/link";
+import AddToCartButton from "@/components/AddToCartButton";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") || "http://localhost:4000";
 const WHATSAPP_NUMBER = "593962736099";
@@ -13,7 +14,8 @@ const resolveImageUrl = (url) => {
 };
 
 // Generar Metadatos dinámicos para SEO
-export async function generateMetadata({ params }) {
+export async function generateMetadata(props) {
+  const params = await props.params;
   try {
     const data = await getVapeById(params.id);
     const vape = data.data || data;
@@ -38,7 +40,8 @@ export async function generateMetadata({ params }) {
   }
 }
 
-export default async function ProductPage({ params }) {
+export default async function ProductPage(props) {
+  const params = await props.params;
   let vape = null;
 
   try {
@@ -141,6 +144,7 @@ export default async function ProductPage({ params }) {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 mt-auto">
+              <AddToCartButton vape={vape} />
               <Link 
                 href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hola! Me interesa el producto: ${vape.nombre} (${vape.sabor}). ¿Sigue disponible?`)}`}
                 target="_blank"
