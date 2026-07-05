@@ -7,7 +7,7 @@ const router = Router();
 router.get('/search', requireVendedor, searchClientes);
 router.get('/', requireAdmin, list);
 router.get('/:id', requireAuth, getById);
-router.post('/', requireAdmin, create);
+router.post('/', requireVendedor, create);
 router.patch('/:id', requireAuth, update);
 router.delete('/:id', requireAdmin, deactivate);
 

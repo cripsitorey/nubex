@@ -1,7 +1,9 @@
 'use client';
 import { useEffect, useState, useCallback } from 'react';
 import { api } from '@/lib/api';
-import { Search, User, ShoppingBag, X, AlertCircle } from 'lucide-react';
+import { Search, User, ShoppingBag, X, AlertCircle, WifiOff } from 'lucide-react';
+import { cacheInventario, getCachedInventario, queueVenta } from '@/lib/syncService';
+import { useNetwork } from '@/components/NetworkProvider';
 
 function BuscadorCliente({ onSelect }) {
   const [q, setQ] = useState('');
@@ -52,28 +54,50 @@ export default function PuntoDeVenta() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [resultado, setResultado] = useState(null);
+  const net = useNetwork();
 
   useEffect(() => {
-    api.get('/inventario').then(setInventario).finally(() => setLoading(false));
+    api.get('/inventario')
+      .then((data) => { setInventario(data); cacheInventario(data); })
+      .catch(() => getCachedInventario().then(setInventario))
+      .finally(() => setLoading(false));
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
-    try {
-      const body = {
-        varianteId: variante.id,
-        clienteId: cliente?.id,
-        ...form,
-        reparto: usarRepartoManual ? reparto : undefined,
-      };
-      const res = await api.post('/ventas', body);
-      setResultado(res);
+    const body = {
+      varianteId: variante.id,
+      clienteId: cliente?.id,
+      ...form,
+      reparto: usarRepartoManual ? reparto : undefined,
+    };
+    const descontarStockLocal = () => {
+      setInventario((prev) => prev.map((i) =>
+        i.variante?.id === variante.id ? { ...i, cantidad: i.cantidad - Number(form.cantidad) } : i
+      ));
+    };
+    const limpiarFormulario = () => {
       setVariante(null);
       setCliente(null);
       setForm({ cantidad: 1, precioVenta: '', metodoPago: 'EFECTIVO', pagadoA: 'VENDEDOR', notas: '' });
+    };
+
+    try {
+      const res = await api.post('/ventas', body);
+      setResultado(res);
+      descontarStockLocal();
+      limpiarFormulario();
     } catch (err) {
-      alert(err.message);
+      if (err instanceof TypeError) {
+        await queueVenta(body);
+        descontarStockLocal();
+        limpiarFormulario();
+        setResultado({ offline: true });
+        net?.refreshPending();
+      } else {
+        alert(err.message);
+      }
     } finally {
       setSubmitting(false);
     }
@@ -86,10 +110,19 @@ export default function PuntoDeVenta() {
       <h2 className="text-2xl font-bold">Punto de venta</h2>
 
       {resultado && (
-        <div className="alert alert-success shadow-sm">
+        <div className={`alert ${resultado.offline ? 'alert-warning' : 'alert-success'} shadow-sm`}>
           <div>
-            <p className="font-bold">Venta registrada</p>
-            {resultado.alertaFidelidad && <p className="text-sm mt-1">{resultado.alertaFidelidad}</p>}
+            {resultado.offline ? (
+              <>
+                <p className="font-bold flex items-center gap-1"><WifiOff size={14} /> Venta guardada sin conexión</p>
+                <p className="text-sm mt-1">Se sincronizará automáticamente cuando vuelva la señal.</p>
+              </>
+            ) : (
+              <>
+                <p className="font-bold">Venta registrada</p>
+                {resultado.alertaFidelidad && <p className="text-sm mt-1">{resultado.alertaFidelidad}</p>}
+              </>
+            )}
           </div>
           <button onClick={() => setResultado(null)}><X size={16} /></button>
         </div>

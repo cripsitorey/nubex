@@ -1,9 +1,20 @@
 import './globals.css';
 import { AuthProvider } from '@/hooks/useAuth';
+import { NetworkProvider } from '@/components/NetworkProvider';
+import ServiceWorkerRegister from '@/components/ServiceWorkerRegister';
 
 export const metadata = {
   title: 'Nubex Labs',
   description: 'Sistema de gestión Nubex Labs',
+  manifest: '/manifest.json',
+  icons: {
+    icon: ['/icon-192x192.png', '/icon-512x512.png'],
+    apple: '/icon-192x192.png',
+  },
+};
+
+export const viewport = {
+  themeColor: '#0b0f19',
 };
 
 const themeInitScript = `
@@ -20,7 +31,10 @@ export default function RootLayout({ children }) {
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body>
-        <AuthProvider>{children}</AuthProvider>
+        <ServiceWorkerRegister />
+        <AuthProvider>
+          <NetworkProvider>{children}</NetworkProvider>
+        </AuthProvider>
       </body>
     </html>
   );

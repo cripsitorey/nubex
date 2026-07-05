@@ -79,9 +79,11 @@ export const create = async (req, res, next) => {
     if (!nombre || !password) {
       return res.status(400).json({ error: 'nombre y password son requeridos' });
     }
+    // Un vendedor solo puede registrar clientes, nunca otros vendedores/admins.
+    const roleFinal = req.user.role === 'ADMIN' ? (role || 'CLIENTE') : 'CLIENTE';
     const hashed = await bcrypt.hash(password, 10);
     const user = await prisma.user.create({
-      data: { nombre, email, telefono, cedula, password: hashed, role: role || 'CLIENTE' },
+      data: { nombre, email, telefono, cedula, password: hashed, role: roleFinal },
       select: userSelect,
     });
     res.status(201).json(user);
