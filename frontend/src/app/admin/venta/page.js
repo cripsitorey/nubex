@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { api } from '@/lib/api';
 import { User, ShoppingBag, X } from 'lucide-react';
 import BuscadorCliente from '@/components/shared/BuscadorCliente';
+import BuscadorProducto from '@/components/shared/BuscadorProducto';
 
 export default function VentaAdminPage() {
   const [modelos, setModelos] = useState([]);
@@ -89,15 +90,16 @@ export default function VentaAdminPage() {
                 <button type="button" className="btn btn-ghost btn-xs" onClick={() => setVariante(null)}><X size={14} /></button>
               </div>
             ) : (
-              <select className="select select-bordered select-sm w-full" onChange={(e) => {
-                const item = variantesConStock.find((v) => v.id === parseInt(e.target.value));
-                if (item) setVariante(item);
-              }}>
-                <option value="">Seleccionar producto...</option>
-                {variantesConStock.map((v) => (
-                  <option key={v.id} value={v.id}>{v.modeloNombre} – {v.sabor} (Stock: {v.stock})</option>
-                ))}
-              </select>
+              <BuscadorProducto
+                placeholder="Buscar producto por nombre o sabor..."
+                productos={variantesConStock.map((v) => ({
+                  id: v.id,
+                  label: `${v.modeloNombre} – ${v.sabor}`,
+                  sublabel: `Stock: ${v.stock}`,
+                  item: v,
+                }))}
+                onSelect={(p) => setVariante(p.item)}
+              />
             )}
           </div>
 

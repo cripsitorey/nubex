@@ -2,12 +2,13 @@
 import { useEffect, useState } from 'react';
 import { api } from '@/lib/api';
 import { useAuth } from '@/hooks/useAuth';
-import { Star, Package, Calendar, Battery, Clock } from 'lucide-react';
+import { Star, Package, Calendar, Battery, Clock, X } from 'lucide-react';
 import { useEscapeKey } from '@/hooks/useEscapeKey';
+import BuscadorProducto from '@/components/shared/BuscadorProducto';
 
 function ModalPedirVape({ suscripcion, onClose, onSave }) {
   const [modelos, setModelos] = useState([]);
-  const [modeloId, setModeloId] = useState('');
+  const [modeloSeleccionado, setModeloSeleccionado] = useState(null);
   const [varianteId, setVarianteId] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -23,8 +24,6 @@ function ModalPedirVape({ suscripcion, onClose, onSave }) {
       setModelos(suscripcion.vapesPermitidos.map((v) => v.modelo));
     }
   }, [suscripcion]);
-
-  const modeloSeleccionado = modelos.find((m) => m.id === parseInt(modeloId));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -47,11 +46,19 @@ function ModalPedirVape({ suscripcion, onClose, onSave }) {
         <form onSubmit={handleSubmit} className="space-y-3">
           <div className="form-control">
             <label className="label"><span className="label-text">Modelo</span></label>
-            <select className="select select-bordered select-sm" value={modeloId}
-              onChange={(e) => { setModeloId(e.target.value); setVarianteId(''); }} required>
-              <option value="">Seleccionar modelo...</option>
-              {modelos.map((m) => <option key={m.id} value={m.id}>{m.nombre} ({m.puffs} puffs)</option>)}
-            </select>
+            {modeloSeleccionado ? (
+              <div className="flex items-center gap-2 p-2 bg-base-200 rounded-lg">
+                <Package size={16} />
+                <span className="flex-1 text-sm font-medium">{modeloSeleccionado.nombre} ({modeloSeleccionado.puffs} puffs)</span>
+                <button type="button" className="btn btn-ghost btn-xs" onClick={() => { setModeloSeleccionado(null); setVarianteId(''); }}><X size={14} /></button>
+              </div>
+            ) : (
+              <BuscadorProducto
+                placeholder="Buscar modelo..."
+                productos={modelos.map((m) => ({ id: m.id, label: m.nombre, sublabel: `${m.puffs} puffs`, item: m }))}
+                onSelect={(p) => { setModeloSeleccionado(p.item); setVarianteId(''); }}
+              />
+            )}
           </div>
           {modeloSeleccionado && (
             <div className="form-control">

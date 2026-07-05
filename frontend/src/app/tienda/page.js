@@ -18,11 +18,11 @@ function VapeImage({ src, alt, className }) {
 }
 
 function ModalProducto({ modelo, onClose }) {
-  const [saborId, setSaborId] = useState(modelo.variantes?.[0]?.id ?? null);
+  const [saborId, setSaborId] = useState(null);
   useEscapeKey(onClose);
 
   const sabor = modelo.variantes?.find((v) => v.id === saborId);
-  const imagen = sabor?.imagenUrl || modelo.imagenUrl;
+  const imagen = sabor ? (sabor.imagenUrl || modelo.imagenUrl) : modelo.imagenUrl;
 
   return (
     <dialog className="modal modal-open" onClick={onClose}>
@@ -40,7 +40,7 @@ function ModalProducto({ modelo, onClose }) {
           {modelo.variantes?.length > 0 && (
             <div className="mt-4">
               <p className="text-xs font-medium text-base-content/60 mb-2">
-                Sabor{sabor ? `: ${sabor.sabor}` : ''}
+                {sabor ? `Sabor: ${sabor.sabor}` : 'Elige un sabor'}
               </p>
               <div className="flex flex-wrap gap-2">
                 {modelo.variantes.map((v) => (

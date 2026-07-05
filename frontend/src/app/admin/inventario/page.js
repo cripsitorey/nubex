@@ -1,12 +1,14 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { api } from '@/lib/api';
-import { Plus, Minus } from 'lucide-react';
+import { Plus, Minus, ShoppingBag, X } from 'lucide-react';
 import { useEscapeKey } from '@/hooks/useEscapeKey';
+import BuscadorProducto from '@/components/shared/BuscadorProducto';
 
 function ModalAsignar({ onClose, onSave }) {
   const [vendedores, setVendedores] = useState([]);
   const [variantes, setVariantes] = useState([]);
+  const [varianteSel, setVarianteSel] = useState(null);
   const [form, setForm] = useState({ vendedorId: '', varianteId: '', cantidad: '' });
   const [saving, setSaving] = useState(false);
   useEscapeKey(onClose);
@@ -46,10 +48,24 @@ function ModalAsignar({ onClose, onSave }) {
           </div>
           <div className="form-control">
             <label className="label"><span className="label-text">Variante</span></label>
-            <select className="select select-bordered select-sm" value={form.varianteId} onChange={(e) => setForm({ ...form, varianteId: e.target.value })} required>
-              <option value="">Seleccionar...</option>
-              {variantes.map((v) => <option key={v.id} value={v.id}>{v.modeloNombre} – {v.sabor} (Stock: {v.stock})</option>)}
-            </select>
+            {varianteSel ? (
+              <div className="flex items-center gap-2 p-2 bg-base-200 rounded-lg">
+                <ShoppingBag size={16} />
+                <span className="flex-1 text-sm font-medium">{varianteSel.modeloNombre} – {varianteSel.sabor} (Stock: {varianteSel.stock})</span>
+                <button type="button" className="btn btn-ghost btn-xs" onClick={() => { setVarianteSel(null); setForm({ ...form, varianteId: '' }); }}><X size={14} /></button>
+              </div>
+            ) : (
+              <BuscadorProducto
+                placeholder="Buscar producto por nombre o sabor..."
+                productos={variantes.map((v) => ({
+                  id: v.id,
+                  label: `${v.modeloNombre} – ${v.sabor}`,
+                  sublabel: `Stock: ${v.stock}`,
+                  item: v,
+                }))}
+                onSelect={(p) => { setVarianteSel(p.item); setForm({ ...form, varianteId: p.item.id }); }}
+              />
+            )}
           </div>
           <div className="form-control">
             <label className="label"><span className="label-text">Cantidad</span></label>

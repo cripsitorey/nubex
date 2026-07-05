@@ -5,6 +5,7 @@ import { User, ShoppingBag, X, AlertCircle, WifiOff } from 'lucide-react';
 import { cacheInventario, getCachedInventario, queueVenta } from '@/lib/syncService';
 import { useNetwork } from '@/components/NetworkProvider';
 import BuscadorCliente from '@/components/shared/BuscadorCliente';
+import BuscadorProducto from '@/components/shared/BuscadorProducto';
 
 export default function PuntoDeVenta() {
   const [inventario, setInventario] = useState([]);
@@ -116,17 +117,16 @@ export default function PuntoDeVenta() {
                 <button className="btn btn-ghost btn-xs" onClick={() => setVariante(null)}><X size={14} /></button>
               </div>
             ) : (
-              <select className="select select-bordered select-sm w-full" onChange={(e) => {
-                const item = inventario.find((i) => i.variante?.id === parseInt(e.target.value));
-                if (item) setVariante({ ...item.variante, modeloNombre: item.variante?.modelo?.nombre, cantidad: item.cantidad });
-              }}>
-                <option value="">Seleccionar producto...</option>
-                {inventario.filter((i) => i.cantidad > 0).map((i) => (
-                  <option key={i.variante?.id} value={i.variante?.id}>
-                    {i.variante?.modelo?.nombre} – {i.variante?.sabor} (Stock: {i.cantidad})
-                  </option>
-                ))}
-              </select>
+              <BuscadorProducto
+                placeholder="Buscar producto por nombre o sabor..."
+                productos={inventario.filter((i) => i.cantidad > 0).map((i) => ({
+                  id: i.variante?.id,
+                  label: `${i.variante?.modelo?.nombre} – ${i.variante?.sabor}`,
+                  sublabel: `Stock: ${i.cantidad}`,
+                  item: i,
+                }))}
+                onSelect={(p) => setVariante({ ...p.item.variante, modeloNombre: p.item.variante?.modelo?.nombre, cantidad: p.item.cantidad })}
+              />
             )}
           </div>
 
