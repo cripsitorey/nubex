@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { api } from '@/lib/api';
-import { Plus } from 'lucide-react';
+import { Plus, Minus } from 'lucide-react';
 import { useEscapeKey } from '@/hooks/useEscapeKey';
 
 function ModalAsignar({ onClose, onSave }) {
@@ -65,10 +65,54 @@ function ModalAsignar({ onClose, onSave }) {
   );
 }
 
+function ModalQuitar({ item, onClose, onSave }) {
+  const [cantidad, setCantidad] = useState(item.cantidad);
+  const [saving, setSaving] = useState(false);
+  useEscapeKey(onClose);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      await api.post('/inventario/devolver', {
+        vendedorId: item.vendedorId,
+        varianteId: item.variante.id,
+        cantidad,
+      });
+      onSave();
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <dialog className="modal modal-open">
+      <div className="modal-box max-w-sm">
+        <h3 className="font-bold text-lg mb-4">Quitar stock a {item.vendedor?.nombre}</h3>
+        <p className="text-sm text-base-content/60 mb-3">{item.variante?.modelo?.nombre} – {item.variante?.sabor} (tiene {item.cantidad} uds)</p>
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <div className="form-control">
+            <label className="label"><span className="label-text">Cantidad a devolver a bodega</span></label>
+            <input type="number" min="1" max={item.cantidad} className="input input-bordered input-sm"
+              value={cantidad} onChange={(e) => setCantidad(e.target.value)} required />
+          </div>
+          <div className="modal-action">
+            <button type="button" className="btn btn-ghost btn-sm" onClick={onClose}>Cancelar</button>
+            <button type="submit" className="btn btn-primary btn-sm" disabled={saving}>{saving ? <span className="loading loading-spinner loading-xs" /> : 'Quitar'}</button>
+          </div>
+        </form>
+      </div>
+    </dialog>
+  );
+}
+
 export default function InventarioPage() {
   const [inventario, setInventario] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState(false);
+  const [modalQuitar, setModalQuitar] = useState(null);
   const [filtroVendedor, setFiltroVendedor] = useState('');
 
   const load = () => {
@@ -106,7 +150,12 @@ export default function InventarioPage() {
                     <div key={item.id} className="flex flex-col p-2 rounded bg-base-200 text-sm">
                       <span className="font-medium">{item.variante?.modelo?.nombre}</span>
                       <span className="text-xs text-base-content/60">{item.variante?.sabor}</span>
-                      <span className="text-primary font-bold mt-1">{item.cantidad} uds</span>
+                      <div className="flex items-center justify-between mt-1">
+                        <span className="text-primary font-bold">{item.cantidad} uds</span>
+                        <button className="btn btn-ghost btn-xs btn-square" title="Quitar stock" onClick={() => setModalQuitar(item)}>
+                          <Minus size={12} />
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -117,6 +166,10 @@ export default function InventarioPage() {
       )}
 
       {modal && <ModalAsignar onClose={() => setModal(false)} onSave={() => { setModal(false); load(); }} />}
+
+      {modalQuitar && (
+        <ModalQuitar item={modalQuitar} onClose={() => setModalQuitar(null)} onSave={() => { setModalQuitar(null); load(); }} />
+      )}
     </div>
   );
 }
