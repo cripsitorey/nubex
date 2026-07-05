@@ -5,12 +5,13 @@ import { useAuth } from '@/hooks/useAuth';
 import Navbar from '@/components/shared/Navbar';
 import Sidebar from '@/components/shared/Sidebar';
 import {
-  LayoutDashboard, ShoppingBag, Package, Users, BarChart2,
+  LayoutDashboard, ShoppingBag, ShoppingCart, Package, Users, BarChart2,
   CreditCard, Star, Repeat, Wallet, UserCircle,
 } from 'lucide-react';
 
 const navItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/admin/venta', label: 'Vender', icon: ShoppingCart },
   { href: '/admin/ventas', label: 'Ventas', icon: ShoppingBag },
   { href: '/admin/catalogo', label: 'Catálogo', icon: Package },
   { href: '/admin/inventario', label: 'Inventario', icon: BarChart2 },
