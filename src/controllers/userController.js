@@ -142,10 +142,38 @@ export const deactivate = async (req, res, next) => {
 };
 
 // Buscador de clientes para POS
+const clienteSelect = { id: true, nombre: true, telefono: true, cedula: true };
+
 export const searchClientes = async (req, res, next) => {
   try {
     const { q } = req.query;
-    if (!q || q.length < 2) return res.json([]);
+
+    if (!q || q.length < 2) {
+      // Sin búsqueda: sugerir los últimos clientes con una venta, y
+      // completar con los últimos registrados si hacen falta.
+      const ventasRecientes = await prisma.venta.findMany({
+        where: { clienteId: { not: null } },
+        distinct: ['clienteId'],
+        orderBy: { createdAt: 'desc' },
+        take: 8,
+        select: { cliente: { select: clienteSelect } },
+      });
+      const recientesPorVenta = ventasRecientes.map((v) => v.cliente).filter(Boolean);
+      const idsVistos = recientesPorVenta.map((c) => c.id);
+
+      const faltantes = 8 - recientesPorVenta.length;
+      const recientesPorRegistro = faltantes > 0
+        ? await prisma.user.findMany({
+            where: { role: 'CLIENTE', activo: true, id: { notIn: idsVistos } },
+            orderBy: { createdAt: 'desc' },
+            take: faltantes,
+            select: clienteSelect,
+          })
+        : [];
+
+      return res.json([...recientesPorVenta, ...recientesPorRegistro]);
+    }
+
     const clientes = await prisma.user.findMany({
       where: {
         role: 'CLIENTE',
@@ -156,7 +184,7 @@ export const searchClientes = async (req, res, next) => {
           { cedula: { contains: q } },
         ],
       },
-      select: { id: true, nombre: true, telefono: true, cedula: true },
+      select: clienteSelect,
       take: 10,
     });
     res.json(clientes);

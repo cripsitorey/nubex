@@ -1,8 +1,9 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { api } from '@/lib/api';
-import { Plus, ChevronDown, ChevronUp, Search, User, Check, X } from 'lucide-react';
+import { Plus, ChevronDown, ChevronUp, User, Check, X } from 'lucide-react';
 import { useEscapeKey } from '@/hooks/useEscapeKey';
+import BuscadorCliente from '@/components/shared/BuscadorCliente';
 
 function ModalPlan({ plan, onClose, onSave }) {
   const [modelos, setModelos] = useState([]);
@@ -111,45 +112,6 @@ function ModalPlan({ plan, onClose, onSave }) {
         </form>
       </div>
     </dialog>
-  );
-}
-
-function BuscadorCliente({ onSelect }) {
-  const [q, setQ] = useState('');
-  const [resultados, setResultados] = useState([]);
-
-  useEffect(() => {
-    if (q.length < 2) { setResultados([]); return; }
-    const t = setTimeout(() => api.get(`/users/search?q=${q}`).then(setResultados), 300);
-    return () => clearTimeout(t);
-  }, [q]);
-
-  return (
-    <div className="relative">
-      <div className="join w-full">
-        <span className="join-item btn btn-sm btn-ghost border border-base-300"><Search size={14} /></span>
-        <input
-          className="input input-bordered input-sm join-item flex-1"
-          placeholder="Buscar cliente por nombre, teléfono..."
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-        />
-      </div>
-      {resultados.length > 0 && (
-        <ul className="absolute z-10 w-full mt-1 bg-base-100 border border-base-200 rounded-box shadow-lg max-h-48 overflow-y-auto">
-          {resultados.map((c) => (
-            <li key={c.id}>
-              <button type="button" className="w-full text-left px-3 py-2 hover:bg-base-200 flex items-center gap-2 text-sm"
-                onClick={() => { onSelect(c); setQ(''); setResultados([]); }}>
-                <User size={14} />
-                <span className="font-medium">{c.nombre}</span>
-                {c.telefono && <span className="text-base-content/50">{c.telefono}</span>}
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
   );
 }
 

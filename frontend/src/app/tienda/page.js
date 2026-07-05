@@ -17,38 +17,55 @@ function VapeImage({ src, alt, className }) {
   );
 }
 
-function Lightbox({ src, title, subtitle, onClose }) {
+function ModalProducto({ modelo, onClose }) {
+  const [saborId, setSaborId] = useState(modelo.variantes?.[0]?.id ?? null);
   useEscapeKey(onClose);
 
+  const sabor = modelo.variantes?.find((v) => v.id === saborId);
+  const imagen = sabor?.imagenUrl || modelo.imagenUrl;
+
   return (
-    <div
-      className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
-      onClick={onClose}
-    >
-      <div className="relative max-w-2xl w-full" onClick={(e) => e.stopPropagation()}>
-        <button
-          className="btn btn-circle btn-sm absolute -top-3 -right-3 z-10"
-          onClick={onClose}
-          title="Cerrar"
-        >
+    <dialog className="modal modal-open" onClick={onClose}>
+      <div className="modal-box max-w-md p-0 overflow-hidden" onClick={(e) => e.stopPropagation()}>
+        <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 z-10 bg-base-100/70" onClick={onClose}>
           <X size={16} />
         </button>
-        <div className="bg-base-100 rounded-box overflow-hidden shadow-2xl">
-          <VapeImage src={src} alt={title} className="w-full aspect-square object-cover" />
-          <div className="p-4 text-center">
-            <h3 className="font-bold text-lg">{title}</h3>
-            {subtitle && <p className="text-sm text-base-content/60">{subtitle}</p>}
-          </div>
+        <VapeImage src={imagen} alt={sabor?.sabor || modelo.nombre} className="w-full aspect-square object-cover" />
+        <div className="p-4">
+          <h3 className="font-bold text-lg">{modelo.nombre}</h3>
+          <p className="text-xs text-base-content/50">{modelo.marca} · {modelo.puffs} puffs</p>
+          {modelo.mostrarPrecio && <p className="text-xl font-bold text-primary mt-1">${modelo.precioSugerido}</p>}
+          {modelo.descripcion && <p className="text-sm text-base-content/70 mt-2">{modelo.descripcion}</p>}
+
+          {modelo.variantes?.length > 0 && (
+            <div className="mt-4">
+              <p className="text-xs font-medium text-base-content/60 mb-2">
+                Sabor{sabor ? `: ${sabor.sabor}` : ''}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {modelo.variantes.map((v) => (
+                  <button
+                    key={v.id}
+                    type="button"
+                    className={`btn btn-xs sm:btn-sm ${saborId === v.id ? 'btn-primary' : 'btn-outline'}`}
+                    onClick={() => setSaborId(v.id)}
+                  >
+                    {v.sabor}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
-    </div>
+    </dialog>
   );
 }
 
 export default function TiendaPage() {
   const [modelos, setModelos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [lightbox, setLightbox] = useState(null);
+  const [modalModelo, setModalModelo] = useState(null);
 
   useEffect(() => {
     api.get('/vapes/publico').then(setModelos).finally(() => setLoading(false));
@@ -72,43 +89,20 @@ export default function TiendaPage() {
         <h1 className="text-3xl font-bold text-center mb-2">Nuestro catálogo</h1>
         <p className="text-center text-base-content/60 mb-8">Los mejores vapes, los mejores sabores</p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
           {modelos.map((m) => (
             <div
               key={m.id}
               className="card bg-base-100 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
-              onClick={() => setLightbox({ src: m.imagenUrl, title: m.nombre, subtitle: m.marca })}
+              onClick={() => setModalModelo(m)}
             >
-              <VapeImage src={m.imagenUrl} alt={m.nombre} className="w-full aspect-video object-cover rounded-t-box" />
-              <div className="card-body p-4">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h2 className="card-title text-base">{m.nombre}</h2>
-                    <p className="text-xs text-base-content/50">{m.marca} · {m.puffs} puffs</p>
-                  </div>
-                  {m.mostrarPrecio && <span className="text-lg font-bold text-primary">${m.precioSugerido}</span>}
-                </div>
-                {m.descripcion && <p className="text-sm text-base-content/70 mt-1">{m.descripcion}</p>}
-
+              <VapeImage src={m.imagenUrl} alt={m.nombre} className="w-full aspect-square sm:aspect-video object-cover rounded-t-box" />
+              <div className="card-body p-3 sm:p-4">
+                <h2 className="card-title text-sm sm:text-base">{m.nombre}</h2>
+                <p className="text-xs text-base-content/50">{m.marca} · {m.puffs} puffs</p>
+                {m.mostrarPrecio && <span className="text-base sm:text-lg font-bold text-primary">${m.precioSugerido}</span>}
                 {m.variantes?.length > 0 && (
-                  <div className="mt-3">
-                    <p className="text-xs font-medium text-base-content/60 mb-2">Sabores disponibles</p>
-                    <div className="flex flex-wrap gap-2">
-                      {m.variantes.map((v) => (
-                        <button
-                          key={v.id}
-                          className="flex items-center gap-1 hover:opacity-70 transition-opacity"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setLightbox({ src: v.imagenUrl || m.imagenUrl, title: v.sabor, subtitle: m.nombre });
-                          }}
-                        >
-                          <VapeImage src={v.imagenUrl || m.imagenUrl} alt={v.sabor} className="w-8 h-8 rounded object-cover" />
-                          <span className="text-xs">{v.sabor}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+                  <p className="text-xs text-base-content/50 mt-1">{m.variantes.length} sabor{m.variantes.length === 1 ? '' : 'es'}</p>
                 )}
               </div>
             </div>
@@ -116,13 +110,8 @@ export default function TiendaPage() {
         </div>
       </div>
 
-      {lightbox && (
-        <Lightbox
-          src={lightbox.src}
-          title={lightbox.title}
-          subtitle={lightbox.subtitle}
-          onClose={() => setLightbox(null)}
-        />
+      {modalModelo && (
+        <ModalProducto modelo={modalModelo} onClose={() => setModalModelo(null)} />
       )}
     </div>
   );
