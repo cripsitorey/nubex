@@ -78,7 +78,7 @@ export default function TiendaPage() {
       <div className="navbar bg-base-100 shadow-sm">
         <div className="navbar-start" />
         <div className="navbar-center">
-          <span className="text-2xl font-bold text-primary">Nubex</span>
+          <img src="/logo.png" alt="Nubex Labs" className="h-14 w-auto" />
         </div>
         <div className="navbar-end">
           <ThemeToggle />

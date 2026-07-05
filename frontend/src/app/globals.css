@@ -1,8 +1,79 @@
 @import "tailwindcss";
 @plugin "daisyui" {
-  themes: dark --default, light;
+  themes: nubexdark --default, nubexlight;
+}
+
+/* Paleta tomada del logo de Nubex Labs: cian, verde lima y magenta neón. */
+@plugin "daisyui/theme" {
+  name: "nubexdark";
+  default: true;
+  prefersdark: true;
+  color-scheme: dark;
+  --color-base-100: #0b0f19;
+  --color-base-200: #10141f;
+  --color-base-300: #171c2a;
+  --color-base-content: #e8eaf0;
+  --color-primary: #ec1f9c;
+  --color-primary-content: #ffffff;
+  --color-secondary: #a3e635;
+  --color-secondary-content: #1a2600;
+  --color-accent: #22d3ee;
+  --color-accent-content: #032b30;
+  --color-neutral: #1c2131;
+  --color-neutral-content: #c9ccd6;
+  --color-info: #38bdf8;
+  --color-info-content: #052e3d;
+  --color-success: #4ade80;
+  --color-success-content: #052e16;
+  --color-warning: #fbbf24;
+  --color-warning-content: #3d2c00;
+  --color-error: #f87171;
+  --color-error-content: #3f0d0d;
+  --radius-selector: 0.5rem;
+  --radius-field: 0.25rem;
+  --radius-box: 0.5rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}
+
+@plugin "daisyui/theme" {
+  name: "nubexlight";
+  default: false;
+  prefersdark: false;
+  color-scheme: light;
+  --color-base-100: #ffffff;
+  --color-base-200: #f5f5f7;
+  --color-base-300: #e6e6ea;
+  --color-base-content: #1a1c23;
+  --color-primary: #d6169a;
+  --color-primary-content: #ffffff;
+  --color-secondary: #65a30d;
+  --color-secondary-content: #ffffff;
+  --color-accent: #0891b2;
+  --color-accent-content: #ffffff;
+  --color-neutral: #e5e7eb;
+  --color-neutral-content: #1a1c23;
+  --color-info: #0284c7;
+  --color-info-content: #ffffff;
+  --color-success: #16a34a;
+  --color-success-content: #ffffff;
+  --color-warning: #d97706;
+  --color-warning-content: #ffffff;
+  --color-error: #dc2626;
+  --color-error-content: #ffffff;
+  --radius-selector: 0.5rem;
+  --radius-field: 0.25rem;
+  --radius-box: 0.5rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
 }
 
 :root {
-  --nubex-primary: #7c3aed;
+  --nubex-primary: #ec1f9c;
 }

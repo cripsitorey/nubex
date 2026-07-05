@@ -18,7 +18,7 @@ export default function Navbar({ title }) {
   return (
     <div className="navbar bg-base-100 border-b border-base-200 sticky top-0 z-40">
       <div className="navbar-start">
-        <span className="text-xl font-bold text-primary">Nubex</span>
+        <img src="/logo.png" alt="Nubex Labs" className="h-11 w-auto" />
         {title && <span className="ml-2 text-base-content/50 hidden sm:inline">/ {title}</span>}
       </div>
       <div className="navbar-end gap-2">

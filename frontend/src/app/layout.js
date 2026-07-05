@@ -20,7 +20,7 @@ export const viewport = {
 const themeInitScript = `
 (function () {
   var stored = localStorage.getItem('nubex_theme');
-  document.documentElement.setAttribute('data-theme', stored === 'light' ? 'light' : 'dark');
+  document.documentElement.setAttribute('data-theme', stored === 'light' ? 'nubexlight' : 'nubexdark');
 })();
 `;
 

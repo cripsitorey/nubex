@@ -52,7 +52,7 @@ export default function AdminDashboard() {
               <XAxis dataKey="fecha" tick={{ fontSize: 11 }} />
               <YAxis tick={{ fontSize: 11 }} />
               <Tooltip />
-              <Bar dataKey="ventas" fill="#7c3aed" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="ventas" fill="var(--color-primary)" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>

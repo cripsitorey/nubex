@@ -34,9 +34,8 @@ export default function LoginPage() {
       </div>
       <div className="card w-full max-w-sm bg-base-100 shadow-xl">
         <div className="card-body">
-          <div className="text-center mb-4">
-            <h1 className="text-3xl font-bold text-primary">Nubex</h1>
-            <p className="text-base-content/60 text-sm">Labs</p>
+          <div className="flex justify-center mb-4">
+            <img src="/logo.png" alt="Nubex Labs" className="h-24 w-auto" />
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
