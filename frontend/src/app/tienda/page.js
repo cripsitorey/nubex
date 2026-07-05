@@ -1,7 +1,8 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { api } from '@/lib/api';
-import { Package, X } from 'lucide-react';
+import Link from 'next/link';
+import { Package, X, LogIn } from 'lucide-react';
 import ThemeToggle from '@/components/shared/ThemeToggle';
 import { useEscapeKey } from '@/hooks/useEscapeKey';
 
@@ -80,8 +81,11 @@ export default function TiendaPage() {
         <div className="navbar-center">
           <img src="/logo.png" alt="Nubex Labs" className="h-14 w-auto" />
         </div>
-        <div className="navbar-end">
+        <div className="navbar-end gap-1">
           <ThemeToggle />
+          <Link href="/login" className="btn btn-ghost btn-sm gap-1">
+            <LogIn size={16} /> <span className="hidden sm:inline">Iniciar sesión</span>
+          </Link>
         </div>
       </div>
 

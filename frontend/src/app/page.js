@@ -9,9 +9,9 @@ export default function Home() {
 
   useEffect(() => {
     if (loading) return;
-    if (!user) { router.replace('/login'); return; }
+    if (!user) { router.replace('/tienda'); return; }
     const routes = { ADMIN: '/admin', VENDEDOR: '/vendedor', CLIENTE: '/cliente' };
-    router.replace(routes[user.role] || '/login');
+    router.replace(routes[user.role] || '/tienda');
   }, [user, loading, router]);
 
   return (
