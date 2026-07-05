@@ -1,80 +1,121 @@
 import { prisma } from '../prisma.js';
 
-export const getAnalytics = async (req, res, next) => {
+export const getDashboard = async (req, res, next) => {
   try {
-    // 1. Ventas agrupadas por mes (últimos 12 meses)
-    const ventas = await prisma.venta.findMany({
-      select: {
-        precioVenta: true,
-        costoAdquisicion: true,
-        cantidad: true,
-        montoParaAdmin: true,
-        montoParaVendedor: true,
-        createdAt: true,
-      },
+    const { desde, hasta } = req.query;
+    const rangoFecha = {};
+    if (desde) rangoFecha.gte = new Date(desde);
+    if (hasta) rangoFecha.lte = new Date(hasta);
+    const filtroFecha = Object.keys(rangoFecha).length ? { createdAt: rangoFecha } : {};
+
+    const [
+      totalVentas,
+      ingresoAdmin,
+      ingresoVendedores,
+      ventasPorEstado,
+      topVariantes,
+      topVendedores,
+      totalClientes,
+      suscripcionesActivas,
+      balanceCaja,
+    ] = await Promise.all([
+      prisma.venta.count({ where: filtroFecha }),
+      prisma.venta.aggregate({ where: filtroFecha, _sum: { montoParaAdmin: true } }),
+      prisma.venta.aggregate({ where: filtroFecha, _sum: { montoParaVendedor: true } }),
+      prisma.venta.groupBy({ by: ['estado'], where: filtroFecha, _count: true }),
+      prisma.venta.groupBy({
+        by: ['varianteId'],
+        where: filtroFecha,
+        _sum: { cantidad: true },
+        orderBy: { _sum: { cantidad: 'desc' } },
+        take: 5,
+      }),
+      prisma.venta.groupBy({
+        by: ['vendedorId'],
+        where: filtroFecha,
+        _sum: { montoParaVendedor: true },
+        _count: true,
+        orderBy: { _sum: { montoParaVendedor: 'desc' } },
+        take: 5,
+      }),
+      prisma.user.count({ where: { role: 'CLIENTE', activo: true } }),
+      prisma.suscripcion.count({ where: { activa: true } }),
+      prisma.movimientoCaja.groupBy({
+        by: ['tipo'],
+        where: filtroFecha,
+        _sum: { monto: true },
+      }),
+    ]);
+
+    // Enriquecer top variantes con nombre
+    const varianteIds = topVariantes.map((v) => v.varianteId);
+    const variantes = await prisma.vapeVariante.findMany({
+      where: { id: { in: varianteIds } },
+      include: { modelo: { select: { nombre: true, marca: true } } },
     });
+    const variantesMap = Object.fromEntries(variantes.map((v) => [v.id, v]));
 
-    // Agrupar ventas por mes
-    const ventasPorMes = {};
-    const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-    ventas.forEach(v => {
-      const d = new Date(v.createdAt);
-      const key = `${d.getFullYear()}-${d.getMonth()}`;
-      if (!ventasPorMes[key]) {
-        ventasPorMes[key] = { name: meses[d.getMonth()], ingresos: 0, costo: 0 };
-      }
-      ventasPorMes[key].ingresos += v.precioVenta * v.cantidad;
-      ventasPorMes[key].costo += v.costoAdquisicion * v.cantidad;
+    // Enriquecer top vendedores con nombre
+    const vendedorIds = topVendedores.map((v) => v.vendedorId);
+    const vendedores = await prisma.user.findMany({
+      where: { id: { in: vendedorIds } },
+      select: { id: true, nombre: true },
     });
-    const dataRevenue = Object.values(ventasPorMes);
+    const vendedoresMap = Object.fromEntries(vendedores.map((v) => [v.id, v]));
 
-    // 2. Distribución de suscripciones por plan
-    const suscripciones = await prisma.suscripcion.findMany({
-      where: { activa: true },
-      include: { plan: { select: { nombre: true } } },
-    });
-
-    const planCounts = {};
-    let casualCount = 0;
-    suscripciones.forEach(s => {
-      const planName = s.plan?.nombre || 'Sin Plan';
-      planCounts[planName] = (planCounts[planName] || 0) + 1;
-    });
-
-    // Contar clientes casuales (sin suscripción activa)
-    const totalClientes = await prisma.user.count({ where: { role: 'CLIENTE' } });
-    casualCount = totalClientes - suscripciones.length;
-    if (casualCount > 0) planCounts['Casual'] = casualCount;
-
-    const dataPlans = Object.entries(planCounts).map(([name, value]) => ({ name, value }));
-
-    // 3. Stock por producto
-    const vapes = await prisma.vape.findMany({
-      select: { nombre: true, stockGlobal: true, createdAt: true },
-    });
-    const dataStock = vapes.map(v => ({
-      name: v.nombre,
-      stock: v.stockGlobal,
-    }));
-
-    // 4. KPI Totals
-    const totalVentas = ventas.length;
-    const ingresosTotales = ventas.reduce((sum, v) => sum + (v.precioVenta * v.cantidad), 0);
-    const utilidadTotal = ventas.reduce((sum, v) => sum + ((v.precioVenta - v.costoAdquisicion) * v.cantidad), 0);
+    const ingresoCaja = balanceCaja.find((b) => b.tipo === 'INGRESO')?._sum?.monto || 0;
+    const egresoCaja = balanceCaja.find((b) => b.tipo === 'EGRESO')?._sum?.monto || 0;
 
     res.json({
-      dataRevenue,
-      dataPlans,
-      dataStock,
-      kpis: {
-        totalVentas,
-        ingresosTotales,
-        utilidadTotal,
-        totalClientes,
-        totalSuscriptores: suscripciones.length,
+      ventas: {
+        total: totalVentas,
+        ingresoAdmin: ingresoAdmin._sum.montoParaAdmin || 0,
+        ingresoVendedores: ingresoVendedores._sum.montoParaVendedor || 0,
+        porEstado: ventasPorEstado,
       },
+      topVariantes: topVariantes.map((v) => ({
+        variante: variantesMap[v.varianteId],
+        cantidadVendida: v._sum.cantidad,
+      })),
+      topVendedores: topVendedores.map((v) => ({
+        vendedor: vendedoresMap[v.vendedorId],
+        totalGanado: v._sum.montoParaVendedor,
+        totalVentas: v._count,
+      })),
+      clientes: { total: totalClientes, conSuscripcion: suscripcionesActivas },
+      caja: { ingresos: ingresoCaja, egresos: egresoCaja, balance: ingresoCaja - egresoCaja },
     });
-  } catch (error) {
-    next(error);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getVentasPorPeriodo = async (req, res, next) => {
+  try {
+    const { desde, hasta, agrupacion = 'dia' } = req.query;
+    const ventas = await prisma.venta.findMany({
+      where: {
+        createdAt: {
+          gte: desde ? new Date(desde) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+          lte: hasta ? new Date(hasta) : new Date(),
+        },
+      },
+      select: { createdAt: true, montoParaAdmin: true, montoParaVendedor: true, cantidad: true },
+      orderBy: { createdAt: 'asc' },
+    });
+
+    // Agrupar por día
+    const grouped = {};
+    for (const v of ventas) {
+      const key = v.createdAt.toISOString().split('T')[0];
+      if (!grouped[key]) grouped[key] = { fecha: key, ventas: 0, ingresoAdmin: 0, ingresoVendedores: 0 };
+      grouped[key].ventas += v.cantidad;
+      grouped[key].ingresoAdmin += v.montoParaAdmin;
+      grouped[key].ingresoVendedores += v.montoParaVendedor;
+    }
+
+    res.json(Object.values(grouped));
+  } catch (err) {
+    next(err);
   }
 };

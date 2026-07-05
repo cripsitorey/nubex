@@ -1,19 +1,25 @@
 import { Router } from 'express';
-import { deliverSubscription, getPlans, createPlan, updatePlan, deletePlan } from '../controllers/subscriptionController.js';
-import { verifyToken, verifyRole } from '../middlewares/authMiddleware.js';
+import {
+  getPlanes, createPlan, updatePlan,
+  getSuscripciones, suscribir, cancelarSuscripcion,
+  registrarEntrega, getEntregas,
+} from '../controllers/subscriptionController.js';
+import { requireAdmin, requireAuth, requireVendedor } from '../middlewares/auth.js';
 
 const router = Router();
 
-// Rutas públicas (para ver los planes)
-router.get('/plans', getPlans);
+// Planes
+router.get('/planes', requireAuth, getPlanes);
+router.post('/planes', requireAdmin, createPlan);
+router.patch('/planes/:id', requireAdmin, updatePlan);
 
-// Rutas protegidas para ADMIN (CRUD de planes)
-router.post('/plans', verifyToken, verifyRole(['ADMIN']), createPlan);
-router.put('/plans/:id', verifyToken, verifyRole(['ADMIN']), updatePlan);
-router.delete('/plans/:id', verifyToken, verifyRole(['ADMIN']), deletePlan);
+// Suscripciones
+router.get('/', requireAuth, getSuscripciones);
+router.post('/', requireAdmin, suscribir);
+router.patch('/:id/cancelar', requireAdmin, cancelarSuscripcion);
 
-// Entregas de suscripción
-router.use(verifyToken, verifyRole(['ADMIN', 'VENDEDOR']));
-router.post('/deliver', deliverSubscription);
+// Entregas
+router.get('/:id/entregas', requireAuth, getEntregas);
+router.post('/:id/entregas', requireVendedor, registrarEntrega);
 
 export default router;

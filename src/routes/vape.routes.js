@@ -1,18 +1,18 @@
 import { Router } from 'express';
-import { getVapes, getVapeById, createVape, updateVape, deleteVape } from '../controllers/vapeController.js';
-import { verifyToken, verifyRole } from '../middlewares/authMiddleware.js';
-import { upload, processMedia } from '../middlewares/uploadMiddleware.js';
+import { listModelos, listPublicos, getModelo, createModelo, updateModelo, addVariante, updateVariante, adjustStock } from '../controllers/vapeController.js';
+import { requireAdmin, requireAuth } from '../middlewares/auth.js';
+import { upload, processImage } from '../middlewares/upload.js';
 
 const router = Router();
 
-// Rutas públicas o solo verificadas por token (depende de tu lógica, asumo que cualquiera logueado puede ver)
-router.get('/', getVapes);
-router.get('/:id', getVapeById);
+router.get('/publico', listPublicos);
+router.get('/', requireAuth, listModelos);
+router.get('/:id', requireAuth, getModelo);
+router.post('/', requireAdmin, upload.single('imagen'), processImage, createModelo);
+router.patch('/:id', requireAdmin, upload.single('imagen'), processImage, updateModelo);
 
-// Rutas protegidas para ADMIN
-router.use(verifyToken, verifyRole(['ADMIN']));
-router.post('/', upload.array('media', 10), processMedia, createVape);
-router.put('/:id', upload.array('media', 10), processMedia, updateVape);
-router.delete('/:id', deleteVape);
+router.post('/:id/variantes', requireAdmin, upload.single('imagen'), processImage, addVariante);
+router.patch('/:id/variantes/:varianteId', requireAdmin, upload.single('imagen'), processImage, updateVariante);
+router.patch('/:id/variantes/:varianteId/stock', requireAdmin, adjustStock);
 
 export default router;

@@ -1,173 +1,185 @@
 import { prisma } from '../prisma.js';
 
-// Obtener todos los vapes
-export const getVapes = async (req, res, next) => {
+const modeloInclude = {
+  variantes: { where: { activo: true }, orderBy: { sabor: 'asc' } },
+};
+
+export const listModelos = async (req, res, next) => {
   try {
-    const vapes = await prisma.vape.findMany({
-      include: {
-        inventarios: true
-      }
+    const { soloActivos = 'true', search } = req.query;
+    const where = {};
+    if (soloActivos === 'true') where.activo = true;
+    if (search) {
+      where.OR = [
+        { nombre: { contains: search, mode: 'insensitive' } },
+        { marca: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+    const modelos = await prisma.vapeModelo.findMany({
+      where,
+      include: modeloInclude,
+      orderBy: { nombre: 'asc' },
     });
-    
-    const vapesConStock = vapes.map(v => {
-      const stockVendedores = v.inventarios.reduce((acc, inv) => acc + inv.cantidad, 0);
-      const { inventarios, ...vapeRest } = v;
-      return {
-        ...vapeRest,
-        stockTotal: v.stockGlobal + stockVendedores
-      };
-    });
-    
-    res.json(vapesConStock);
-  } catch (error) {
-    next(error);
+    res.json(modelos);
+  } catch (err) {
+    next(err);
   }
 };
 
-// Obtener un vape por ID
-export const getVapeById = async (req, res, next) => {
+export const listPublicos = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    const vape = await prisma.vape.findUnique({
-      where: { id: parseInt(id) }
+    const modelos = await prisma.vapeModelo.findMany({
+      where: { activo: true },
+      select: {
+        id: true,
+        nombre: true,
+        marca: true,
+        descripcion: true,
+        puffs: true,
+        precioSugerido: true,
+        mostrarPrecio: true,
+        imagenUrl: true,
+        variantes: {
+          where: { activo: true },
+          orderBy: { sabor: 'asc' },
+          select: { id: true, sabor: true, imagenUrl: true },
+        },
+      },
+      orderBy: { nombre: 'asc' },
     });
-    
-    if (!vape) {
-      return res.status(404).json({ error: 'Vape no encontrado' });
-    }
-    res.json(vape);
-  } catch (error) {
-    next(error);
+    res.json(modelos);
+  } catch (err) {
+    next(err);
   }
 };
 
-// Crear un nuevo vape
-export const createVape = async (req, res, next) => {
+export const getModelo = async (req, res, next) => {
   try {
-    const { nombre, descripcion, costo, precio, precioVendedor, puffs, sabor, stockGlobal, mostrarPrecio } = req.body;
+    const modelo = await prisma.vapeModelo.findUnique({
+      where: { id: parseInt(req.params.id) },
+      include: { variantes: { orderBy: { sabor: 'asc' } } },
+    });
+    if (!modelo) return res.status(404).json({ error: 'Modelo no encontrado' });
+    res.json(modelo);
+  } catch (err) {
+    next(err);
+  }
+};
 
-    if (!nombre || !costo || !precio || !precioVendedor || !puffs || !sabor) {
-      return res.status(400).json({ error: 'Campos obligatorios faltantes: nombre, costo, precio, precioVendedor, puffs, sabor' });
+export const createModelo = async (req, res, next) => {
+  try {
+    const { nombre, marca, descripcion, puffs, costo, precioVendedor, precioSugerido, mostrarPrecio } = req.body;
+    if (!nombre || !marca || !puffs || !costo || !precioVendedor || !precioSugerido) {
+      return res.status(400).json({ error: 'Faltan campos requeridos' });
     }
+    const imagenUrl = req.file ? `/uploads/${req.file.filename}` : null;
 
-    let imagenUrl = null;
-    let media = [];
-
-    // req.files fue procesado por processMedia
-    if (req.files && req.files.length > 0) {
-      // Usar la primera imagen como imagenUrl (legacy/principal)
-      const primeraImagen = req.files.find(f => f.mimetype.startsWith('image/'));
-      if (primeraImagen) {
-        imagenUrl = `/uploads/${primeraImagen.filename}`;
-      } else {
-        imagenUrl = `/uploads/${req.files[0].filename}`; // Fallback si es un video principal
-      }
-
-      media = req.files.map(f => ({
-        url: `/uploads/${f.filename}`,
-        type: f.mimetype.startsWith('image/') ? 'image' : 'video',
-        mimetype: f.mimetype
-      }));
-    } else if (req.file) {
-      // Por si se envía con upload.single
-      imagenUrl = `/uploads/${req.file.filename}`;
-      media = [{
-        url: imagenUrl,
-        type: req.file.mimetype.startsWith('image/') ? 'image' : 'video',
-        mimetype: req.file.mimetype
-      }];
-    }
-
-    const newVape = await prisma.vape.create({
+    const modelo = await prisma.vapeModelo.create({
       data: {
         nombre,
+        marca,
         descripcion,
-        costo: parseFloat(costo),
-        precio: parseFloat(precio),
-        precioVendedor: parseFloat(precioVendedor),
         puffs: parseInt(puffs),
-        sabor,
-        stockGlobal: stockGlobal ? parseInt(stockGlobal) : 0,
-        mostrarPrecio: mostrarPrecio !== undefined ? mostrarPrecio === 'true' || mostrarPrecio === true : true,
+        costo: parseFloat(costo),
+        precioVendedor: parseFloat(precioVendedor),
+        precioSugerido: parseFloat(precioSugerido),
+        mostrarPrecio: mostrarPrecio !== false && mostrarPrecio !== 'false',
         imagenUrl,
-        media
-      }
+      },
+      include: modeloInclude,
     });
-
-    res.status(201).json(newVape);
-  } catch (error) {
-    next(error);
+    res.status(201).json(modelo);
+  } catch (err) {
+    next(err);
   }
 };
 
-// Actualizar un vape
-export const updateVape = async (req, res, next) => {
+export const updateModelo = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    const { nombre, descripcion, costo, precio, precioVendedor, puffs, sabor, stockGlobal, mostrarPrecio } = req.body;
-    
-    const updateData = {};
-    if (nombre !== undefined) updateData.nombre = nombre;
-    if (descripcion !== undefined) updateData.descripcion = descripcion;
-    if (costo !== undefined) updateData.costo = parseFloat(costo);
-    if (precio !== undefined) updateData.precio = parseFloat(precio);
-    if (precioVendedor !== undefined) updateData.precioVendedor = parseFloat(precioVendedor);
-    if (puffs !== undefined) updateData.puffs = parseInt(puffs);
-    if (sabor !== undefined) updateData.sabor = sabor;
-    if (stockGlobal !== undefined) updateData.stockGlobal = parseInt(stockGlobal);
-    if (mostrarPrecio !== undefined) updateData.mostrarPrecio = mostrarPrecio === 'true' || mostrarPrecio === true;
+    const { nombre, marca, descripcion, puffs, costo, precioVendedor, precioSugerido, mostrarPrecio, activo } = req.body;
+    const data = {};
+    if (nombre !== undefined) data.nombre = nombre;
+    if (marca !== undefined) data.marca = marca;
+    if (descripcion !== undefined) data.descripcion = descripcion;
+    if (puffs !== undefined) data.puffs = parseInt(puffs);
+    if (costo !== undefined) data.costo = parseFloat(costo);
+    if (precioVendedor !== undefined) data.precioVendedor = parseFloat(precioVendedor);
+    if (precioSugerido !== undefined) data.precioSugerido = parseFloat(precioSugerido);
+    if (mostrarPrecio !== undefined) data.mostrarPrecio = mostrarPrecio !== false && mostrarPrecio !== 'false';
+    if (activo !== undefined) data.activo = activo !== false && activo !== 'false';
+    if (req.file) data.imagenUrl = `/uploads/${req.file.filename}`;
 
-    // Si se suben nuevos archivos, reemplazamos el array de media por completo
-    // En una implementación más avanzada se podrían añadir o borrar individualmente
-    if (req.files && req.files.length > 0) {
-      const primeraImagen = req.files.find(f => f.mimetype.startsWith('image/'));
-      if (primeraImagen) {
-        updateData.imagenUrl = `/uploads/${primeraImagen.filename}`;
-      } else {
-        updateData.imagenUrl = `/uploads/${req.files[0].filename}`;
-      }
-
-      updateData.media = req.files.map(f => ({
-        url: `/uploads/${f.filename}`,
-        type: f.mimetype.startsWith('image/') ? 'image' : 'video',
-        mimetype: f.mimetype
-      }));
-    } else if (req.file) {
-      updateData.imagenUrl = `/uploads/${req.file.filename}`;
-      updateData.media = [{
-        url: updateData.imagenUrl,
-        type: req.file.mimetype.startsWith('image/') ? 'image' : 'video',
-        mimetype: req.file.mimetype
-      }];
-    }
-
-    const updatedVape = await prisma.vape.update({
-      where: { id: parseInt(id) },
-      data: updateData
+    const modelo = await prisma.vapeModelo.update({
+      where: { id: parseInt(req.params.id) },
+      data,
+      include: modeloInclude,
     });
-
-    res.json(updatedVape);
-  } catch (error) {
-    if (error.code === 'P2025') {
-      return res.status(404).json({ error: 'Vape no encontrado' });
-    }
-    next(error);
+    res.json(modelo);
+  } catch (err) {
+    next(err);
   }
 };
 
-// Eliminar un vape
-export const deleteVape = async (req, res, next) => {
+export const addVariante = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    await prisma.vape.delete({
-      where: { id: parseInt(id) }
+    const modeloId = parseInt(req.params.id);
+    const { sabor, stock } = req.body;
+    if (!sabor) return res.status(400).json({ error: 'El sabor es requerido' });
+
+    const imagenUrl = req.file ? `/uploads/${req.file.filename}` : null;
+
+    const variante = await prisma.vapeVariante.create({
+      data: {
+        modeloId,
+        sabor,
+        imagenUrl,
+        stock: stock ? parseInt(stock) : 0,
+      },
     });
-    
-    res.status(204).send();
-  } catch (error) {
-    if (error.code === 'P2025') {
-      return res.status(404).json({ error: 'Vape no encontrado' });
-    }
-    next(error);
+    res.status(201).json(variante);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const updateVariante = async (req, res, next) => {
+  try {
+    const { sabor, stock, activo } = req.body;
+    const data = {};
+    if (sabor !== undefined) data.sabor = sabor;
+    if (stock !== undefined) data.stock = parseInt(stock);
+    if (activo !== undefined) data.activo = activo;
+    if (req.file) data.imagenUrl = `/uploads/${req.file.filename}`;
+
+    const variante = await prisma.vapeVariante.update({
+      where: { id: parseInt(req.params.varianteId) },
+      data,
+    });
+    res.json(variante);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const adjustStock = async (req, res, next) => {
+  try {
+    const { cantidad, operacion } = req.body; // operacion: 'add' | 'set'
+    const id = parseInt(req.params.varianteId);
+    const variante = await prisma.vapeVariante.findUnique({ where: { id } });
+    if (!variante) return res.status(404).json({ error: 'Variante no encontrada' });
+
+    const nuevoStock = operacion === 'set'
+      ? parseInt(cantidad)
+      : variante.stock + parseInt(cantidad);
+
+    if (nuevoStock < 0) return res.status(400).json({ error: 'Stock no puede ser negativo' });
+
+    const updated = await prisma.vapeVariante.update({
+      where: { id },
+      data: { stock: nuevoStock },
+    });
+    res.json(updated);
+  } catch (err) {
+    next(err);
   }
 };

@@ -1,16 +1,12 @@
 import { Router } from 'express';
-import { assignVapesToVendedor, getInventory, updateAssignedInventory, removeAssignedInventory } from '../controllers/inventoryController.js';
-import { verifyToken, verifyRole } from '../middlewares/authMiddleware.js';
+import { getInventario, asignar, devolver, setComisionVendedor } from '../controllers/inventoryController.js';
+import { requireAdmin, requireVendedor } from '../middlewares/auth.js';
 
 const router = Router();
 
-// Rutas para consultar inventario (ADMIN ve todo, VENDEDOR ve lo suyo)
-router.use(verifyToken);
-router.get('/', verifyRole(['ADMIN', 'VENDEDOR']), getInventory);
-
-// Rutas de administración
-router.post('/assign', verifyRole(['ADMIN']), assignVapesToVendedor);
-router.put('/:id', verifyRole(['ADMIN']), updateAssignedInventory);
-router.delete('/:id', verifyRole(['ADMIN']), removeAssignedInventory);
+router.get('/', requireVendedor, getInventario);
+router.post('/asignar', requireAdmin, asignar);
+router.post('/devolver', requireAdmin, devolver);
+router.post('/comision', requireAdmin, setComisionVendedor);
 
 export default router;

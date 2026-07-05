@@ -1,73 +1,39 @@
-"use client";
-
-import { useState, useEffect, createContext, useContext, useCallback } from "react";
-import { loginUser, logoutUser, getCurrentUser, isAuthenticated } from "@/services/api";
-import { useRouter } from "next/navigation";
+'use client';
+import { useState, useEffect, createContext, useContext } from 'react';
+import { api } from '@/lib/api';
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
 
   useEffect(() => {
-    // Leer usuario persistido en localStorage
-    const stored = getCurrentUser();
-    if (stored && isAuthenticated()) {
-      setUser(stored);
-      
-      // Fetch silencioso para actualizar datos frescos (fidelidad, historial)
-      import("@/services/api").then(({ getMe }) => {
-        getMe().then(freshUser => {
-          setUser(freshUser);
-          localStorage.setItem("nubex_user", JSON.stringify(freshUser));
-        }).catch(err => {
-          console.error("Error refreshing profile:", err);
-        });
-      });
-    }
-    setLoading(false);
+    const token = localStorage.getItem('nubex_token');
+    if (!token) { setLoading(false); return; }
+    api.get('/auth/me')
+      .then(setUser)
+      .catch(() => localStorage.removeItem('nubex_token'))
+      .finally(() => setLoading(false));
   }, []);
 
-  const login = useCallback(async (identifier, password) => {
-    const data = await loginUser(identifier, password);
-    setUser(data.user);
+  const login = async (identifier, password) => {
+    const { token, user } = await api.post('/auth/login', { identifier, password });
+    localStorage.setItem('nubex_token', token);
+    setUser(user);
+    return user;
+  };
 
-    // Redirigir según rol
-    switch (data.user.role) {
-      case "ADMIN":
-        router.push("/admin");
-        break;
-      case "VENDEDOR":
-        router.push("/vender");
-        break;
-      case "CLIENTE":
-      default:
-        router.push("/cliente");
-        break;
-    }
-
-    return data;
-  }, [router]);
-
-  const logout = useCallback(() => {
-    logoutUser();
+  const logout = () => {
+    localStorage.removeItem('nubex_token');
     setUser(null);
-    router.push("/login");
-  }, [router]);
+  };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, isAuthenticated: !!user }}>
+    <AuthContext.Provider value={{ user, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
 }
 
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth debe usarse dentro de <AuthProvider>");
-  }
-  return context;
-}
+export const useAuth = () => useContext(AuthContext);

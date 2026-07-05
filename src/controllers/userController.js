@@ -1,140 +1,158 @@
-import { prisma } from '../prisma.js';
 import bcrypt from 'bcrypt';
+import { prisma } from '../prisma.js';
 
-// Solo accesible por ADMIN para crear vendedores y clientes con suscripción
-export const createUserByAdmin = async (req, res, next) => {
+const userSelect = {
+  id: true,
+  nombre: true,
+  email: true,
+  telefono: true,
+  cedula: true,
+  role: true,
+  activo: true,
+  createdAt: true,
+};
+
+export const list = async (req, res, next) => {
   try {
-    const { nombre, password, cedula, telefono, email, role, conSuscripcion } = req.body;
-    
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const newUser = await prisma.$transaction(async (prismaClient) => {
-      const user = await prismaClient.user.create({
-        data: {
-          nombre,
-          password: hashedPassword,
-          cedula,
-          telefono,
-          email,
-          role // ADMIN puede especificar VENDEDOR, CLIENTE o ADMIN
-        }
-      });
-
-      if (role === 'CLIENTE' && conSuscripcion) {
-        await prismaClient.suscripcion.create({
-          data: {
-            clienteId: user.id,
-            activa: true
-          }
-        });
-      }
-
-      return user;
-    });
-
-    const { password: _, ...userWithoutPassword } = newUser;
-    res.status(201).json(userWithoutPassword);
-  } catch (error) {
-    if (error.code === 'P2002') {
-      return res.status(400).json({ error: 'Cédula, teléfono o email ya registrados' });
+    const { role, search, page = 1, limit = 50 } = req.query;
+    const where = { activo: true };
+    if (role) where.role = role;
+    if (search) {
+      where.OR = [
+        { nombre: { contains: search, mode: 'insensitive' } },
+        { telefono: { contains: search } },
+        { cedula: { contains: search } },
+        { email: { contains: search, mode: 'insensitive' } },
+      ];
     }
-    next(error);
+    const [users, total] = await Promise.all([
+      prisma.user.findMany({
+        where,
+        select: userSelect,
+        orderBy: { nombre: 'asc' },
+        skip: (Number(page) - 1) * Number(limit),
+        take: Number(limit),
+      }),
+      prisma.user.count({ where }),
+    ]);
+    res.json({ data: users, total, page: Number(page) });
+  } catch (err) {
+    next(err);
   }
 };
 
-export const getUsers = async (req, res, next) => {
+export const getById = async (req, res, next) => {
   try {
-    const users = await prisma.user.findMany({
+    const id = parseInt(req.params.id);
+    if (req.user.role !== 'ADMIN' && req.user.id !== id) {
+      return res.status(403).json({ error: 'Sin permiso' });
+    }
+    const user = await prisma.user.findUnique({
+      where: { id },
       select: {
-        id: true,
-        nombre: true,
-        email: true,
-        cedula: true,
-        telefono: true,
-        role: true,
-        createdAt: true,
-        suscripcion: true
-      }
+        ...userSelect,
+        suscripcion: {
+          include: {
+            entregas: { orderBy: { fechaEntrega: 'desc' }, take: 5 },
+            vapesPermitidos: { include: { modelo: true } },
+          },
+        },
+        logros: { where: { reclamado: false } },
+        ventasComoCliente: {
+          orderBy: { createdAt: 'desc' },
+          take: 20,
+          include: { variante: { include: { modelo: true } } },
+        },
+        comisionDefault: true,
+      },
     });
-    res.json(users);
-  } catch (error) {
-    next(error);
+    if (!user) return res.status(404).json({ error: 'Usuario no encontrado' });
+    res.json(user);
+  } catch (err) {
+    next(err);
   }
 };
 
-export const updateUser = async (req, res, next) => {
+export const create = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    const { nombre, telefono, email, role, password, conSuscripcion } = req.body;
-
-    const updateData = { nombre, telefono, email, role };
-    if (password) {
-      updateData.password = await bcrypt.hash(password, 10);
+    const { nombre, email, telefono, cedula, password, role } = req.body;
+    if (!nombre || !password) {
+      return res.status(400).json({ error: 'nombre y password son requeridos' });
     }
-
-    const updatedUser = await prisma.$transaction(async (prismaClient) => {
-      const user = await prismaClient.user.update({
-        where: { id: parseInt(id) },
-        data: updateData
-      });
-
-      // Manejar la suscripción si es cliente
-      if (role === 'CLIENTE') {
-        const suscripcionExistente = await prismaClient.suscripcion.findUnique({
-          where: { clienteId: parseInt(id) }
-        });
-
-        if (conSuscripcion && !suscripcionExistente) {
-          await prismaClient.suscripcion.create({
-            data: { clienteId: parseInt(id), activa: true }
-          });
-        } else if (!conSuscripcion && suscripcionExistente) {
-          await prismaClient.suscripcion.delete({
-            where: { clienteId: parseInt(id) }
-          });
-        }
-      }
-
-      return user;
+    const hashed = await bcrypt.hash(password, 10);
+    const user = await prisma.user.create({
+      data: { nombre, email, telefono, cedula, password: hashed, role: role || 'CLIENTE' },
+      select: userSelect,
     });
-
-    const { password: _, ...userWithoutPassword } = updatedUser;
-    res.json(userWithoutPassword);
-  } catch (error) {
-    if (error.code === 'P2002') {
-      return res.status(400).json({ error: 'Cédula, teléfono o email ya registrados por otro usuario' });
+    res.status(201).json(user);
+  } catch (err) {
+    if (err.code === 'P2002') {
+      return res.status(409).json({ error: 'Email, teléfono o cédula ya registrados' });
     }
-    if (error.code === 'P2025') {
-      return res.status(404).json({ error: 'Usuario no encontrado' });
-    }
-    next(error);
+    next(err);
   }
 };
 
-export const deleteUser = async (req, res, next) => {
+export const update = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    const id = parseInt(req.params.id);
+    if (req.user.role !== 'ADMIN' && req.user.id !== id) {
+      return res.status(403).json({ error: 'Sin permiso' });
+    }
+    const { nombre, email, telefono, cedula, password } = req.body;
+    const data = {};
+    if (nombre) data.nombre = nombre;
+    if (email) data.email = email;
+    if (telefono) data.telefono = telefono;
+    if (cedula) data.cedula = cedula;
+    if (password) data.password = await bcrypt.hash(password, 10);
 
-    // Intentar borrar (si tiene ventas asociadas, Prisma lanzará error de foreign key P2003)
-    await prisma.$transaction(async (prismaClient) => {
-      // Borrar dependencias seguras primero
-      await prismaClient.logroFidelidad.deleteMany({ where: { clienteId: parseInt(id) } });
-      await prismaClient.suscripcion.deleteMany({ where: { clienteId: parseInt(id) } });
-      await prismaClient.inventarioVendedor.deleteMany({ where: { vendedorId: parseInt(id) } });
-      
-      await prismaClient.user.delete({
-        where: { id: parseInt(id) }
-      });
+    const user = await prisma.user.update({
+      where: { id },
+      data,
+      select: userSelect,
     });
+    res.json(user);
+  } catch (err) {
+    if (err.code === 'P2002') {
+      return res.status(409).json({ error: 'Email, teléfono o cédula ya registrados' });
+    }
+    next(err);
+  }
+};
 
-    res.json({ message: 'Usuario eliminado exitosamente' });
-  } catch (error) {
-    if (error.code === 'P2003') {
-      return res.status(400).json({ error: 'No se puede eliminar el usuario porque tiene ventas o registros históricos asociados. Intenta cambiar sus datos o rol.' });
-    }
-    if (error.code === 'P2025') {
-      return res.status(404).json({ error: 'Usuario no encontrado' });
-    }
-    next(error);
+export const deactivate = async (req, res, next) => {
+  try {
+    await prisma.user.update({
+      where: { id: parseInt(req.params.id) },
+      data: { activo: false },
+    });
+    res.json({ message: 'Usuario desactivado' });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Buscador de clientes para POS
+export const searchClientes = async (req, res, next) => {
+  try {
+    const { q } = req.query;
+    if (!q || q.length < 2) return res.json([]);
+    const clientes = await prisma.user.findMany({
+      where: {
+        role: 'CLIENTE',
+        activo: true,
+        OR: [
+          { nombre: { contains: q, mode: 'insensitive' } },
+          { telefono: { contains: q } },
+          { cedula: { contains: q } },
+        ],
+      },
+      select: { id: true, nombre: true, telefono: true, cedula: true },
+      take: 10,
+    });
+    res.json(clientes);
+  } catch (err) {
+    next(err);
   }
 };

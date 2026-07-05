@@ -1,13 +1,11 @@
 import { Router } from 'express';
-import { previewLiquidacion, executeLiquidacion } from '../controllers/liquidationController.js';
-import { verifyToken, verifyRole } from '../middlewares/authMiddleware.js';
+import { getLiquidaciones, createLiquidacion, cerrarLiquidacion } from '../controllers/liquidationController.js';
+import { requireAdmin, requireVendedor } from '../middlewares/auth.js';
 
 const router = Router();
 
-// Ambos requieren ser ADMIN para controlar cierres de caja
-router.use(verifyToken, verifyRole(['ADMIN']));
-
-router.get('/preview/:vendedorId', previewLiquidacion);
-router.post('/execute', executeLiquidacion);
+router.get('/', requireVendedor, getLiquidaciones);
+router.post('/', requireAdmin, createLiquidacion);
+router.patch('/:id/cerrar', requireAdmin, cerrarLiquidacion);
 
 export default router;

@@ -1,209 +1,225 @@
 import { prisma } from '../prisma.js';
 
+const calcularReparto = (totalVenta, vape, repartoOverride, role) => {
+  if (role === 'ADMIN') {
+    return { tipo: 'PRECIO_FIJO', valor: totalVenta, montoParaAdmin: totalVenta, montoParaVendedor: 0 };
+  }
+  if (repartoOverride) {
+    const valor = parseFloat(repartoOverride.valor);
+    const tipo = repartoOverride.tipo;
+    const montoParaAdmin = tipo === 'PORCENTAJE'
+      ? totalVenta * (valor / 100)
+      : valor * (totalVenta / (parseFloat(repartoOverride.precioVenta) || totalVenta));
+    return { tipo, valor, montoParaAdmin, montoParaVendedor: totalVenta - montoParaAdmin };
+  }
+  // fallback: precio base del modelo
+  const montoParaAdmin = vape.modelo.precioVendedor * (totalVenta / (totalVenta || 1));
+  return { tipo: 'PRECIO_FIJO', valor: vape.modelo.precioVendedor, montoParaAdmin: vape.modelo.precioVendedor, montoParaVendedor: totalVenta - vape.modelo.precioVendedor };
+};
+
 export const createVenta = async (req, res, next) => {
   try {
-    const vendedorId = req.user.id; 
-    
-    // El payload debe traer el objeto "reparto" para saber la partición de la ganancia
-    const { clienteId, vapeId, cantidad, precioVenta, pagadoA, reparto } = req.body;
-    
-    if (!vapeId || !cantidad || !precioVenta) {
-      return res.status(400).json({ error: 'Parámetros obligatorios faltantes' });
+    const vendedorId = req.user.id;
+    const {
+      clienteId, varianteId, cantidad, precioVenta,
+      pagadoA, metodoPago, reparto, esGarantia, notas,
+      descuentoAdmin = 0, descuentoVendedor = 0,
+    } = req.body;
+
+    const cantidadInt = parseInt(cantidad);
+    const esGarantiaFinal = req.user.role === 'ADMIN' && (esGarantia === true || esGarantia === 'true');
+
+    if (!varianteId || !cantidadInt || cantidadInt <= 0) {
+      return res.status(400).json({ error: 'varianteId y cantidad son requeridos' });
+    }
+    if (!esGarantiaFinal && (precioVenta === undefined || isNaN(parseFloat(precioVenta)))) {
+      return res.status(400).json({ error: 'precioVenta es requerido' });
     }
 
-    let comprobanteUrl = null;
-    if (req.file) {
-      comprobanteUrl = `/uploads/${req.file.filename}`;
-    }
+    const comprobanteUrl = req.file ? `/uploads/${req.file.filename}` : null;
 
-    // Validar que el cliente existe si se envía clienteId
-    let clienteIdFinal = null;
-    if (clienteId) {
-      const clienteExiste = await prisma.user.findUnique({ where: { id: parseInt(clienteId) } });
-      if (!clienteExiste) {
-        return res.status(400).json({ error: 'El cliente especificado no existe' });
-      }
-      clienteIdFinal = parseInt(clienteId);
-    }
-
-    // Si es admin, forzar pagadoA a ADMIN
-    const pagadoAFinal = req.user.role === 'ADMIN' ? 'ADMIN' : (pagadoA === 'ADMIN' ? 'ADMIN' : 'VENDEDOR');
-
-    const venta = await prisma.$transaction(async (prismaClient) => {
-      // Obtener snapshot del vape (costo actual)
-      const vape = await prismaClient.vape.findUnique({
-        where: { id: parseInt(vapeId) }
+    const venta = await prisma.$transaction(async (tx) => {
+      const variante = await tx.vapeVariante.findUnique({
+        where: { id: parseInt(varianteId) },
+        include: { modelo: true },
       });
-
-      if (!vape) {
-        throw new Error('Vape no encontrado');
-      }
+      if (!variante) throw new Error('Variante no encontrada');
 
       if (req.user.role === 'ADMIN') {
-        if (vape.stockGlobal < parseInt(cantidad)) {
-          throw new Error('Stock insuficiente en la bodega central');
-        }
-        // Restar stock global
-        await prismaClient.vape.update({
-          where: { id: parseInt(vapeId) },
-          data: { stockGlobal: vape.stockGlobal - parseInt(cantidad) }
+        if (variante.stock < cantidadInt) throw new Error('Stock insuficiente en bodega');
+        await tx.vapeVariante.update({
+          where: { id: parseInt(varianteId) },
+          data: { stock: { decrement: cantidadInt } },
         });
       } else {
-        // Verificar si el vendedor tiene stock
-        const inventario = await prismaClient.inventarioVendedor.findUnique({
-          where: {
-            vendedorId_vapeId: {
-              vendedorId: parseInt(vendedorId),
-              vapeId: parseInt(vapeId)
-            }
-          }
+        const inv = await tx.inventarioVendedor.findUnique({
+          where: { vendedorId_varianteId: { vendedorId, varianteId: parseInt(varianteId) } },
         });
-
-        if (!inventario || inventario.cantidad < parseInt(cantidad)) {
-          throw new Error('Stock insuficiente en tu inventario asignado');
-        }
-
-        // Restar stock del inventario del vendedor
-        await prismaClient.inventarioVendedor.update({
-          where: {
-            vendedorId_vapeId: {
-              vendedorId: parseInt(vendedorId),
-              vapeId: parseInt(vapeId)
-            }
-          },
-          data: {
-            cantidad: inventario.cantidad - parseInt(cantidad)
-          }
+        if (!inv || inv.cantidad < cantidadInt) throw new Error('Stock insuficiente en tu inventario');
+        await tx.inventarioVendedor.update({
+          where: { vendedorId_varianteId: { vendedorId, varianteId: parseInt(varianteId) } },
+          data: { cantidad: { decrement: cantidadInt } },
         });
       }
 
-      // Cálculo del monto dinámico
-      const totalVenta = parseFloat(precioVenta) * parseInt(cantidad);
-      let montoParaAdmin = 0;
-      let montoParaVendedor = 0;
+      const precioVentaFinal = esGarantiaFinal ? 0 : parseFloat(precioVenta);
+      const totalVenta = precioVentaFinal * cantidadInt;
 
-      if (req.user.role === 'ADMIN') {
-        // Admin vende directamente: recibe todo el dinero
-        montoParaAdmin = totalVenta;
-        montoParaVendedor = 0;
-      } else if (reparto && reparto.tipo === 'FIJO') {
-        montoParaAdmin = parseFloat(reparto.valorAdmin);
-        montoParaVendedor = totalVenta - montoParaAdmin;
-      } else if (reparto && reparto.tipo === 'PORCENTAJE') {
-        montoParaAdmin = totalVenta * (parseFloat(reparto.valorAdmin) / 100);
-        montoParaVendedor = totalVenta - montoParaAdmin;
-      } else {
-        // Fallback: Admin recibe el precioVendedor por cada unidad
-        montoParaAdmin = vape.precioVendedor * parseInt(cantidad);
-        montoParaVendedor = totalVenta - montoParaAdmin;
+      let montoParaAdmin = 0, montoParaVendedor = 0, repartoTipo = 'PRECIO_FIJO', repartoValor = 0;
+
+      if (!esGarantiaFinal) {
+        if (req.user.role === 'ADMIN') {
+          montoParaAdmin = totalVenta;
+          repartoTipo = 'PRECIO_FIJO';
+          repartoValor = totalVenta;
+        } else if (reparto) {
+          repartoTipo = reparto.tipo;
+          repartoValor = parseFloat(reparto.valor);
+          montoParaAdmin = repartoTipo === 'PORCENTAJE'
+            ? totalVenta * (repartoValor / 100)
+            : repartoValor * cantidadInt;
+          montoParaVendedor = totalVenta - montoParaAdmin;
+        } else {
+          // Usar comisión default del vendedor o precio base del modelo
+          const comision = await tx.comisionVendedor.findUnique({ where: { vendedorId } });
+          if (comision) {
+            repartoTipo = comision.tipo;
+            repartoValor = comision.valor;
+            montoParaAdmin = comision.tipo === 'PORCENTAJE'
+              ? totalVenta * (comision.valor / 100)
+              : comision.valor * cantidadInt;
+          } else {
+            repartoTipo = 'PRECIO_FIJO';
+            repartoValor = variante.modelo.precioVendedor;
+            montoParaAdmin = variante.modelo.precioVendedor * cantidadInt;
+          }
+          montoParaVendedor = totalVenta - montoParaAdmin;
+        }
+        montoParaAdmin -= parseFloat(descuentoAdmin);
+        montoParaVendedor -= parseFloat(descuentoVendedor);
       }
 
-      // Registrar la venta
-      const nuevaVenta = await prismaClient.venta.create({
+      const nuevaVenta = await tx.venta.create({
         data: {
-          vendedorId: parseInt(vendedorId),
-          clienteId: clienteIdFinal,
-          vapeId: parseInt(vapeId),
-          cantidad: parseInt(cantidad),
-          costoAdquisicion: vape.costo,
-          precioVenta: parseFloat(precioVenta),
+          vendedorId,
+          clienteId: clienteId ? parseInt(clienteId) : null,
+          varianteId: parseInt(varianteId),
+          cantidad: cantidadInt,
+          costoAdquisicion: variante.modelo.costo,
+          precioVenta: precioVentaFinal,
+          repartoTipo,
+          repartoValor,
           montoParaAdmin,
           montoParaVendedor,
-          pagadoA: pagadoAFinal,
+          descuentoAdmin: parseFloat(descuentoAdmin),
+          descuentoVendedor: parseFloat(descuentoVendedor),
+          pagadoA: req.user.role === 'ADMIN' ? 'ADMIN' : (pagadoA || 'VENDEDOR'),
+          metodoPago: metodoPago || 'EFECTIVO',
+          estado: esGarantiaFinal ? 'GARANTIA' : 'PENDIENTE_LIQUIDACION',
           comprobanteUrl,
-          estado: 'PENDIENTE_LIQUIDACION'
-        }
+          notas,
+        },
+        include: {
+          variante: { include: { modelo: true } },
+          cliente: { select: { id: true, nombre: true } },
+        },
       });
 
+      // Fidelidad
       let alertaFidelidad = null;
-      if (clienteId) {
-        const clienteActualizado = await prismaClient.user.update({
-          where: { id: parseInt(clienteId) },
-          data: { totalVapesComprados: { increment: parseInt(cantidad) } }
-        });
-
-        if (clienteActualizado.totalVapesComprados >= 6) {
-          await prismaClient.user.update({
+      if (clienteId && !esGarantiaFinal) {
+        const config = await tx.configFidelidad.findFirst({ where: { activo: true }, orderBy: { createdAt: 'desc' } });
+        if (config) {
+          const cliente = await tx.user.update({
             where: { id: parseInt(clienteId) },
-            data: { totalVapesComprados: clienteActualizado.totalVapesComprados - 6 }
+            data: { ventasComoCliente: undefined }, // solo update contador
           });
-
-          await prismaClient.logroFidelidad.create({
-            data: {
-              clienteId: parseInt(clienteId),
-              nombre: 'Vape Gratis',
-              descripcion: 'Alcanzó 6 compras. Tiene derecho a 1 vape gratis en su próxima visita.'
-            }
+          // Contar ventas del cliente (sin garantías)
+          const totalCompras = await tx.venta.count({
+            where: { clienteId: parseInt(clienteId), estado: { not: 'GARANTIA' } },
           });
+          const logrosYaObtenidos = await tx.logroFidelidad.count({ where: { clienteId: parseInt(clienteId) } });
+          const logrosQueDebeTener = Math.floor(totalCompras / config.comprasNecesarias);
 
-          alertaFidelidad = "¡Felicidades! El cliente ha acumulado 6 compras. Su próximo vape es GRATIS.";
+          if (logrosQueDebeTener > logrosYaObtenidos) {
+            await tx.logroFidelidad.create({
+              data: {
+                clienteId: parseInt(clienteId),
+                configId: config.id,
+                nombre: config.tipoRecompensa === 'VAPE_GRATIS' ? 'Vape Gratis' : `Descuento $${config.valorDescuento}`,
+                descripcion: `Alcanzó ${totalCompras} compras.`,
+              },
+            });
+            alertaFidelidad = config.tipoRecompensa === 'VAPE_GRATIS'
+              ? `¡El cliente tiene derecho a un vape gratis! (${totalCompras} compras acumuladas)`
+              : `¡El cliente tiene un descuento de $${config.valorDescuento}!`;
+          }
         }
       }
 
-      return { nuevaVenta, alertaFidelidad };
+      return { venta: nuevaVenta, alertaFidelidad };
     });
 
     res.status(201).json(venta);
-  } catch (error) {
-    if (error.message === 'Stock insuficiente en tu inventario asignado' || error.message === 'Stock insuficiente en la bodega central') {
-      return res.status(400).json({ error: error.message });
+  } catch (err) {
+    if (['Stock insuficiente en bodega', 'Stock insuficiente en tu inventario', 'Variante no encontrada'].includes(err.message)) {
+      return res.status(400).json({ error: err.message });
     }
-    next(error);
+    next(err);
   }
 };
 
-export const updatePagadoA = async (req, res, next) => {
+export const getVentas = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    const { pagadoA } = req.body;
+    const { vendedorId, clienteId, estado, desde, hasta, page = 1, limit = 50 } = req.query;
+    const where = {};
 
-    if (pagadoA !== 'ADMIN' && pagadoA !== 'VENDEDOR') {
-      return res.status(400).json({ error: 'pagadoA debe ser ADMIN o VENDEDOR' });
+    if (req.user.role === 'VENDEDOR') {
+      where.vendedorId = req.user.id;
+    } else {
+      if (vendedorId) where.vendedorId = parseInt(vendedorId);
+      if (clienteId) where.clienteId = parseInt(clienteId);
+    }
+    if (estado) where.estado = estado;
+    if (desde || hasta) {
+      where.createdAt = {};
+      if (desde) where.createdAt.gte = new Date(desde);
+      if (hasta) where.createdAt.lte = new Date(hasta);
     }
 
-    const venta = await prisma.venta.update({
-      where: { id: parseInt(id) },
-      data: { pagadoA }
-    });
-
-    res.json({ message: 'Receptor de pago actualizado', venta });
-  } catch (error) {
-    if (error.code === 'P2025') {
-      return res.status(404).json({ error: 'Venta no encontrada' });
-    }
-    next(error);
-  }
-};
-
-export const getSales = async (req, res, next) => {
-  try {
-    const role = req.user.role;
-    let ventas = [];
-
-    if (role === 'ADMIN') {
-      ventas = await prisma.venta.findMany({
-        orderBy: { createdAt: 'desc' },
+    const [ventas, total] = await Promise.all([
+      prisma.venta.findMany({
+        where,
         include: {
           vendedor: { select: { id: true, nombre: true } },
-          cliente: { select: { id: true, nombre: true } },
-          vape: { select: { id: true, nombre: true } }
-        }
-      });
-    } else if (role === 'VENDEDOR') {
-      ventas = await prisma.venta.findMany({
-        where: { vendedorId: req.user.id },
+          cliente: { select: { id: true, nombre: true, telefono: true } },
+          variante: { include: { modelo: { select: { id: true, nombre: true, marca: true } } } },
+        },
         orderBy: { createdAt: 'desc' },
-        include: {
-          cliente: { select: { id: true, nombre: true } },
-          vape: { select: { id: true, nombre: true } }
-        }
-      });
-    } else {
-      return res.status(403).json({ error: 'No tienes permiso para ver ventas' });
-    }
+        skip: (Number(page) - 1) * Number(limit),
+        take: Number(limit),
+      }),
+      prisma.venta.count({ where }),
+    ]);
 
-    res.json(ventas);
-  } catch (error) {
-    next(error);
+    res.json({ data: ventas, total, page: Number(page) });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const updateVenta = async (req, res, next) => {
+  try {
+    const id = parseInt(req.params.id);
+    const { pagadoA, estado, notas } = req.body;
+    const data = {};
+    if (pagadoA) data.pagadoA = pagadoA;
+    if (estado) data.estado = estado;
+    if (notas !== undefined) data.notas = notas;
+
+    const venta = await prisma.venta.update({ where: { id }, data });
+    res.json(venta);
+  } catch (err) {
+    next(err);
   }
 };

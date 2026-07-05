@@ -1,176 +1,108 @@
 import { prisma } from '../prisma.js';
 
-export const assignVapesToVendedor = async (req, res, next) => {
+export const getInventario = async (req, res, next) => {
   try {
-    const { vendedorId, vapeId, cantidad } = req.body;
-
-    if (!vendedorId || !vapeId || !cantidad || cantidad <= 0) {
-      return res.status(400).json({ error: 'Parámetros inválidos' });
+    const where = {};
+    if (req.user.role === 'VENDEDOR') {
+      where.vendedorId = req.user.id;
+    } else if (req.query.vendedorId) {
+      where.vendedorId = parseInt(req.query.vendedorId);
     }
 
-    const assignment = await prisma.$transaction(async (prismaClient) => {
-      // Verificar stock global
-      const vape = await prismaClient.vape.findUnique({ where: { id: parseInt(vapeId) } });
-      
-      if (!vape) {
-        throw new Error('Vape no encontrado');
-      }
-
-      if (vape.stockGlobal < cantidad) {
-        throw new Error('Stock global insuficiente');
-      }
-
-      // Restar stock global
-      await prismaClient.vape.update({
-        where: { id: parseInt(vapeId) },
-        data: { stockGlobal: vape.stockGlobal - parseInt(cantidad) }
-      });
-
-      // Sumar al inventario del vendedor (crear si no existe)
-      const inventario = await prismaClient.inventarioVendedor.upsert({
-        where: {
-          vendedorId_vapeId: {
-            vendedorId: parseInt(vendedorId),
-            vapeId: parseInt(vapeId)
-          }
-        },
-        update: {
-          cantidad: { increment: parseInt(cantidad) }
-        },
-        create: {
-          vendedorId: parseInt(vendedorId),
-          vapeId: parseInt(vapeId),
-          cantidad: parseInt(cantidad)
-        }
-      });
-
-      return inventario;
+    const inventario = await prisma.inventarioVendedor.findMany({
+      where,
+      include: {
+        variante: { include: { modelo: true } },
+        vendedor: { select: { id: true, nombre: true } },
+      },
+      orderBy: [{ vendedor: { nombre: 'asc' } }, { variante: { sabor: 'asc' } }],
     });
-
-    res.status(200).json({ message: 'Vapes asignados exitosamente', assignment });
-  } catch (error) {
-    if (error.message === 'Vape no encontrado' || error.message === 'Stock global insuficiente') {
-      return res.status(400).json({ error: error.message });
-    }
-    next(error);
+    res.json(inventario);
+  } catch (err) {
+    next(err);
   }
 };
 
-export const getInventory = async (req, res, next) => {
+// Admin asigna stock de bodega central al inventario de un vendedor
+export const asignar = async (req, res, next) => {
   try {
-    const role = req.user.role;
-    
-    if (role === 'ADMIN') {
-      // Para admin: devolver todos los vapes con su stockGlobal y las asignaciones a cada vendedor
-      const vapes = await prisma.vape.findMany({
-        include: {
-          inventarios: {
-            include: {
-              vendedor: {
-                select: { id: true, nombre: true }
-              }
-            }
-          }
-        }
-      });
-      return res.json(vapes);
-    } else if (role === 'VENDEDOR') {
-      // Para vendedor: devolver solo los inventarios que tiene asignados, incluyendo datos del vape
-      const inventarios = await prisma.inventarioVendedor.findMany({
-        where: { vendedorId: req.user.id },
-        include: {
-          vape: true
-        }
-      });
-      return res.json(inventarios);
-    } else {
-      return res.status(403).json({ error: 'No tienes permiso para ver el inventario' });
+    const { vendedorId, varianteId, cantidad } = req.body;
+    if (!vendedorId || !varianteId || !cantidad) {
+      return res.status(400).json({ error: 'vendedorId, varianteId y cantidad son requeridos' });
     }
-  } catch (error) {
-    next(error);
+    const cantidadInt = parseInt(cantidad);
+    if (cantidadInt <= 0) return res.status(400).json({ error: 'Cantidad inválida' });
+
+    const result = await prisma.$transaction(async (tx) => {
+      const variante = await tx.vapeVariante.findUnique({ where: { id: parseInt(varianteId) } });
+      if (!variante) throw new Error('Variante no encontrada');
+      if (variante.stock < cantidadInt) throw new Error('Stock insuficiente en bodega');
+
+      await tx.vapeVariante.update({
+        where: { id: parseInt(varianteId) },
+        data: { stock: variante.stock - cantidadInt },
+      });
+
+      const inv = await tx.inventarioVendedor.upsert({
+        where: { vendedorId_varianteId: { vendedorId: parseInt(vendedorId), varianteId: parseInt(varianteId) } },
+        update: { cantidad: { increment: cantidadInt } },
+        create: { vendedorId: parseInt(vendedorId), varianteId: parseInt(varianteId), cantidad: cantidadInt },
+        include: { variante: { include: { modelo: true } }, vendedor: { select: { id: true, nombre: true } } },
+      });
+      return inv;
+    });
+
+    res.json(result);
+  } catch (err) {
+    if (err.message === 'Stock insuficiente en bodega' || err.message === 'Variante no encontrada') {
+      return res.status(400).json({ error: err.message });
+    }
+    next(err);
   }
 };
 
-export const updateAssignedInventory = async (req, res, next) => {
+// Devolver stock del vendedor a bodega
+export const devolver = async (req, res, next) => {
   try {
-    const { id } = req.params; // ID del inventarioVendedor
-    const { cantidad } = req.body; // Nueva cantidad EXACTA que debe tener el vendedor
+    const { vendedorId, varianteId, cantidad } = req.body;
+    const cantidadInt = parseInt(cantidad);
 
-    if (cantidad < 0) {
-      return res.status(400).json({ error: 'La cantidad no puede ser negativa' });
-    }
-
-    const updated = await prisma.$transaction(async (prismaClient) => {
-      const inventario = await prismaClient.inventarioVendedor.findUnique({
-        where: { id: parseInt(id) },
-        include: { vape: true }
+    const result = await prisma.$transaction(async (tx) => {
+      const inv = await tx.inventarioVendedor.findUnique({
+        where: { vendedorId_varianteId: { vendedorId: parseInt(vendedorId), varianteId: parseInt(varianteId) } },
       });
+      if (!inv || inv.cantidad < cantidadInt) throw new Error('Stock insuficiente en inventario del vendedor');
 
-      if (!inventario) throw new Error('Asignación de inventario no encontrada');
-
-      const diferencia = parseInt(cantidad) - inventario.cantidad;
-      
-      // Si la diferencia es positiva, se le están asignando MÁS vapes al vendedor (se sacan de bodega)
-      if (diferencia > 0) {
-        if (inventario.vape.stockGlobal < diferencia) {
-          throw new Error('Stock global insuficiente para cubrir el aumento');
-        }
-      }
-
-      // Actualizar bodega (stockGlobal)
-      await prismaClient.vape.update({
-        where: { id: inventario.vapeId },
-        data: { stockGlobal: inventario.vape.stockGlobal - diferencia }
+      await tx.inventarioVendedor.update({
+        where: { vendedorId_varianteId: { vendedorId: parseInt(vendedorId), varianteId: parseInt(varianteId) } },
+        data: { cantidad: { decrement: cantidadInt } },
       });
-
-      // Actualizar cantidad del vendedor
-      const nuevoInventario = await prismaClient.inventarioVendedor.update({
-        where: { id: parseInt(id) },
-        data: { cantidad: parseInt(cantidad) }
+      await tx.vapeVariante.update({
+        where: { id: parseInt(varianteId) },
+        data: { stock: { increment: cantidadInt } },
       });
-
-      return nuevoInventario;
+      return { message: 'Stock devuelto a bodega' };
     });
 
-    res.json(updated);
-  } catch (error) {
-    if (error.message === 'Asignación de inventario no encontrada' || error.message === 'Stock global insuficiente para cubrir el aumento') {
-      return res.status(400).json({ error: error.message });
+    res.json(result);
+  } catch (err) {
+    if (err.message === 'Stock insuficiente en inventario del vendedor') {
+      return res.status(400).json({ error: err.message });
     }
-    next(error);
+    next(err);
   }
 };
 
-export const removeAssignedInventory = async (req, res, next) => {
+export const setComisionVendedor = async (req, res, next) => {
   try {
-    const { id } = req.params;
-
-    const removed = await prisma.$transaction(async (prismaClient) => {
-      const inventario = await prismaClient.inventarioVendedor.findUnique({
-        where: { id: parseInt(id) }
-      });
-
-      if (!inventario) throw new Error('Asignación no encontrada');
-
-      // Devolver los vapes a la bodega central
-      await prismaClient.vape.update({
-        where: { id: inventario.vapeId },
-        data: { stockGlobal: { increment: inventario.cantidad } }
-      });
-
-      // Eliminar el registro
-      await prismaClient.inventarioVendedor.delete({
-        where: { id: parseInt(id) }
-      });
-
-      return { success: true };
+    const { vendedorId, tipo, valor } = req.body;
+    const comision = await prisma.comisionVendedor.upsert({
+      where: { vendedorId: parseInt(vendedorId) },
+      update: { tipo, valor: parseFloat(valor) },
+      create: { vendedorId: parseInt(vendedorId), tipo, valor: parseFloat(valor) },
     });
-
-    res.json(removed);
-  } catch (error) {
-    if (error.message === 'Asignación no encontrada') {
-      return res.status(404).json({ error: error.message });
-    }
-    next(error);
+    res.json(comision);
+  } catch (err) {
+    next(err);
   }
 };

@@ -1,132 +1,75 @@
 import { prisma } from '../prisma.js';
 
-export const previewLiquidacion = async (req, res, next) => {
+export const getLiquidaciones = async (req, res, next) => {
   try {
-    const { vendedorId } = req.params;
+    const where = {};
+    if (req.user.role === 'VENDEDOR') where.vendedorId = req.user.id;
+    else if (req.query.vendedorId) where.vendedorId = parseInt(req.query.vendedorId);
+    if (req.query.cerrada !== undefined) where.cerrada = req.query.cerrada === 'true';
 
-    const ventas = await prisma.venta.findMany({
-      where: {
-        vendedorId: parseInt(vendedorId),
-        estado: 'PENDIENTE_LIQUIDACION'
-      },
+    const liquidaciones = await prisma.liquidacion.findMany({
+      where,
       include: {
-        vape: true
-      }
+        vendedor: { select: { id: true, nombre: true } },
+        ventas: {
+          include: { variante: { include: { modelo: { select: { nombre: true } } } } },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
     });
-
-    if (ventas.length === 0) {
-      return res.status(200).json({
-        message: 'No hay ventas pendientes de liquidación',
-        balanceAdmin: 0,
-        balanceVendedor: 0,
-        balanceNeto: 0,
-        ventas: []
-      });
-    }
-
-    let balanceAdmin = 0;
-    let balanceVendedor = 0;
-    let netoVendedorDebeAAdmin = 0;
-
-    ventas.forEach(venta => {
-      // Costo que le corresponde al admin
-      const gananciaAdmin = venta.montoParaAdmin;
-      // Ganancia que le corresponde al vendedor
-      const gananciaVendedor = venta.montoParaVendedor;
-
-      if (venta.pagadoA === 'VENDEDOR') {
-        // El vendedor tiene todo el dinero de la venta.
-        // Debe entregarle al admin su parte.
-        netoVendedorDebeAAdmin += gananciaAdmin;
-        balanceAdmin += gananciaAdmin;
-        balanceVendedor += gananciaVendedor; // El vendedor ya lo tiene, este es su balance a favor
-      } else if (venta.pagadoA === 'ADMIN') {
-        // El admin tiene todo el dinero de la venta.
-        // El admin le debe al vendedor su parte de la ganancia.
-        netoVendedorDebeAAdmin -= gananciaVendedor;
-        balanceAdmin += gananciaAdmin; // El admin ya lo tiene
-        balanceVendedor += gananciaVendedor;
-      }
-    });
-
-    res.status(200).json({
-      vendedorId: parseInt(vendedorId),
-      totalVentas: ventas.length,
-      balanceAdmin, // Lo que el admin ganó en total en este lote
-      balanceVendedor, // Lo que el vendedor ganó en total en este lote
-      netoVendedorDebeAAdmin, // Si es positivo, el Vendedor paga al Admin. Si es negativo, el Admin le paga al Vendedor (absoluto)
-      ventas
-    });
-  } catch (error) {
-    next(error);
+    res.json(liquidaciones);
+  } catch (err) {
+    next(err);
   }
 };
 
-export const executeLiquidacion = async (req, res, next) => {
+export const createLiquidacion = async (req, res, next) => {
   try {
     const { vendedorId } = req.body;
+    if (!vendedorId) return res.status(400).json({ error: 'vendedorId requerido' });
 
-    if (!vendedorId) {
-      return res.status(400).json({ error: 'Falta vendedorId' });
-    }
-
-    // Usar una transacción para evitar inconsistencias
-    const liquidacion = await prisma.$transaction(async (prismaClient) => {
-      const ventas = await prismaClient.venta.findMany({
-        where: {
-          vendedorId: parseInt(vendedorId),
-          estado: 'PENDIENTE_LIQUIDACION'
-        }
+    const result = await prisma.$transaction(async (tx) => {
+      const ventasPendientes = await tx.venta.findMany({
+        where: { vendedorId: parseInt(vendedorId), estado: 'PENDIENTE_LIQUIDACION', liquidacionId: null },
       });
+      if (ventasPendientes.length === 0) throw new Error('No hay ventas pendientes de liquidación');
 
-      if (ventas.length === 0) {
-        throw new Error('No hay ventas pendientes');
-      }
+      const montoTotal = ventasPendientes.reduce((sum, v) => sum + v.montoParaVendedor, 0);
 
-      let netoVendedorDebeAAdmin = 0;
-
-      ventas.forEach(venta => {
-        const gananciaAdmin = venta.montoParaAdmin;
-        const gananciaVendedor = venta.montoParaVendedor;
-
-        if (venta.pagadoA === 'VENDEDOR') {
-          netoVendedorDebeAAdmin += gananciaAdmin;
-        } else if (venta.pagadoA === 'ADMIN') {
-          netoVendedorDebeAAdmin -= gananciaVendedor;
-        }
-      });
-
-      // Crear la Liquidacion
-      const nuevaLiquidacion = await prismaClient.liquidacion.create({
+      const liquidacion = await tx.liquidacion.create({
         data: {
           vendedorId: parseInt(vendedorId),
-          montoTotal: netoVendedorDebeAAdmin,
-          cerrada: true // La creamos directamente como cerrada en este caso simple
-        }
-      });
-
-      // Actualizar ventas a LIQUIDADA y enlazar con la Liquidacion
-      await prismaClient.venta.updateMany({
-        where: {
-          id: { in: ventas.map(v => v.id) }
+          montoTotal,
+          ventas: { connect: ventasPendientes.map((v) => ({ id: v.id })) },
         },
-        data: {
-          estado: 'LIQUIDADA',
-          liquidacionId: nuevaLiquidacion.id
-        }
+        include: { vendedor: { select: { id: true, nombre: true } }, ventas: true },
       });
 
-      return nuevaLiquidacion;
+      await tx.venta.updateMany({
+        where: { id: { in: ventasPendientes.map((v) => v.id) } },
+        data: { estado: 'LIQUIDADA', liquidacionId: liquidacion.id },
+      });
+
+      return liquidacion;
     });
 
-    res.status(201).json({
-      message: 'Liquidación ejecutada exitosamente',
-      liquidacion
-    });
-  } catch (error) {
-    if (error.message === 'No hay ventas pendientes') {
-      return res.status(400).json({ error: error.message });
+    res.status(201).json(result);
+  } catch (err) {
+    if (err.message === 'No hay ventas pendientes de liquidación') {
+      return res.status(400).json({ error: err.message });
     }
-    next(error);
+    next(err);
+  }
+};
+
+export const cerrarLiquidacion = async (req, res, next) => {
+  try {
+    const liquidacion = await prisma.liquidacion.update({
+      where: { id: parseInt(req.params.id) },
+      data: { cerrada: true },
+    });
+    res.json(liquidacion);
+  } catch (err) {
+    next(err);
   }
 };

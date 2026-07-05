@@ -1,11 +1,10 @@
 import { Router } from 'express';
-import { getAnalytics } from '../controllers/analyticsController.js';
-import { verifyToken, verifyRole } from '../middlewares/authMiddleware.js';
+import { getDashboard, getVentasPorPeriodo } from '../controllers/analyticsController.js';
+import { requireAdmin } from '../middlewares/auth.js';
 
 const router = Router();
 
-// Solo ADMIN puede ver analytics
-router.use(verifyToken, verifyRole(['ADMIN']));
-router.get('/', getAnalytics);
+router.get('/dashboard', requireAdmin, getDashboard);
+router.get('/ventas-por-periodo', requireAdmin, getVentasPorPeriodo);
 
 export default router;

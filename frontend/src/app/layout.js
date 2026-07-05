@@ -1,59 +1,27 @@
-import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
-import "./globals.css";
-import BottomNav from "@/components/BottomNav";
-import CommandCenterProvider from "@/components/CommandCenterProvider";
-import NetworkProvider from "@/components/NetworkProvider";
-import { AuthProvider } from "@/hooks/useAuth";
-
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
-  subsets: ["latin"],
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
-  subsets: ["latin"],
-});
+import './globals.css';
+import { AuthProvider } from '@/hooks/useAuth';
 
 export const metadata = {
-  title: "Nubex Vape Inventory",
-  description: "Sistema offline-first para Nubex Vapes",
-  manifest: "/manifest.json",
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "black-translucent",
-    title: "Nubex",
-  },
+  title: 'Nubex Labs',
+  description: 'Sistema de gestión Nubex Labs',
 };
 
-export const viewport = {
-  themeColor: "#0B0F19",
-  width: "device-width",
-  initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
-};
+const themeInitScript = `
+(function () {
+  var stored = localStorage.getItem('nubex_theme');
+  document.documentElement.setAttribute('data-theme', stored === 'light' ? 'light' : 'dark');
+})();
+`;
 
 export default function RootLayout({ children }) {
   return (
-    <html
-      lang="es"
-      className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} h-full antialiased`}
-      data-theme="nubexTheme"
-    >
-      <body className="h-full flex flex-col bg-base-100 text-base-content overflow-hidden">
-        <AuthProvider>
-          <NetworkProvider>
-            <CommandCenterProvider>
-              <main className="flex-1 overflow-y-auto pb-16">
-                {children}
-              </main>
-              <BottomNav />
-            </CommandCenterProvider>
-          </NetworkProvider>
-        </AuthProvider>
+    <html lang="es" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
+      <body>
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );
 }
-

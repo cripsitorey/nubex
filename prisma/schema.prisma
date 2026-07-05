@@ -3,9 +3,13 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma-client"
+  provider               = "prisma-client"
+  output                 = "../src/generated/prisma-client"
+  generatedFileExtension = "ts"
+  importFileExtension    = "ts"
 }
+
+// ─── ENUMS ────────────────────────────────────────────────────────────────────
 
 enum Role {
   ADMIN
@@ -16,6 +20,7 @@ enum Role {
 enum EstadoVenta {
   PENDIENTE_LIQUIDACION
   LIQUIDADA
+  GARANTIA
 }
 
 enum ReceptorPago {
@@ -23,81 +28,173 @@ enum ReceptorPago {
   VENDEDOR
 }
 
-model User {
-  id                  Int                  @id @default(autoincrement())
-  email               String?              @unique
-  cedula              String?              @unique
-  telefono            String?              @unique
-  password            String
-  role                Role                 @default(CLIENTE)
-  nombre              String
-  totalVapesComprados Int                  @default(0)
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
-  inventariosVendedor InventarioVendedor[] // Para vendedores
-  ventasRealizadas    Venta[]              @relation("VendedorVenta") // Ventas hechas por el vendedor
-  ventasCompradas     Venta[]              @relation("ClienteVenta") // Compras del cliente
-  suscripcion         Suscripcion?
-  logros              LogroFidelidad[]
-  liquidaciones       Liquidacion[]        @relation("VendedorLiquidacion")
-  entregasSuscripcion EntregaSuscripcion[] // Entregas hechas por el vendedor
+enum MetodoPago {
+  EFECTIVO
+  TARJETA
+  TRANSFERENCIA
 }
 
-model Vape {
-  id          Int                  @id @default(autoincrement())
-  nombre      String
-  descripcion String?
-  imagenUrl   String?
-  media       Json?
-  costo          Float
-  precio         Float                // Precio sugerido al público
-  precioVendedor Float                // Precio que el vendedor paga al admin
-  puffs          Int                  // Número de puffs del dispositivo
-  sabor          String               // Sabor del vape
-  mostrarPrecio  Boolean  @default(true)
-  stockGlobal Int                  @default(0)
-  createdAt   DateTime             @default(now())
-  updatedAt   DateTime             @updatedAt
-  inventarios InventarioVendedor[]
-  Venta       Venta[]
-  entregas    EntregaSuscripcion[]
+enum CanalVenta {
+  POS
+  ECOMMERCE
 }
+
+enum TipoReparto {
+  PRECIO_FIJO  // Vendedor paga X fijo al admin por unidad
+  PORCENTAJE   // Admin se queda con X% del precio de venta
+}
+
+enum TipoPlan {
+  VAPES_MES
+  PUFFS_MES
+}
+
+enum TipoRecompensa {
+  VAPE_GRATIS
+  DESCUENTO
+}
+
+enum TipoMovimiento {
+  INGRESO
+  EGRESO
+}
+
+enum CategoriaMovimiento {
+  COMPRA_PROVEEDOR
+  VENTA
+  LIQUIDACION_VENDEDOR
+  GASTO_ENVIO
+  GASTO_OPERATIVO
+  OTRO
+}
+
+// ─── USUARIOS ─────────────────────────────────────────────────────────────────
+
+model User {
+  id        Int      @id @default(autoincrement())
+  nombre    String
+  email     String?  @unique
+  cedula    String?  @unique
+  telefono  String?  @unique
+  password  String
+  role      Role     @default(CLIENTE)
+  activo    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relaciones como vendedor
+  inventario          InventarioVendedor[]
+  comisionDefault     ComisionVendedor?
+  ventasComoVendedor  Venta[]              @relation("VendedorVenta")
+  liquidaciones       Liquidacion[]        @relation("VendedorLiquidacion")
+  entregasRealizadas  EntregaSuscripcion[] @relation("EntregadoPor")
+  entregasVerificadas EntregaSuscripcion[] @relation("VerificadoPor")
+  movimientosCaja     MovimientoCaja[]
+
+  // Relaciones como cliente
+  ventasComoCliente Venta[]        @relation("ClienteVenta")
+  suscripcion       Suscripcion?
+  logros            LogroFidelidad[]
+}
+
+// ─── CATÁLOGO ─────────────────────────────────────────────────────────────────
+
+model VapeModelo {
+  id              Int      @id @default(autoincrement())
+  nombre          String
+  marca           String
+  descripcion     String?
+  puffs           Int
+  costo           Float    // Lo que el admin paga al proveedor
+  precioVendedor  Float    // Precio base que el vendedor paga al admin (default)
+  precioSugerido  Float    // Precio sugerido al público
+  mostrarPrecio   Boolean  @default(true)
+  imagenUrl       String?
+  activo          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  variantes           VapeVariante[]
+  planesPermitidos    PlanVapeModelo[]
+  suscPermitidos      SuscripcionVapePermitido[]
+}
+
+model VapeVariante {
+  id        Int      @id @default(autoincrement())
+  modeloId  Int
+  sabor     String
+  imagenUrl String?
+  stock     Int      @default(0) // Stock global de esta variante en bodega
+  activo    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  modelo     VapeModelo           @relation(fields: [modeloId], references: [id])
+  inventario InventarioVendedor[]
+  ventas     Venta[]
+  entregas   EntregaSuscripcion[]
+}
+
+// ─── VENDEDORES ───────────────────────────────────────────────────────────────
 
 model InventarioVendedor {
   id         Int      @id @default(autoincrement())
   vendedorId Int
-  vapeId     Int
+  varianteId Int
   cantidad   Int      @default(0)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  vendedor User @relation(fields: [vendedorId], references: [id])
-  vape     Vape @relation(fields: [vapeId], references: [id])
+  vendedor User         @relation(fields: [vendedorId], references: [id])
+  variante VapeVariante @relation(fields: [varianteId], references: [id])
 
-  @@unique([vendedorId, vapeId])
+  @@unique([vendedorId, varianteId])
 }
 
+// Comisión por defecto del vendedor, sobrescribible por venta
+model ComisionVendedor {
+  id         Int         @id @default(autoincrement())
+  vendedorId Int         @unique
+  tipo       TipoReparto
+  valor      Float       // Si PRECIO_FIJO: monto fijo. Si PORCENTAJE: % que va al admin.
+  updatedAt  DateTime    @updatedAt
+
+  vendedor User @relation(fields: [vendedorId], references: [id])
+}
+
+// ─── VENTAS ───────────────────────────────────────────────────────────────────
+
 model Venta {
-  id                Int      @id @default(autoincrement())
-  vendedorId        Int
-  clienteId         Int?     // Opcional si es una venta rápida sin registrar cliente
-  vapeId            Int
-  cantidad          Int
-  costoAdquisicion  Float    // Snapshot del costo en el momento de la venta
-  precioVenta       Float    // Precio al que se vendió finalmente (con o sin descuento)
-  descuentoAdmin    Float    @default(0) // Monto del descuento absorbido por el admin
-  descuentoVendedor Float    @default(0) // Monto del descuento absorbido por el vendedor
-  montoParaAdmin    Float    @default(0)
-  montoParaVendedor Float    @default(0)
-  pagadoA           ReceptorPago @default(VENDEDOR)
-  estado            EstadoVenta @default(PENDIENTE_LIQUIDACION)
-  comprobanteUrl    String?
-  liquidacionId     Int?
-  createdAt         DateTime @default(now())
+  id         Int      @id @default(autoincrement())
+  vendedorId Int
+  clienteId  Int?     // Nullable: ventas anónimas
+  varianteId Int
+  cantidad   Int
+  canal      CanalVenta @default(POS)
+
+  // Snapshot del momento de la venta
+  costoAdquisicion Float
+  precioVenta      Float
+  repartoTipo      TipoReparto
+  repartoValor     Float        // El valor usado para calcular (fijo o %)
+
+  // Resultado del cálculo
+  montoParaAdmin    Float  @default(0)
+  montoParaVendedor Float  @default(0)
+  descuentoAdmin    Float  @default(0)
+  descuentoVendedor Float  @default(0)
+
+  pagadoA      ReceptorPago @default(VENDEDOR)
+  metodoPago   MetodoPago   @default(EFECTIVO)
+  estado       EstadoVenta  @default(PENDIENTE_LIQUIDACION)
+  liquidacionId Int?
+  comprobanteUrl String?
+  notas          String?
+  createdAt      DateTime @default(now())
 
   vendedor    User         @relation("VendedorVenta", fields: [vendedorId], references: [id])
   cliente     User?        @relation("ClienteVenta", fields: [clienteId], references: [id])
-  vape        Vape         @relation(fields: [vapeId], references: [id])
+  variante    VapeVariante @relation(fields: [varianteId], references: [id])
   liquidacion Liquidacion? @relation(fields: [liquidacionId], references: [id])
 }
 
@@ -113,53 +210,139 @@ model Liquidacion {
   ventas   Venta[]
 }
 
+// ─── SUSCRIPCIONES ────────────────────────────────────────────────────────────
+
 model PlanSuscripcion {
-  id                Int           @id @default(autoincrement())
-  nombre            String
-  diasEntreEntregas Int           @default(30)
-  precio            Float         @default(0)
-  limiteVapes       Int?          // Límite opcional de vapes por periodo
-  limitePuffs       Int?          // Límite opcional de puffs totales por periodo
-  createdAt         DateTime      @default(now())
-  updatedAt         DateTime      @updatedAt
-  suscripciones     Suscripcion[]
+  id          Int      @id @default(autoincrement())
+  nombre      String
+  descripcion String?
+  tipo        TipoPlan // VAPES_MES o PUFFS_MES
+  valorLimite Int      // X vapes o Y puffs según el tipo
+  maxPuffsPermitidosPorVape Int? // Restricción: ningún vape puede superar este puff count
+  diasEntreEntregas         Int
+  precio                    Float
+  todosLosVapes             Boolean @default(true) // Si false, usar PlanVapeModelo
+  penalizacionPorDia        Float   @default(0)    // Multa diaria si no devuelve el vape quemado
+  diasGraciaDevolucion      Int     @default(7)    // Días para devolver sin multa
+  activo                    Boolean @default(true)
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
+
+  vapesPermitidos PlanVapeModelo[]
+  suscripciones   Suscripcion[]
 }
 
-model Suscripcion {
-  id                Int      @id @default(autoincrement())
-  clienteId         Int      @unique
-  planId            Int?     // Referencia opcional si aún no migramos todos
-  activa            Boolean  @default(true)
-  diasEntreEntregas Int      @default(60) // Legacy
-  multaFija         Float?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+// Lista de modelos permitidos cuando todosLosVapes = false
+model PlanVapeModelo {
+  planId   Int
+  modeloId Int
 
-  cliente User @relation(fields: [clienteId], references: [id])
-  plan    PlanSuscripcion? @relation(fields: [planId], references: [id])
-  entregas EntregaSuscripcion[]
+  plan   PlanSuscripcion @relation(fields: [planId], references: [id])
+  modelo VapeModelo      @relation(fields: [modeloId], references: [id])
+
+  @@id([planId, modeloId])
+}
+
+// Contrato real del cliente — snapshot congelado al momento de contratar
+model Suscripcion {
+  id        Int @id @default(autoincrement())
+  clienteId Int @unique
+  planId    Int // Referencia al plan original (solo trazabilidad)
+
+  // Snapshot congelado de las reglas del plan al momento de contratar
+  tipo                      TipoPlan
+  valorLimite               Int
+  maxPuffsPermitidosPorVape Int?
+  diasEntreEntregas         Int
+  precio                    Float
+  todosLosVapes             Boolean
+  penalizacionPorDia        Float
+  diasGraciaDevolucion      Int
+
+  multaFijaAdicional Float?   // Multa fija adicional si aplica
+  activa             Boolean  @default(true)
+  createdAt          DateTime @default(now())
+
+  cliente        User                     @relation(fields: [clienteId], references: [id])
+  plan           PlanSuscripcion          @relation(fields: [planId], references: [id])
+  vapesPermitidos SuscripcionVapePermitido[]
+  entregas       EntregaSuscripcion[]
+}
+
+// Snapshot de los modelos permitidos al momento de contratar
+model SuscripcionVapePermitido {
+  suscripcionId Int
+  modeloId      Int
+
+  suscripcion Suscripcion @relation(fields: [suscripcionId], references: [id])
+  modelo      VapeModelo  @relation(fields: [modeloId], references: [id])
+
+  @@id([suscripcionId, modeloId])
 }
 
 model EntregaSuscripcion {
-  id             Int      @id @default(autoincrement())
-  suscripcionId  Int
-  vendedorId     Int
-  vapeId         Int
-  multaAplicada  Float    @default(0)
-  createdAt      DateTime @default(now())
+  id            Int      @id @default(autoincrement())
+  suscripcionId Int
+  varianteId    Int
+  entregadoPorId  Int
+  verificadoPorId Int?   // Quien confirmó que el vape anterior estaba quemado
 
-  suscripcion    Suscripcion @relation(fields: [suscripcionId], references: [id])
-  vendedor       User        @relation(fields: [vendedorId], references: [id])
-  vape           Vape        @relation(fields: [vapeId], references: [id])
+  vapeAnteriorDevuelto Boolean @default(false)
+  multaAplicada        Float   @default(0)
+
+  fechaEntrega          DateTime @default(now())
+  fechaLimiteDevolucion DateTime // Hasta cuándo puede devolver sin multa
+  fechaProximaEntrega   DateTime // Cuándo se libera la próxima entrega
+
+  notas String?
+
+  suscripcion   Suscripcion  @relation(fields: [suscripcionId], references: [id])
+  variante      VapeVariante @relation(fields: [varianteId], references: [id])
+  entregadoPor  User         @relation("EntregadoPor", fields: [entregadoPorId], references: [id])
+  verificadoPor User?        @relation("VerificadoPor", fields: [verificadoPorId], references: [id])
+}
+
+// ─── FIDELIDAD ────────────────────────────────────────────────────────────────
+
+model ConfigFidelidad {
+  id                 Int            @id @default(autoincrement())
+  comprasNecesarias  Int            // Ej: 6
+  tipoRecompensa     TipoRecompensa
+  valorDescuento     Float?         // Solo si tipoRecompensa = DESCUENTO
+  activo             Boolean        @default(true)
+  createdAt          DateTime       @default(now())
+
+  logros LogroFidelidad[]
 }
 
 model LogroFidelidad {
   id          Int      @id @default(autoincrement())
   clienteId   Int
+  configId    Int      // Qué regla lo generó
   nombre      String
   descripcion String?
-  obtenidoEn  DateTime @default(now())
   reclamado   Boolean  @default(false)
+  reclamadoEn DateTime?
+  obtenidoEn  DateTime @default(now())
 
-  cliente User @relation(fields: [clienteId], references: [id])
+  cliente User            @relation(fields: [clienteId], references: [id])
+  config  ConfigFidelidad @relation(fields: [configId], references: [id])
+}
+
+// ─── CAJA ─────────────────────────────────────────────────────────────────────
+
+model MovimientoCaja {
+  id          Int                 @id @default(autoincrement())
+  tipo        TipoMovimiento
+  categoria   CategoriaMovimiento
+  monto       Float
+  metodoPago  MetodoPago
+  descripcion String
+  // Referencia opcional a otra entidad (Venta, Liquidacion, etc.)
+  referenciaId   Int?
+  referenciaTipo String?
+  registradoPorId Int
+  createdAt       DateTime @default(now())
+
+  registradoPor User @relation(fields: [registradoPorId], references: [id])
 }

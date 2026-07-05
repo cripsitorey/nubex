@@ -1,80 +1,102 @@
-"use client";
-
-import { useState } from "react";
-import AnalyticsDashboard from "@/components/admin/AnalyticsDashboard";
-import PlanesManager from "@/components/admin/PlanesManager";
-import VendedoresManager from "@/components/admin/VendedoresManager";
-import StockCentral from "@/components/admin/StockCentral";
-import LiquidationManager from "@/components/admin/LiquidationManager";
-import ClientRegistration from "@/components/vendedor/ClientRegistration";
-import SalesHistory from "@/components/admin/SalesHistory";
-import { BarChart3, Layers, Users, Package, Wallet, UserCircle, Receipt } from "lucide-react";
-import { useAuth } from "@/hooks/useAuth";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-
-const TABS = [
-  { key: "analytics", label: "Métricas", icon: BarChart3 },
-  { key: "ventas", label: "Ventas", icon: Receipt },
-  { key: "planes", label: "Planes", icon: Layers },
-  { key: "vendedores", label: "Vendedores", icon: Users },
-  { key: "clientes", label: "Clientes", icon: UserCircle },
-  { key: "stock", label: "Stock", icon: Package },
-  { key: "liquidaciones", label: "Cierres", icon: Wallet },
-];
+'use client';
+import { useEffect, useState } from 'react';
+import { api } from '@/lib/api';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+import { TrendingUp, ShoppingBag, Users, Repeat } from 'lucide-react';
 
 export default function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState("analytics");
-  const { user, loading } = useAuth();
-  const router = useRouter();
+  const [data, setData] = useState(null);
+  const [grafico, setGrafico] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!loading) {
-      if (!user) router.push("/login");
-      else if (user.role !== "ADMIN") router.push("/");
-    }
-  }, [user, loading, router]);
+    Promise.all([
+      api.get('/analytics/dashboard'),
+      api.get('/analytics/ventas-por-periodo'),
+    ]).then(([dash, graf]) => {
+      setData(dash);
+      setGrafico(graf);
+    }).catch(console.error).finally(() => setLoading(false));
+  }, []);
 
-  if (loading || !user || user.role !== "ADMIN") return null;
+  if (loading) return <div className="flex justify-center py-20"><span className="loading loading-spinner loading-lg" /></div>;
+  if (!data) return null;
+
+  const stats = [
+    { label: 'Ingresos admin', value: `$${data.ventas.ingresoAdmin.toFixed(2)}`, icon: TrendingUp, color: 'text-success' },
+    { label: 'Total ventas', value: data.ventas.total, icon: ShoppingBag, color: 'text-primary' },
+    { label: 'Clientes', value: data.clientes.total, icon: Users, color: 'text-info' },
+    { label: 'Suscripciones', value: data.clientes.conSuscripcion, icon: Repeat, color: 'text-warning' },
+  ];
 
   return (
-    <div className="p-4 sm:p-8 space-y-6 animate-in fade-in duration-500">
-      <div className="flex items-center justify-between mb-2">
-        <h1 className="text-2xl font-bold text-white">Centro de Control</h1>
-        <span className="text-[10px] text-neutral-content/40 font-mono uppercase tracking-wider">Admin Panel</span>
+    <div className="space-y-6">
+      <h2 className="text-2xl font-bold">Dashboard</h2>
+
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {stats.map((s) => (
+          <div key={s.label} className="stat bg-base-100 rounded-box shadow-sm">
+            <div className={`stat-figure ${s.color}`}><s.icon size={28} /></div>
+            <div className="stat-title text-xs">{s.label}</div>
+            <div className="stat-value text-2xl">{s.value}</div>
+          </div>
+        ))}
       </div>
 
-      {/* Tab Navigation */}
-      <div className="flex gap-1 overflow-x-auto pb-2 scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0">
-        {TABS.map(tab => {
-          const Icon = tab.icon;
-          const isActive = activeTab === tab.key;
-          return (
-            <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all ${
-                isActive
-                  ? "bg-primary text-primary-content shadow-[0_0_20px_rgba(0,229,255,0.3)]"
-                  : "bg-base-200 text-neutral-content/60 hover:text-white hover:bg-base-300"
-              }`}
-            >
-              <Icon className="w-4 h-4" />
-              {tab.label}
-            </button>
-          );
-        })}
+      <div className="card bg-base-100 shadow-sm">
+        <div className="card-body">
+          <h3 className="card-title text-base">Ventas últimos 30 días</h3>
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={grafico}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="fecha" tick={{ fontSize: 11 }} />
+              <YAxis tick={{ fontSize: 11 }} />
+              <Tooltip />
+              <Bar dataKey="ventas" fill="#7c3aed" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </div>
 
-      {/* Tab Content */}
-      <div className="min-h-[50vh]">
-        {activeTab === "analytics" && <AnalyticsDashboard />}
-        {activeTab === "ventas" && <SalesHistory />}
-        {activeTab === "planes" && <PlanesManager />}
-        {activeTab === "vendedores" && <VendedoresManager />}
-        {activeTab === "clientes" && <ClientRegistration standalone={true} />}
-        {activeTab === "stock" && <StockCentral />}
-        {activeTab === "liquidaciones" && <LiquidationManager />}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="card bg-base-100 shadow-sm">
+          <div className="card-body">
+            <h3 className="card-title text-base">Top 5 productos</h3>
+            <div className="space-y-2">
+              {data.topVariantes.map((v, i) => (
+                <div key={i} className="flex justify-between items-center text-sm">
+                  <span>{v.variante?.modelo?.nombre} – {v.variante?.sabor}</span>
+                  <span className="badge badge-primary badge-sm">{v.cantidadVendida} uds</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="card bg-base-100 shadow-sm">
+          <div className="card-body">
+            <h3 className="card-title text-base">Top vendedores</h3>
+            <div className="space-y-2">
+              {data.topVendedores.map((v, i) => (
+                <div key={i} className="flex justify-between items-center text-sm">
+                  <span>{v.vendedor?.nombre}</span>
+                  <span className="badge badge-secondary badge-sm">{v.totalVentas} ventas</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="card bg-base-100 shadow-sm">
+        <div className="card-body">
+          <h3 className="card-title text-base">Caja</h3>
+          <div className="flex gap-6 flex-wrap text-sm">
+            <div><span className="text-success font-bold">+${data.caja.ingresos.toFixed(2)}</span> ingresos</div>
+            <div><span className="text-error font-bold">-${data.caja.egresos.toFixed(2)}</span> egresos</div>
+            <div><span className="font-bold">${data.caja.balance.toFixed(2)}</span> balance</div>
+          </div>
+        </div>
       </div>
     </div>
   );
