@@ -2,10 +2,82 @@
 import { useEffect, useState } from 'react';
 import { api } from '@/lib/api';
 import { useAuth } from '@/hooks/useAuth';
-import { Star, Package, Calendar } from 'lucide-react';
+import { Star, Package, Calendar, Battery, Clock } from 'lucide-react';
+import { useEscapeKey } from '@/hooks/useEscapeKey';
 
-function VistaConSuscripcion({ suscripcion }) {
+function ModalPedirVape({ suscripcion, onClose, onSave }) {
+  const [modelos, setModelos] = useState([]);
+  const [modeloId, setModeloId] = useState('');
+  const [varianteId, setVarianteId] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+  useEscapeKey(onClose);
+
+  useEffect(() => {
+    if (suscripcion.todosLosVapes) {
+      api.get('/vapes/publico').then((data) => {
+        const max = suscripcion.maxPuffsPermitidosPorVape;
+        setModelos(max ? data.filter((m) => m.puffs <= max) : data);
+      });
+    } else {
+      setModelos(suscripcion.vapesPermitidos.map((v) => v.modelo));
+    }
+  }, [suscripcion]);
+
+  const modeloSeleccionado = modelos.find((m) => m.id === parseInt(modeloId));
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSaving(true);
+    try {
+      await api.post(`/suscripciones/${suscripcion.id}/solicitudes`, { varianteId });
+      onSave();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <dialog className="modal modal-open">
+      <div className="modal-box">
+        <h3 className="font-bold text-lg mb-4">Pedir mi próximo vape</h3>
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <div className="form-control">
+            <label className="label"><span className="label-text">Modelo</span></label>
+            <select className="select select-bordered select-sm" value={modeloId}
+              onChange={(e) => { setModeloId(e.target.value); setVarianteId(''); }} required>
+              <option value="">Seleccionar modelo...</option>
+              {modelos.map((m) => <option key={m.id} value={m.id}>{m.nombre} ({m.puffs} puffs)</option>)}
+            </select>
+          </div>
+          {modeloSeleccionado && (
+            <div className="form-control">
+              <label className="label"><span className="label-text">Sabor</span></label>
+              <select className="select select-bordered select-sm" value={varianteId} onChange={(e) => setVarianteId(e.target.value)} required>
+                <option value="">Seleccionar sabor...</option>
+                {modeloSeleccionado.variantes?.map((v) => <option key={v.id} value={v.id}>{v.sabor}</option>)}
+              </select>
+            </div>
+          )}
+          {error && <div className="alert alert-error text-sm py-2">{error}</div>}
+          <div className="modal-action">
+            <button type="button" className="btn btn-ghost btn-sm" onClick={onClose}>Cancelar</button>
+            <button type="submit" className="btn btn-primary btn-sm" disabled={saving || !varianteId}>
+              {saving ? <span className="loading loading-spinner loading-xs" /> : 'Enviar solicitud'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </dialog>
+  );
+}
+
+function VistaConSuscripcion({ suscripcion, onRefresh }) {
   const [entregas, setEntregas] = useState([]);
+  const [modalPedir, setModalPedir] = useState(false);
 
   useEffect(() => {
     api.get(`/suscripciones/${suscripcion.id}/entregas`).then(setEntregas).catch(() => {});
@@ -15,6 +87,7 @@ function VistaConSuscripcion({ suscripcion }) {
   const proxima = ultimaEntrega ? new Date(ultimaEntrega.fechaProximaEntrega) : null;
   const hoy = new Date();
   const diasRestantes = proxima ? Math.ceil((proxima - hoy) / (1000 * 60 * 60 * 24)) : null;
+  const solicitudPendiente = suscripcion.solicitudes?.[0];
 
   return (
     <div className="space-y-4">
@@ -34,6 +107,20 @@ function VistaConSuscripcion({ suscripcion }) {
           </div>
         </div>
       </div>
+
+      {solicitudPendiente ? (
+        <div className="alert alert-warning shadow-sm">
+          <Clock size={18} />
+          <div>
+            <p className="font-bold">Solicitud en revisión</p>
+            <p className="text-sm">{solicitudPendiente.variante?.modelo?.nombre} – {solicitudPendiente.variante?.sabor}</p>
+          </div>
+        </div>
+      ) : (
+        <button className="btn btn-outline btn-block gap-2" onClick={() => setModalPedir(true)}>
+          <Battery size={16} /> Se me acabó, quiero uno nuevo
+        </button>
+      )}
 
       {diasRestantes !== null && (
         <div className={`alert ${diasRestantes <= 0 ? 'alert-success' : 'alert-info'} shadow-sm`}>
@@ -68,6 +155,14 @@ function VistaConSuscripcion({ suscripcion }) {
           )}
         </div>
       </div>
+
+      {modalPedir && (
+        <ModalPedirVape
+          suscripcion={suscripcion}
+          onClose={() => setModalPedir(false)}
+          onSave={() => { setModalPedir(false); onRefresh(); }}
+        />
+      )}
     </div>
   );
 }
@@ -111,9 +206,11 @@ export default function ClientePage() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const load = () => {
     api.get(`/users/${user.id}`).then(setData).finally(() => setLoading(false));
-  }, [user.id]);
+  };
+
+  useEffect(load, [user.id]);
 
   if (loading) return <div className="flex justify-center py-20"><span className="loading loading-spinner loading-lg" /></div>;
   if (!data) return null;
@@ -133,7 +230,7 @@ export default function ClientePage() {
       </div>
 
       {data.suscripcion?.activa ? (
-        <VistaConSuscripcion suscripcion={data.suscripcion} />
+        <VistaConSuscripcion suscripcion={data.suscripcion} onRefresh={load} />
       ) : (
         <VistaSinSuscripcion logros={data.logros || []} ventas={data.ventasComoCliente || []} />
       )}

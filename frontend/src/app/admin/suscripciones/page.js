@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { api } from '@/lib/api';
-import { Plus, ChevronDown, ChevronUp } from 'lucide-react';
+import { Plus, ChevronDown, ChevronUp, Search, User, Check, X } from 'lucide-react';
 import { useEscapeKey } from '@/hooks/useEscapeKey';
 
 function ModalPlan({ plan, onClose, onSave }) {
@@ -114,22 +114,192 @@ function ModalPlan({ plan, onClose, onSave }) {
   );
 }
 
+function BuscadorCliente({ onSelect }) {
+  const [q, setQ] = useState('');
+  const [resultados, setResultados] = useState([]);
+
+  useEffect(() => {
+    if (q.length < 2) { setResultados([]); return; }
+    const t = setTimeout(() => api.get(`/users/search?q=${q}`).then(setResultados), 300);
+    return () => clearTimeout(t);
+  }, [q]);
+
+  return (
+    <div className="relative">
+      <div className="join w-full">
+        <span className="join-item btn btn-sm btn-ghost border border-base-300"><Search size={14} /></span>
+        <input
+          className="input input-bordered input-sm join-item flex-1"
+          placeholder="Buscar cliente por nombre, teléfono..."
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+        />
+      </div>
+      {resultados.length > 0 && (
+        <ul className="absolute z-10 w-full mt-1 bg-base-100 border border-base-200 rounded-box shadow-lg max-h-48 overflow-y-auto">
+          {resultados.map((c) => (
+            <li key={c.id}>
+              <button type="button" className="w-full text-left px-3 py-2 hover:bg-base-200 flex items-center gap-2 text-sm"
+                onClick={() => { onSelect(c); setQ(''); setResultados([]); }}>
+                <User size={14} />
+                <span className="font-medium">{c.nombre}</span>
+                {c.telefono && <span className="text-base-content/50">{c.telefono}</span>}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+function ModalSuscribir({ planes, onClose, onSave }) {
+  const [cliente, setCliente] = useState(null);
+  const [planId, setPlanId] = useState('');
+  const [multaFijaAdicional, setMultaFijaAdicional] = useState('');
+  const [saving, setSaving] = useState(false);
+  useEscapeKey(onClose);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      await api.post('/suscripciones', {
+        clienteId: cliente.id,
+        planId,
+        multaFijaAdicional: multaFijaAdicional || undefined,
+      });
+      onSave();
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <dialog className="modal modal-open">
+      <div className="modal-box">
+        <h3 className="font-bold text-lg mb-4">Suscribir cliente a un plan</h3>
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <div className="form-control">
+            <label className="label"><span className="label-text">Cliente</span></label>
+            {cliente ? (
+              <div className="flex items-center gap-2 p-2 bg-base-200 rounded-lg">
+                <User size={16} />
+                <span className="flex-1 text-sm font-medium">{cliente.nombre}</span>
+                <button type="button" className="btn btn-ghost btn-xs" onClick={() => setCliente(null)}><X size={14} /></button>
+              </div>
+            ) : (
+              <BuscadorCliente onSelect={setCliente} />
+            )}
+          </div>
+          <div className="form-control">
+            <label className="label"><span className="label-text">Plan</span></label>
+            <select className="select select-bordered select-sm" value={planId} onChange={(e) => setPlanId(e.target.value)} required>
+              <option value="">Seleccionar plan...</option>
+              {planes.filter((p) => p.activo).map((p) => (
+                <option key={p.id} value={p.id}>{p.nombre} (${p.precio})</option>
+              ))}
+            </select>
+          </div>
+          <div className="form-control">
+            <label className="label"><span className="label-text text-xs">Multa fija adicional (opcional)</span></label>
+            <input type="number" step="0.01" className="input input-bordered input-sm" value={multaFijaAdicional} onChange={(e) => setMultaFijaAdicional(e.target.value)} />
+          </div>
+          <div className="modal-action">
+            <button type="button" className="btn btn-ghost btn-sm" onClick={onClose}>Cancelar</button>
+            <button type="submit" className="btn btn-primary btn-sm" disabled={saving || !cliente || !planId}>
+              {saving ? <span className="loading loading-spinner loading-xs" /> : 'Suscribir'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </dialog>
+  );
+}
+
+function ModalProcesarSolicitud({ solicitud, onClose, onSave }) {
+  const [vapeAnteriorDevuelto, setVapeAnteriorDevuelto] = useState(true);
+  const [multaManual, setMultaManual] = useState('');
+  const [saving, setSaving] = useState(false);
+  useEscapeKey(onClose);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      await api.post(`/suscripciones/${solicitud.suscripcionId}/entregas`, {
+        varianteId: solicitud.varianteId,
+        vapeAnteriorDevuelto,
+        multaManual: multaManual || undefined,
+        solicitudId: solicitud.id,
+      });
+      onSave();
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <dialog className="modal modal-open">
+      <div className="modal-box max-w-sm">
+        <h3 className="font-bold text-lg mb-4">Entregar sabor solicitado</h3>
+        <div className="mb-3 p-3 bg-base-200 rounded-lg text-sm">
+          <p><strong>{solicitud.suscripcion?.cliente?.nombre}</strong></p>
+          <p className="text-base-content/60">{solicitud.variante?.modelo?.nombre} – {solicitud.variante?.sabor}</p>
+        </div>
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" className="toggle toggle-primary toggle-sm" checked={vapeAnteriorDevuelto} onChange={(e) => setVapeAnteriorDevuelto(e.target.checked)} />
+            <span className="text-sm">¿Devolvió el vape anterior quemado?</span>
+          </label>
+          {!vapeAnteriorDevuelto && (
+            <div className="form-control">
+              <label className="label"><span className="label-text text-xs">Multa manual (opcional, si no se devuelve automático por días de retraso)</span></label>
+              <input type="number" step="0.01" className="input input-bordered input-sm" value={multaManual} onChange={(e) => setMultaManual(e.target.value)} />
+            </div>
+          )}
+          <div className="modal-action">
+            <button type="button" className="btn btn-ghost btn-sm" onClick={onClose}>Cancelar</button>
+            <button type="submit" className="btn btn-primary btn-sm" disabled={saving}>
+              {saving ? <span className="loading loading-spinner loading-xs" /> : 'Confirmar entrega'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </dialog>
+  );
+}
+
 export default function SuscripcionesPage() {
   const [planes, setPlanes] = useState([]);
   const [suscripciones, setSuscripciones] = useState([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState('planes');
+  const [solicitudes, setSolicitudes] = useState([]);
   const [modal, setModal] = useState(null);
+  const [modalSuscribir, setModalSuscribir] = useState(false);
+  const [modalSolicitud, setModalSolicitud] = useState(null);
 
   const load = () => {
     setLoading(true);
     Promise.all([
       api.get('/suscripciones/planes?soloActivos=false'),
       api.get('/suscripciones'),
-    ]).then(([pl, sus]) => { setPlanes(pl); setSuscripciones(sus); }).finally(() => setLoading(false));
+      api.get('/suscripciones/solicitudes'),
+    ]).then(([pl, sus, sol]) => { setPlanes(pl); setSuscripciones(sus); setSolicitudes(sol); }).finally(() => setLoading(false));
   };
 
   useEffect(load, []);
+
+  const rechazar = async (id) => {
+    if (!confirm('¿Rechazar esta solicitud?')) return;
+    await api.patch(`/suscripciones/solicitudes/${id}/rechazar`, {});
+    load();
+  };
 
   return (
     <div className="space-y-4">
@@ -138,11 +308,17 @@ export default function SuscripcionesPage() {
         {tab === 'planes' && (
           <button className="btn btn-primary btn-sm gap-1" onClick={() => setModal({})}><Plus size={16} /> Nuevo plan</button>
         )}
+        {tab === 'activas' && (
+          <button className="btn btn-primary btn-sm gap-1" onClick={() => setModalSuscribir(true)}><Plus size={16} /> Suscribir cliente</button>
+        )}
       </div>
 
       <div className="tabs tabs-boxed w-fit">
         <button className={`tab ${tab === 'planes' ? 'tab-active' : ''}`} onClick={() => setTab('planes')}>Planes</button>
         <button className={`tab ${tab === 'activas' ? 'tab-active' : ''}`} onClick={() => setTab('activas')}>Activas</button>
+        <button className={`tab gap-1 ${tab === 'solicitudes' ? 'tab-active' : ''}`} onClick={() => setTab('solicitudes')}>
+          Solicitudes {solicitudes.length > 0 && <span className="badge badge-primary badge-xs">{solicitudes.length}</span>}
+        </button>
       </div>
 
       {loading ? (
@@ -170,7 +346,7 @@ export default function SuscripcionesPage() {
             </div>
           ))}
         </div>
-      ) : (
+      ) : tab === 'activas' ? (
         <div className="overflow-x-auto">
           <table className="table table-sm bg-base-100 rounded-box shadow-sm">
             <thead>
@@ -190,10 +366,38 @@ export default function SuscripcionesPage() {
             </tbody>
           </table>
         </div>
+      ) : (
+        <div className="space-y-3">
+          {solicitudes.length === 0 ? (
+            <p className="text-sm text-base-content/50 py-10 text-center">No hay solicitudes pendientes</p>
+          ) : solicitudes.map((s) => (
+            <div key={s.id} className="card bg-base-100 shadow-sm">
+              <div className="card-body p-4 flex-row justify-between items-center">
+                <div>
+                  <p className="font-bold">{s.suscripcion?.cliente?.nombre}</p>
+                  <p className="text-sm text-base-content/60">{s.variante?.modelo?.nombre} – {s.variante?.sabor}</p>
+                  <p className="text-xs text-base-content/40">{new Date(s.createdAt).toLocaleString('es')}</p>
+                </div>
+                <div className="flex gap-2">
+                  <button className="btn btn-ghost btn-sm btn-square" title="Rechazar" onClick={() => rechazar(s.id)}><X size={16} /></button>
+                  <button className="btn btn-primary btn-sm gap-1" onClick={() => setModalSolicitud(s)}><Check size={14} /> Entregar</button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       )}
 
       {modal !== null && (
         <ModalPlan plan={modal.id ? modal : null} onClose={() => setModal(null)} onSave={() => { setModal(null); load(); }} />
+      )}
+
+      {modalSuscribir && (
+        <ModalSuscribir planes={planes} onClose={() => setModalSuscribir(false)} onSave={() => { setModalSuscribir(false); load(); }} />
+      )}
+
+      {modalSolicitud && (
+        <ModalProcesarSolicitud solicitud={modalSolicitud} onClose={() => setModalSolicitud(null)} onSave={() => { setModalSolicitud(null); load(); }} />
       )}
     </div>
   );

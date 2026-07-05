@@ -110,6 +110,12 @@ export const getSuscripciones = async (req, res, next) => {
           take: 1,
           include: { variante: { include: { modelo: true } } },
         },
+        solicitudes: {
+          where: { estado: 'PENDIENTE' },
+          orderBy: { createdAt: 'desc' },
+          take: 1,
+          include: { variante: { include: { modelo: true } } },
+        },
       },
     });
     res.json(req.user.role === 'CLIENTE' ? suscripciones[0] || null : suscripciones);
@@ -173,10 +179,32 @@ export const cancelarSuscripcion = async (req, res, next) => {
 
 // ─── ENTREGAS ─────────────────────────────────────────────────────────────────
 
+// Valida que el vape elegido respete las reglas de la suscripción (snapshot
+// congelado al momento de contratar): si no es "todos los vapes", el modelo
+// debe estar en la lista permitida, y si hay tope de puffs, no puede excederlo.
+async function validarVarianteParaSuscripcion(suscripcion, varianteId) {
+  const variante = await prisma.vapeVariante.findUnique({
+    where: { id: parseInt(varianteId) },
+    include: { modelo: true },
+  });
+  if (!variante) throw new Error('Variante no encontrada');
+
+  if (!suscripcion.todosLosVapes) {
+    const permitidos = await prisma.suscripcionVapePermitido.findMany({ where: { suscripcionId: suscripcion.id } });
+    if (!permitidos.some((p) => p.modeloId === variante.modeloId)) {
+      throw new Error('Ese modelo de vape no está permitido en tu plan');
+    }
+  }
+  if (suscripcion.maxPuffsPermitidosPorVape && variante.modelo.puffs > suscripcion.maxPuffsPermitidosPorVape) {
+    throw new Error(`Ese vape excede el máximo de ${suscripcion.maxPuffsPermitidosPorVape} puffs de tu plan`);
+  }
+  return variante;
+}
+
 export const registrarEntrega = async (req, res, next) => {
   try {
     const suscripcionId = parseInt(req.params.id);
-    const { varianteId, vapeAnteriorDevuelto, notas, multaManual } = req.body;
+    const { varianteId, vapeAnteriorDevuelto, notas, multaManual, solicitudId } = req.body;
 
     const suscripcion = await prisma.suscripcion.findUnique({
       where: { id: suscripcionId },
@@ -185,6 +213,8 @@ export const registrarEntrega = async (req, res, next) => {
     if (!suscripcion || !suscripcion.activa) {
       return res.status(400).json({ error: 'Suscripción no encontrada o inactiva' });
     }
+
+    const variante = await validarVarianteParaSuscripcion(suscripcion, varianteId);
 
     // Calcular multa si no devolvió el vape
     let multaAplicada = 0;
@@ -210,27 +240,56 @@ export const registrarEntrega = async (req, res, next) => {
     const fechaProximaEntrega = new Date(fechaEntrega);
     fechaProximaEntrega.setDate(fechaProximaEntrega.getDate() + suscripcion.diasEntreEntregas);
 
-    const entrega = await prisma.entregaSuscripcion.create({
-      data: {
-        suscripcionId,
-        varianteId: parseInt(varianteId),
-        entregadoPorId: req.user.id,
-        verificadoPorId: req.user.id,
-        vapeAnteriorDevuelto: !!vapeAnteriorDevuelto,
-        multaAplicada,
-        fechaEntrega,
-        fechaLimiteDevolucion,
-        fechaProximaEntrega,
-        notas,
-      },
-      include: {
-        variante: { include: { modelo: true } },
-        entregadoPor: { select: { id: true, nombre: true } },
-      },
+    const entrega = await prisma.$transaction(async (tx) => {
+      if (req.user.role === 'ADMIN') {
+        if (variante.stock < 1) throw new Error('Stock insuficiente en bodega');
+        await tx.vapeVariante.update({ where: { id: variante.id }, data: { stock: { decrement: 1 } } });
+      } else {
+        const inv = await tx.inventarioVendedor.findUnique({
+          where: { vendedorId_varianteId: { vendedorId: req.user.id, varianteId: variante.id } },
+        });
+        if (!inv || inv.cantidad < 1) throw new Error('Stock insuficiente en tu inventario');
+        await tx.inventarioVendedor.update({
+          where: { vendedorId_varianteId: { vendedorId: req.user.id, varianteId: variante.id } },
+          data: { cantidad: { decrement: 1 } },
+        });
+      }
+
+      const nuevaEntrega = await tx.entregaSuscripcion.create({
+        data: {
+          suscripcionId,
+          varianteId: variante.id,
+          entregadoPorId: req.user.id,
+          verificadoPorId: req.user.id,
+          vapeAnteriorDevuelto: !!vapeAnteriorDevuelto,
+          multaAplicada,
+          fechaEntrega,
+          fechaLimiteDevolucion,
+          fechaProximaEntrega,
+          notas,
+        },
+        include: {
+          variante: { include: { modelo: true } },
+          entregadoPor: { select: { id: true, nombre: true } },
+        },
+      });
+
+      if (solicitudId) {
+        await tx.solicitudEntrega.update({
+          where: { id: parseInt(solicitudId) },
+          data: { estado: 'APROBADA', resueltaEn: new Date(), entregaId: nuevaEntrega.id },
+        });
+      }
+
+      return nuevaEntrega;
     });
 
     res.status(201).json({ entrega, multaAplicada });
   } catch (err) {
+    if (['Variante no encontrada', 'Stock insuficiente en bodega', 'Stock insuficiente en tu inventario'].includes(err.message)
+      || err.message.startsWith('Ese modelo') || err.message.startsWith('Ese vape')) {
+      return res.status(400).json({ error: err.message });
+    }
     next(err);
   }
 };
@@ -248,6 +307,73 @@ export const getEntregas = async (req, res, next) => {
       orderBy: { fechaEntrega: 'desc' },
     });
     res.json(entregas);
+  } catch (err) {
+    next(err);
+  }
+};
+
+// ─── SOLICITUDES DE ENTREGA ───────────────────────────────────────────────────
+
+// El cliente pide "se me acabó, quiero uno nuevo" seleccionando el sabor.
+export const solicitarEntrega = async (req, res, next) => {
+  try {
+    const suscripcionId = parseInt(req.params.id);
+    const { varianteId, notas } = req.body;
+    if (!varianteId) return res.status(400).json({ error: 'varianteId es requerido' });
+
+    const suscripcion = await prisma.suscripcion.findUnique({ where: { id: suscripcionId } });
+    if (!suscripcion || !suscripcion.activa) {
+      return res.status(400).json({ error: 'Suscripción no encontrada o inactiva' });
+    }
+    if (req.user.role === 'CLIENTE' && suscripcion.clienteId !== req.user.id) {
+      return res.status(403).json({ error: 'Sin permiso' });
+    }
+
+    const yaHayPendiente = await prisma.solicitudEntrega.findFirst({
+      where: { suscripcionId, estado: 'PENDIENTE' },
+    });
+    if (yaHayPendiente) {
+      return res.status(400).json({ error: 'Ya tienes una solicitud pendiente de revisión' });
+    }
+
+    await validarVarianteParaSuscripcion(suscripcion, varianteId);
+
+    const solicitud = await prisma.solicitudEntrega.create({
+      data: { suscripcionId, varianteId: parseInt(varianteId), notas },
+      include: { variante: { include: { modelo: true } } },
+    });
+    res.status(201).json(solicitud);
+  } catch (err) {
+    if (err.message.startsWith('Ese modelo') || err.message.startsWith('Ese vape') || err.message === 'Variante no encontrada') {
+      return res.status(400).json({ error: err.message });
+    }
+    next(err);
+  }
+};
+
+export const getSolicitudesPendientes = async (req, res, next) => {
+  try {
+    const solicitudes = await prisma.solicitudEntrega.findMany({
+      where: { estado: 'PENDIENTE' },
+      include: {
+        variante: { include: { modelo: true } },
+        suscripcion: { include: { cliente: { select: { id: true, nombre: true, telefono: true } } } },
+      },
+      orderBy: { createdAt: 'asc' },
+    });
+    res.json(solicitudes);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const rechazarSolicitud = async (req, res, next) => {
+  try {
+    const solicitud = await prisma.solicitudEntrega.update({
+      where: { id: parseInt(req.params.id) },
+      data: { estado: 'RECHAZADA', resueltaEn: new Date(), notas: req.body.notas },
+    });
+    res.json(solicitud);
   } catch (err) {
     next(err);
   }

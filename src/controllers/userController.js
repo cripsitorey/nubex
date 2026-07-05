@@ -54,7 +54,13 @@ export const getById = async (req, res, next) => {
         suscripcion: {
           include: {
             entregas: { orderBy: { fechaEntrega: 'desc' }, take: 5 },
-            vapesPermitidos: { include: { modelo: true } },
+            vapesPermitidos: { include: { modelo: { include: { variantes: { where: { activo: true } } } } } },
+            solicitudes: {
+              where: { estado: 'PENDIENTE' },
+              orderBy: { createdAt: 'desc' },
+              take: 1,
+              include: { variante: { include: { modelo: true } } },
+            },
           },
         },
         logros: { where: { reclamado: false } },

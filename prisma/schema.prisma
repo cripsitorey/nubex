@@ -68,6 +68,12 @@ enum CategoriaMovimiento {
   OTRO
 }
 
+enum EstadoSolicitud {
+  PENDIENTE
+  APROBADA
+  RECHAZADA
+}
+
 // ─── USUARIOS ─────────────────────────────────────────────────────────────────
 
 model User {
@@ -133,6 +139,7 @@ model VapeVariante {
   inventario InventarioVendedor[]
   ventas     Venta[]
   entregas   EntregaSuscripcion[]
+  solicitudes SolicitudEntrega[]
 }
 
 // ─── VENDEDORES ───────────────────────────────────────────────────────────────
@@ -267,6 +274,7 @@ model Suscripcion {
   plan           PlanSuscripcion          @relation(fields: [planId], references: [id])
   vapesPermitidos SuscripcionVapePermitido[]
   entregas       EntregaSuscripcion[]
+  solicitudes    SolicitudEntrega[]
 }
 
 // Snapshot de los modelos permitidos al momento de contratar
@@ -300,6 +308,24 @@ model EntregaSuscripcion {
   variante      VapeVariante @relation(fields: [varianteId], references: [id])
   entregadoPor  User         @relation("EntregadoPor", fields: [entregadoPorId], references: [id])
   verificadoPor User?        @relation("VerificadoPor", fields: [verificadoPorId], references: [id])
+  solicitud     SolicitudEntrega?
+}
+
+// El cliente pide "se me acabó, quiero uno nuevo" seleccionando el sabor;
+// un admin/vendedor la revisa y la resuelve generando la EntregaSuscripcion.
+model SolicitudEntrega {
+  id            Int             @id @default(autoincrement())
+  suscripcionId Int
+  varianteId    Int
+  estado        EstadoSolicitud @default(PENDIENTE)
+  notas         String?
+  createdAt     DateTime        @default(now())
+  resueltaEn    DateTime?
+  entregaId     Int?            @unique
+
+  suscripcion Suscripcion         @relation(fields: [suscripcionId], references: [id])
+  variante    VapeVariante        @relation(fields: [varianteId], references: [id])
+  entrega     EntregaSuscripcion? @relation(fields: [entregaId], references: [id])
 }
 
 // ─── FIDELIDAD ────────────────────────────────────────────────────────────────
