@@ -1,0 +1,7 @@
+node_modules
+frontend
+uploads
+.env
+.env.local
+.git
+src/generated
